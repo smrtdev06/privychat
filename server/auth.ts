@@ -7,6 +7,12 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 
+declare module "express-session" {
+  interface SessionData {
+    csrfToken?: string;
+  }
+}
+
 declare global {
   namespace Express {
     interface User extends SelectUser {}
@@ -28,18 +34,61 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+// CSRF protection functions
+function generateCSRFToken(): string {
+  return randomBytes(32).toString('hex');
+}
+
+function verifyCSRFToken(sessionToken: string, requestToken: string): boolean {
+  if (!sessionToken || !requestToken) {
+    return false;
+  }
+  return timingSafeEqual(Buffer.from(sessionToken), Buffer.from(requestToken));
+}
+
+// CSRF middleware
+function csrfProtection(req: any, res: any, next: any) {
+  // Skip CSRF for GET, HEAD, OPTIONS
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    return next();
+  }
+
+  // Skip CSRF for unauthenticated requests (handled by route-level auth)
+  if (!req.isAuthenticated()) {
+    return next();
+  }
+
+  const sessionToken = req.session.csrfToken;
+  const requestToken = req.headers['x-csrf-token'] || req.body._csrfToken;
+
+  if (!verifyCSRFToken(sessionToken, requestToken)) {
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+
+  next();
+}
+
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: "lax",
+    },
   };
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Apply CSRF protection middleware
+  app.use(csrfProtection);
 
   passport.use(
     new LocalStrategy(async (username, password, done) => {
@@ -89,5 +138,17 @@ export function setupAuth(app: Express) {
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
+  });
+
+  // CSRF token endpoint
+  app.get("/api/csrf-token", (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    // Generate or retrieve CSRF token from session
+    if (!req.session.csrfToken) {
+      req.session.csrfToken = generateCSRFToken();
+    }
+    
+    res.json({ csrfToken: req.session.csrfToken });
   });
 }

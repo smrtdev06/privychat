@@ -2,10 +2,101 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema } from "@shared/schema";
+import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema, insertUserSchema } from "@shared/schema";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
 import { randomUUID } from "crypto";
+import rateLimit from "express-rate-limit";
+import { z } from "zod";
+
+// Rate limiting store for brute-force protection
+interface AttemptsStore {
+  [key: string]: {
+    attempts: number;
+    lastAttempt: number;
+    lockedUntil?: number;
+  };
+}
+
+const bruteForceStore: AttemptsStore = {};
+
+// Validation schemas
+const numericPasswordSchema = z.object({
+  numericPassword: z.string().regex(/^\d+$/, "Must be numeric")
+});
+
+const userCodeSchema = z.object({
+  userCode: z.string().min(1, "User code is required")
+});
+
+const mediaUrlSchema = z.object({
+  mediaUrl: z.string().url("Valid URL required")
+});
+
+const upgradeCodeSchema = z.object({
+  upgradeCode: z.string().min(1, "Upgrade code is required")
+});
+
+const phoneSchema = z.object({
+  phone: z.string().min(1, "Phone number is required")
+});
+
+const smsCodeSchema = z.object({
+  code: z.string().min(1, "Verification code is required")
+});
+
+// Brute-force protection functions
+function checkBruteForceProtection(userId: string): { allowed: boolean; delayMs?: number } {
+  const key = `brute-force:${userId}`;
+  const record = bruteForceStore[key];
+  
+  if (!record) {
+    return { allowed: true };
+  }
+  
+  const now = Date.now();
+  
+  // Check if user is currently locked out
+  if (record.lockedUntil && now < record.lockedUntil) {
+    return { 
+      allowed: false, 
+      delayMs: record.lockedUntil - now 
+    };
+  }
+  
+  // Reset if enough time has passed (1 hour)
+  if (now - record.lastAttempt > 60 * 60 * 1000) {
+    delete bruteForceStore[key];
+    return { allowed: true };
+  }
+  
+  return { allowed: true };
+}
+
+function recordFailedAttempt(userId: string): void {
+  const key = `brute-force:${userId}`;
+  const now = Date.now();
+  const record = bruteForceStore[key] || { attempts: 0, lastAttempt: 0 };
+  
+  record.attempts += 1;
+  record.lastAttempt = now;
+  
+  // Progressive lockout: 3 attempts = 1 min, 6 attempts = 5 min, 10+ attempts = 30 min
+  if (record.attempts >= 10) {
+    record.lockedUntil = now + (30 * 60 * 1000); // 30 minutes
+  } else if (record.attempts >= 6) {
+    record.lockedUntil = now + (5 * 60 * 1000); // 5 minutes
+  } else if (record.attempts >= 3) {
+    record.lockedUntil = now + (1 * 60 * 1000); // 1 minute
+  }
+  
+  bruteForceStore[key] = record;
+}
+
+function recordSuccessfulAttempt(userId: string): void {
+  const key = `brute-force:${userId}`;
+  delete bruteForceStore[key];
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -35,10 +126,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { numericPassword } = req.body;
-      if (!numericPassword || !/^\d+$/.test(numericPassword)) {
-        return res.status(400).json({ error: "Numeric password required" });
-      }
+      const validatedData = numericPasswordSchema.parse(req.body);
+      const { numericPassword } = validatedData;
 
       await storage.updateUser(req.user!.id, { 
         numericPassword,
@@ -47,6 +136,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ success: true });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error setting numeric password:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -56,15 +148,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { numericPassword } = req.body;
+      // Check brute-force protection
+      const bruteForceCheck = checkBruteForceProtection(req.user!.id);
+      if (!bruteForceCheck.allowed) {
+        const delaySeconds = Math.ceil((bruteForceCheck.delayMs || 0) / 1000);
+        return res.status(429).json({ 
+          error: "Too many failed attempts. Please try again later.",
+          retryAfter: delaySeconds
+        });
+      }
+
+      const validatedData = numericPasswordSchema.parse(req.body);
+      const { numericPassword } = validatedData;
+      
       const user = await storage.getUser(req.user!.id);
       
       if (!user || user.numericPassword !== numericPassword) {
+        recordFailedAttempt(req.user!.id);
         return res.status(401).json({ error: "Invalid password" });
       }
 
+      recordSuccessfulAttempt(req.user!.id);
       res.json({ success: true });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error verifying numeric password:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -87,7 +196,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { userCode } = req.body;
+      const validatedData = userCodeSchema.parse(req.body);
+      const { userCode } = validatedData;
       
       // Find user by code
       const otherUser = await storage.getUserByUserCode(userCode);
@@ -111,6 +221,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(conversation);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error creating conversation:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -224,10 +337,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { mediaUrl } = req.body;
-      if (!mediaUrl) {
-        return res.status(400).json({ error: "Media URL is required" });
-      }
+      const validatedData = mediaUrlSchema.parse(req.body);
+      const { mediaUrl } = validatedData;
 
       const objectStorageService = new ObjectStorageService();
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
@@ -240,6 +351,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ objectPath });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error setting media ACL:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -293,10 +407,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { upgradeCode } = req.body;
-      if (!upgradeCode) {
-        return res.status(400).json({ error: "Upgrade code is required" });
-      }
+      const validatedData = upgradeCodeSchema.parse(req.body);
+      const { upgradeCode } = validatedData;
 
       const success = await storage.redeemSubscriptionGift(upgradeCode, req.user!.id);
       if (!success) {
@@ -305,6 +417,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ success: true });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error redeeming upgrade code:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -313,11 +428,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // SMS verification (mock endpoint)
   app.post("/api/sms/send-verification", async (req, res) => {
     try {
-      const { phone } = req.body;
+      const validatedData = phoneSchema.parse(req.body);
+      const { phone } = validatedData;
       // Mock SMS sending - in real app would integrate with Twilio/similar
       console.log(`Mock SMS verification code sent to ${phone}: 123456`);
       res.json({ success: true });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error sending SMS verification:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -327,7 +446,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
-      const { code } = req.body;
+      const validatedData = smsCodeSchema.parse(req.body);
+      const { code } = validatedData;
       // Mock verification - in real app would verify against sent code
       if (code === "123456") {
         await storage.updateUser(req.user!.id, { isPhoneVerified: true });
@@ -336,6 +456,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(400).json({ error: "Invalid verification code" });
       }
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
       console.error("Error verifying SMS code:", error);
       res.status(500).json({ error: "Internal server error" });
     }
