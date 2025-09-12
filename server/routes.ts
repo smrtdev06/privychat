@@ -2,7 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema, insertUserSchema } from "@shared/schema";
+import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema, insertUserSchema, users as usersTable } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 import { ObjectPermission } from "./objectAcl";
 import { randomUUID } from "crypto";
@@ -145,11 +147,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/verify-numeric-password", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
     try {
-      // Check brute-force protection
-      const bruteForceCheck = checkBruteForceProtection(req.user!.id);
+      const validatedData = numericPasswordSchema.parse(req.body);
+      const { numericPassword } = validatedData;
+      
+      // Find user by numeric password (for calculator disguise access)
+      const users = await db.select().from(usersTable).where(eq(usersTable.numericPassword, numericPassword));
+      const user = users[0];
+      
+      if (!user) {
+        return res.status(401).json({ error: "Invalid password" });
+      }
+
+      // Check brute-force protection for this user
+      const bruteForceCheck = checkBruteForceProtection(user.id);
       if (!bruteForceCheck.allowed) {
         const delaySeconds = Math.ceil((bruteForceCheck.delayMs || 0) / 1000);
         return res.status(429).json({ 
@@ -158,18 +169,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const validatedData = numericPasswordSchema.parse(req.body);
-      const { numericPassword } = validatedData;
+      // Authenticate the user (create session)
+      req.login(user, (err) => {
+        if (err) {
+          console.error("Error creating session:", err);
+          recordFailedAttempt(user.id);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+        
+        recordSuccessfulAttempt(user.id);
+        res.json({ success: true });
+      });
       
-      const user = await storage.getUser(req.user!.id);
-      
-      if (!user || user.numericPassword !== numericPassword) {
-        recordFailedAttempt(req.user!.id);
-        return res.status(401).json({ error: "Invalid password" });
-      }
-
-      recordSuccessfulAttempt(req.user!.id);
-      res.json({ success: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors[0].message });
