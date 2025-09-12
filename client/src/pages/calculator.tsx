@@ -10,11 +10,30 @@ import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+const calculate = (firstOperand: number, secondOperand: number, operator: string): number => {
+  switch (operator) {
+    case "+":
+      return firstOperand + secondOperand;
+    case "-":
+      return firstOperand - secondOperand;
+    case "*":
+    case "×":
+      return firstOperand * secondOperand;
+    case "/":
+    case "÷":
+      return firstOperand / secondOperand;
+    default:
+      return secondOperand;
+  }
+};
+
 export default function Calculator() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const [expression, setExpression] = useState("");
-  const [result, setResult] = useState("0");
+  const [display, setDisplay] = useState("0");
+  const [previousValue, setPreviousValue] = useState<number | null>(null);
+  const [operator, setOperator] = useState<string | null>(null);
+  const [waitingForOperand, setWaitingForOperand] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [passwordEntry, setPasswordEntry] = useState("");
   const [isPasswordMode, setIsPasswordMode] = useState(false);
@@ -37,21 +56,22 @@ export default function Calculator() {
       return;
     }
 
-    if (result === "0" && value !== ".") {
-      setResult(value);
-      setExpression(value);
+    if (waitingForOperand) {
+      setDisplay(value);
+      setWaitingForOperand(false);
     } else {
-      setResult(prev => prev + value);
-      setExpression(prev => prev + value);
+      setDisplay(display === "0" ? value : display + value);
     }
   };
 
-  const handleOperator = (operator: string) => {
+  const handleOperator = (nextOperator: string) => {
     if (isPasswordMode) return;
 
-    if (operator === "+") {
-      // Check for special plus behavior
-      if (!isPasswordMode && expression === "" && result === "0") {
+    const inputValue = parseFloat(display);
+
+    if (nextOperator === "+") {
+      // Check for special plus behavior - only if display is "0" and no previous operation
+      if (!isPasswordMode && display === "0" && previousValue === null) {
         setIsPasswordMode(true);
         setPasswordEntry("");
         toast({
@@ -62,8 +82,18 @@ export default function Calculator() {
       }
     }
 
-    setExpression(prev => prev + ` ${operator} `);
-    setResult("0");
+    if (previousValue === null) {
+      setPreviousValue(inputValue);
+    } else if (operator) {
+      const currentValue = previousValue || 0;
+      const newValue = calculate(currentValue, inputValue, operator);
+
+      setDisplay(String(newValue));
+      setPreviousValue(newValue);
+    }
+
+    setWaitingForOperand(true);
+    setOperator(nextOperator);
   };
 
   const handleClear = () => {
@@ -71,8 +101,10 @@ export default function Calculator() {
       setIsPasswordMode(false);
       setPasswordEntry("");
     }
-    setExpression("");
-    setResult("0");
+    setDisplay("0");
+    setPreviousValue(null);
+    setOperator(null);
+    setWaitingForOperand(false);
   };
 
   const handleEquals = async () => {
@@ -97,24 +129,25 @@ export default function Calculator() {
       return;
     }
 
-    try {
-      // Simple calculator evaluation
-      const evalResult = eval(expression.replace(/×/g, '*').replace(/÷/g, '/'));
-      setResult(evalResult.toString());
-      setExpression("");
-    } catch (error) {
-      setResult("Error");
-      setExpression("");
+    const inputValue = parseFloat(display);
+
+    if (previousValue !== null && operator) {
+      const newValue = calculate(previousValue, inputValue, operator);
+      
+      setDisplay(String(newValue));
+      setPreviousValue(null);
+      setOperator(null);
+      setWaitingForOperand(true);
     }
   };
 
   const displayValue = isPasswordMode 
     ? "•".repeat(passwordEntry.length)
-    : result;
+    : display;
 
   const displayExpression = isPasswordMode
     ? "Enter Password"
-    : expression;
+    : "";
 
   return (
     <div className="h-screen bg-black text-white flex flex-col">
