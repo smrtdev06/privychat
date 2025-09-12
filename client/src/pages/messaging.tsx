@@ -20,23 +20,31 @@ export default function Messaging() {
     }
   });
 
-  const handleNewConversation = () => {
+  const handleNewConversation = async () => {
     const userCode = prompt("Enter recipient's user code:");
     if (userCode) {
-      // Create conversation and navigate to it
-      fetch("/api/conversations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ userCode: userCode.trim() }),
-      })
-        .then(res => res.json())
-        .then(conversation => {
-          setLocation(`/conversation/${conversation.id}`);
-        })
-        .catch(error => {
-          alert("Error starting conversation. Please check the user code.");
+      try {
+        const response = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ userCode: userCode.trim() }),
         });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          // Handle validation errors from server
+          alert(data.error || "Error starting conversation. Please check the user code.");
+          return;
+        }
+
+        // Success - navigate to the conversation
+        setLocation(`/conversation/${data.id}`);
+      } catch (error) {
+        console.error("Error creating conversation:", error);
+        alert("Error starting conversation. Please check the user code.");
+      }
     }
   };
 

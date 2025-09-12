@@ -148,6 +148,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/verify-numeric-password", async (req, res) => {
     try {
+      console.log("Received numeric password request:", {
+        body: req.body,
+        numericPassword: req.body?.numericPassword,
+        type: typeof req.body?.numericPassword,
+        length: req.body?.numericPassword?.length
+      });
+      
       const validatedData = numericPasswordSchema.parse(req.body);
       const { numericPassword } = validatedData;
       
