@@ -154,36 +154,23 @@ export default function Calculator() {
     if (isPasswordMode) {
       // Verify numeric password
       try {
-        console.log("Sending password:", { 
-          passwordEntry, 
-          length: passwordEntry.length,
-          chars: passwordEntry.split('').map(c => ({ char: c, code: c.charCodeAt(0) }))
-        });
-        
-        console.log("Starting authentication...");
         await apiRequest("POST", "/api/verify-numeric-password", {
           numericPassword: passwordEntry
         });
         
-        console.log("Authentication success, waiting for session...");
-        
         // Wait a moment for session to be fully established
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        console.log("Invalidating user query...");
         // Invalidate user query to refetch authentication status
         await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         
-        console.log("Waiting for auth state to refresh...");
         // Wait for auth state to update
         await new Promise(resolve => setTimeout(resolve, 200));
         
-        console.log("Navigating to messaging...");
         setIsPasswordMode(false);
         setPasswordEntry("");
         setLocation("/messaging");
       } catch (error) {
-        console.error("Password verification error:", error);
         toast({
           title: "Invalid Password",
           description: "Please try again",

@@ -1,14 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, Settings, ArrowRight } from "lucide-react";
 import ConversationList from "@/components/conversation-list";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { useAuth } from "@/hooks/use-auth";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Messaging() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: conversations = [], isLoading } = useQuery({
     queryKey: ["/api/conversations"],
@@ -24,26 +26,22 @@ export default function Messaging() {
     const userCode = prompt("Enter recipient's user code:");
     if (userCode) {
       try {
-        const response = await fetch("/api/conversations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ userCode: userCode.trim() }),
+        const response = await apiRequest("POST", "/api/conversations", {
+          userCode: userCode.trim()
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-          // Handle validation errors from server
-          alert(data.error || "Error starting conversation. Please check the user code.");
-          return;
-        }
+        // Invalidate conversations cache to refresh the list
+        queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
 
         // Success - navigate to the conversation
         setLocation(`/conversation/${data.id}`);
       } catch (error) {
         console.error("Error creating conversation:", error);
-        alert("Error starting conversation. Please check the user code.");
+        // Parse error message from response if available
+        const errorMessage = error.message || "Error starting conversation. Please check the user code.";
+        alert(errorMessage);
       }
     }
   };

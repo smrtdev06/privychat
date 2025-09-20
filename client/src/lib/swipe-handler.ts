@@ -12,6 +12,7 @@ export function useSwipeHandler(onSwipe: (direction: SwipeDirection) => void) {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
       startTime = Date.now();
+      console.log("Swipe started:", { startX, startY, startTime });
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
@@ -25,26 +26,42 @@ export function useSwipeHandler(onSwipe: (direction: SwipeDirection) => void) {
       const deltaY = endY - startY;
       const deltaTime = endTime - startTime;
 
+      console.log("Swipe ended:", { 
+        startX, startY, endX, endY, 
+        deltaX, deltaY, deltaTime,
+        absX: Math.abs(deltaX), absY: Math.abs(deltaY)
+      });
+
       // Minimum swipe distance and maximum time for a valid swipe
       const minDistance = 100;
       const maxTime = 300;
 
-      if (Math.abs(deltaX) < minDistance && Math.abs(deltaY) < minDistance) return;
-      if (deltaTime > maxTime) return;
+      if (Math.abs(deltaX) < minDistance && Math.abs(deltaY) < minDistance) {
+        console.log("Swipe rejected: insufficient distance");
+        return;
+      }
+      if (deltaTime > maxTime) {
+        console.log("Swipe rejected: too slow");
+        return;
+      }
 
       // Determine direction
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
         if (deltaX > 0) {
+          console.log("Swipe detected: RIGHT");
           onSwipe("right");
         } else {
+          console.log("Swipe detected: LEFT");
           onSwipe("left");
         }
       } else {
         // Vertical swipe
         if (deltaY > 0) {
+          console.log("Swipe detected: DOWN");
           onSwipe("down");
         } else {
+          console.log("Swipe detected: UP");
           onSwipe("up");
         }
       }
