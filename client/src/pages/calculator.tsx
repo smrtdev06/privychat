@@ -10,6 +10,11 @@ import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+interface CalculationHistoryEntry {
+  expression: string;
+  result: string;
+}
+
 const calculate = (firstOperand: number, secondOperand: number, operator: string): number => {
   switch (operator) {
     case "+":
@@ -37,6 +42,8 @@ export default function Calculator() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [passwordEntry, setPasswordEntry] = useState("");
   const [isPasswordMode, setIsPasswordMode] = useState(false);
+  const [calculationHistory, setCalculationHistory] = useState<CalculationHistoryEntry[]>([]);
+  const [currentExpression, setCurrentExpression] = useState("");
   const { toast } = useToast();
 
   useSwipeHandler((direction) => {
@@ -58,9 +65,28 @@ export default function Calculator() {
 
     if (waitingForOperand) {
       setDisplay(value);
+      setCurrentExpression(prev => prev + value);
       setWaitingForOperand(false);
     } else {
-      setDisplay(display === "0" ? value : display + value);
+      const newDisplay = display === "0" ? value : display + value;
+      setDisplay(newDisplay);
+      
+      // Update current expression
+      if (display === "0" && !currentExpression) {
+        setCurrentExpression(value);
+      } else if (waitingForOperand) {
+        setCurrentExpression(prev => prev + value);
+      } else {
+        setCurrentExpression(prev => {
+          // If we're continuing to type a number, replace the last number in the expression
+          const parts = prev.split(/([+\-×÷])/);
+          if (parts.length > 0) {
+            parts[parts.length - 1] = newDisplay;
+            return parts.join('');
+          }
+          return newDisplay;
+        });
+      }
     }
   };
 
@@ -82,6 +108,13 @@ export default function Calculator() {
       }
     }
 
+    // Add operator to current expression
+    if (!currentExpression) {
+      setCurrentExpression(display + " " + nextOperator + " ");
+    } else {
+      setCurrentExpression(prev => prev + " " + nextOperator + " ");
+    }
+
     if (previousValue === null) {
       setPreviousValue(inputValue);
     } else if (operator) {
@@ -90,6 +123,15 @@ export default function Calculator() {
 
       setDisplay(String(newValue));
       setPreviousValue(newValue);
+      
+      // Update expression with intermediate result
+      setCurrentExpression(prev => {
+        const parts = prev.split(/([+\-×÷])/);
+        if (parts.length >= 3) {
+          return String(newValue) + " " + nextOperator + " ";
+        }
+        return prev;
+      });
     }
 
     setWaitingForOperand(true);
@@ -105,6 +147,7 @@ export default function Calculator() {
     setPreviousValue(null);
     setOperator(null);
     setWaitingForOperand(false);
+    setCurrentExpression("");
   };
 
   const handleEquals = async () => {
@@ -156,10 +199,18 @@ export default function Calculator() {
     if (previousValue !== null && operator) {
       const newValue = calculate(previousValue, inputValue, operator);
       
+      // Add completed calculation to history
+      const completeExpression = currentExpression || `${previousValue} ${operator} ${inputValue}`;
+      setCalculationHistory(prev => [...prev, {
+        expression: completeExpression,
+        result: String(newValue)
+      }]);
+      
       setDisplay(String(newValue));
       setPreviousValue(null);
       setOperator(null);
       setWaitingForOperand(true);
+      setCurrentExpression("");
     }
   };
 
@@ -169,7 +220,7 @@ export default function Calculator() {
 
   const displayExpression = isPasswordMode
     ? "Enter Password"
-    : "";
+    : currentExpression;
 
   return (
     <div className="h-screen bg-black text-white flex flex-col">
@@ -218,6 +269,7 @@ export default function Calculator() {
       <CalculatorDisplay
         expression={displayExpression}
         result={displayValue}
+        calculationHistory={calculationHistory}
       />
 
       {/* Calculator Keypad */}
