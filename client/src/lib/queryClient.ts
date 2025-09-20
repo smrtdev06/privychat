@@ -12,9 +12,31 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: Record<string, string> = {};
+  
+  if (data) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  // For non-GET requests, try to get CSRF token
+  if (method !== "GET") {
+    try {
+      const csrfRes = await fetch("/api/csrf-token", {
+        credentials: "include",
+      });
+      if (csrfRes.ok) {
+        const { csrfToken } = await csrfRes.json();
+        headers["x-csrf-token"] = csrfToken;
+      }
+    } catch (error) {
+      // If CSRF token fetch fails, continue without it (for unauthenticated requests)
+      console.warn("Failed to fetch CSRF token:", error);
+    }
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
