@@ -37,7 +37,6 @@ export default function Conversation() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageData: { content?: string; messageType: string; mediaUrl?: string }) => {
-      console.log("Sending message with conversationId:", id, "messageData:", messageData);
       if (!id) {
         throw new Error("No conversation ID available");
       }
