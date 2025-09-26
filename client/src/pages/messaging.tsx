@@ -6,11 +6,13 @@ import ConversationList from "@/components/conversation-list";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Messaging() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: conversations = [], isLoading } = useQuery({
     queryKey: ["/api/conversations"],
@@ -26,22 +28,24 @@ export default function Messaging() {
     const userCode = prompt("Enter recipient's user code:");
     if (userCode) {
       try {
-        const response = await apiRequest("POST", "/api/conversations", {
+        const data = await apiRequest("POST", "/api/conversations", {
           userCode: userCode.trim()
         });
-
-        const data = await response.json();
 
         // Invalidate conversations cache to refresh the list
         queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
 
         // Success - navigate to the conversation
         setLocation(`/conversation/${data.id}`);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error creating conversation:", error);
         // Parse error message from response if available
-        const errorMessage = error.message || "Error starting conversation. Please check the user code.";
-        alert(errorMessage);
+        const errorMessage = error?.error || error?.message || "Error starting conversation. Please check the user code.";
+        toast({
+          title: "Failed to start conversation",
+          description: errorMessage,
+          variant: "destructive",
+        });
       }
     }
   };
