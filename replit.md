@@ -51,9 +51,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Business Logic
 - **Freemium Model**: Free users limited to 1 message per day, premium users get unlimited messaging
+  - **Shared Premium Benefit**: If EITHER user in a conversation has premium, BOTH users can send unlimited messages
+  - Implementation: `canUserSendMessage()` checks both sender and receiver subscription status
+  - Daily message limits only apply when BOTH users are on free tier
 - **Subscription Gifts**: Users can purchase and gift premium subscriptions via upgrade codes
 - **User Discovery**: User code system for finding and connecting with other users
-- **Message Types**: Support for text, image, and video messages with media URL storage
+- **Message Types**: Support for text, image, video, and voice messages with media URL storage
+  - Text messages: Fully functional
+  - Image/Video/Voice messages: Schema and rendering complete, requires object storage setup for upload functionality
 
 ## Development and Deployment
 - **Build System**: Vite for fast development and optimized production builds
