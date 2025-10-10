@@ -17,9 +17,55 @@ export function useWebSocket(
   const connect = useCallback(() => {
     if (!conversationId || !userId || !isActiveRef.current) return;
 
-    // Determine WebSocket protocol based on current location
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws?userId=${userId}&conversationId=${conversationId}`;
+    // Detect if running in Capacitor mobile app
+    const isCapacitor = window.location.protocol === "capacitor:" || 
+                        window.location.protocol === "ionic:" ||
+                        (window as any).Capacitor !== undefined;
+
+    let wsUrl: string;
+    
+    if (isCapacitor) {
+      // In Capacitor, the app loads from a Capacitor URL but API requests are proxied 
+      // to the server configured in capacitor.config.ts. We need to build the WebSocket
+      // URL using the same server that serves the API.
+      // Since we can't access the Capacitor config from here, we'll get it from the document's base URL
+      // or use a meta tag that can be set during build
+      
+      const serverUrlMeta = document.querySelector<HTMLMetaElement>('meta[name="server-url"]');
+      const serverUrl = serverUrlMeta?.content && serverUrlMeta.content !== '%VITE_SERVER_URL%' 
+        ? serverUrlMeta.content 
+        : window.location.origin.replace('capacitor://', 'https://');
+      
+      // Respect the original protocol: http→ws, https→wss, or use as-is if already ws/wss
+      if (serverUrl.startsWith('ws://') || serverUrl.startsWith('wss://')) {
+        // Already has WebSocket protocol
+        wsUrl = `${serverUrl}/ws?userId=${userId}&conversationId=${conversationId}`;
+      } else {
+        let wsProtocol = 'wss';
+        let cleanUrl = serverUrl;
+        
+        if (serverUrl.startsWith('http://')) {
+          wsProtocol = 'ws';
+          cleanUrl = serverUrl.replace(/^http:\/\//, '');
+        } else if (serverUrl.startsWith('https://')) {
+          wsProtocol = 'wss';
+          cleanUrl = serverUrl.replace(/^https:\/\//, '');
+        } else {
+          // No protocol, remove any remaining protocol prefixes and default to wss
+          cleanUrl = serverUrl.replace(/^(capacitor|ionic):\/\//, '');
+        }
+        
+        wsUrl = `${wsProtocol}://${cleanUrl}/ws?userId=${userId}&conversationId=${conversationId}`;
+      }
+      
+      console.log("[Capacitor] WebSocket URL:", wsUrl);
+    } else {
+      // In browser, use current location
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      wsUrl = `${protocol}//${window.location.host}/ws?userId=${userId}&conversationId=${conversationId}`;
+    }
+
+    console.log("WebSocket connecting to:", wsUrl);
 
     try {
       const ws = new WebSocket(wsUrl);
