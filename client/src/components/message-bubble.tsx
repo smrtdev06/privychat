@@ -35,6 +35,24 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
             data-testid={`message-image-${message.id}`}
           />
         )}
+
+        {message.messageType === "video" && message.mediaUrl && (
+          <video
+            src={message.mediaUrl}
+            controls
+            className="w-full h-auto rounded-lg mb-2"
+            data-testid={`message-video-${message.id}`}
+          />
+        )}
+
+        {message.messageType === "voice" && message.mediaUrl && (
+          <audio
+            src={message.mediaUrl}
+            controls
+            className="w-full mb-2"
+            data-testid={`message-voice-${message.id}`}
+          />
+        )}
         
         {message.content && (
           <p className="text-sm" data-testid={`message-content-${message.id}`}>
