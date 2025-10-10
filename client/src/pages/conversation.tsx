@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useWebSocket } from "@/hooks/use-websocket";
 
 export default function Conversation() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,20 @@ export default function Conversation() {
   });
 
   const conversation = (conversations as any[]).find((c: any) => c.id === id);
+
+  // Handle incoming WebSocket messages
+  const handleWebSocketMessage = useCallback((newMessage: any) => {
+    // Add new message to the cache optimistically
+    queryClient.setQueryData(["/api/conversations", id, "messages"], (oldMessages: any) => {
+      // Check if message already exists to avoid duplicates
+      const exists = oldMessages?.some((msg: any) => msg.id === newMessage.id);
+      if (exists) return oldMessages;
+      return [...(oldMessages || []), newMessage];
+    });
+  }, [queryClient, id]);
+
+  // Setup WebSocket connection
+  useWebSocket(id, user?.id, handleWebSocketMessage);
 
   useSwipeHandler((direction) => {
     if (direction === "right" || direction === "left") {

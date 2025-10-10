@@ -10,6 +10,7 @@ import { ObjectPermission } from "./objectAcl";
 import { randomUUID } from "crypto";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
+import { setupWebSocket } from "./websocket";
 
 // Rate limiting store for brute-force protection
 interface AttemptsStore {
@@ -228,13 +229,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if conversation already exists
+      console.log(`[DEBUG] Checking conversation between user ${req.user!.id} and ${otherUser.id}`);
       let conversation = await storage.getConversation(req.user!.id, otherUser.id);
       
       if (!conversation) {
+        console.log(`[DEBUG] No existing conversation found, creating new one`);
         conversation = await storage.createConversation({
           user1Id: req.user!.id,
           user2Id: otherUser.id,
         });
+        console.log(`[DEBUG] Created conversation ${conversation.id}`);
+      } else {
+        console.log(`[DEBUG] Found existing conversation ${conversation.id}`);
       }
 
       // Return conversation with otherUser info (same format as GET /api/conversations)
@@ -306,6 +312,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(req.user!.id);
       if (user && user.subscriptionType === "free") {
         await storage.incrementDailyMessageCount(req.user!.id);
+      }
+
+      // Broadcast new message via WebSocket
+      const wsManager = app.get("wsManager");
+      if (wsManager) {
+        wsManager.broadcastMessage(messageData.conversationId, message);
       }
 
       res.json(message);
@@ -487,5 +499,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Setup WebSocket server
+  const wsManager = setupWebSocket(httpServer);
+  
+  // Store wsManager on app for access in routes
+  app.set("wsManager", wsManager);
+  
   return httpServer;
 }
