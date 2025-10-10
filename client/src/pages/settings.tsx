@@ -52,8 +52,7 @@ export default function Settings() {
 
   const giftMutation = useMutation({
     mutationFn: async (data: { recipientEmail: string; giftMessage?: string }) => {
-      const response = await apiRequest("POST", "/api/subscription/gift", data);
-      return response.json();
+      return await apiRequest("POST", "/api/subscription/gift", data);
     },
     onSuccess: (data) => {
       toast({
