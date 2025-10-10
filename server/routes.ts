@@ -276,13 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const messageData = insertMessageSchema.parse(req.body);
 
-      // Check if user can send message (rate limiting)
-      const canSend = await storage.canUserSendMessage(req.user!.id);
-      if (!canSend) {
-        return res.status(429).json({ error: "Daily message limit reached. Upgrade to premium for unlimited messages." });
-      }
-
-      // Verify conversation access
+      // Verify conversation access first
       const conversation = await storage.getConversationById(messageData.conversationId);
       if (!conversation) {
         return res.status(404).json({ error: "Conversation not found" });
@@ -290,6 +284,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (conversation.user1Id !== req.user!.id && conversation.user2Id !== req.user!.id) {
         return res.status(403).json({ error: "Access denied" });
+      }
+
+      // Check if user can send message (rate limiting - checks if either user has premium)
+      const canSend = await storage.canUserSendMessage(req.user!.id, messageData.conversationId);
+      if (!canSend) {
+        return res.status(429).json({ error: "Daily message limit reached. Upgrade to premium for unlimited messages." });
       }
 
       // Create message
