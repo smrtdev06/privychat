@@ -30,7 +30,7 @@ export default function Conversation() {
   const conversation = (conversations as any[]).find((c: any) => c.id === id);
 
   useSwipeHandler((direction) => {
-    if (direction === "right") {
+    if (direction === "right" || direction === "left") {
       setLocation("/");
     }
   });

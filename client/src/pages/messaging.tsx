@@ -19,7 +19,7 @@ export default function Messaging() {
   });
 
   useSwipeHandler((direction) => {
-    if (direction === "right") {
+    if (direction === "right" || direction === "left") {
       setLocation("/");
     }
   });
