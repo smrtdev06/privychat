@@ -60,9 +60,32 @@ Preferred communication style: Simple, everyday language.
   - Text messages: Fully functional
   - Image/Video/Voice messages: Schema and rendering complete, requires object storage setup for upload functionality
 
+## Real-Time Messaging
+- **WebSocket Server**: Custom WebSocket implementation for real-time message delivery
+  - Path: `/ws` with query parameters `userId` and `conversationId`
+  - Security: Verifies user exists and is a conversation member before allowing connection
+  - Broadcasts messages to all authorized clients in a conversation
+- **WebSocket Client**: Custom `useWebSocket` hook with automatic reconnection
+  - Detects Capacitor mobile environment and uses appropriate server URL
+  - Memory leak prevention: stops reconnections after component unmount via `isActiveRef`
+  - Falls back to polling in environments where WebSocket isn't available
+
+## Mobile Deployment (Capacitor)
+- **Platform**: Capacitor for iOS and Android native apps
+- **WebSocket Compatibility**: Automatically detects Capacitor environment and connects to production server
+  - Uses `VITE_SERVER_URL` or `REPLIT_DOMAINS` environment variable for server address
+  - Falls back to wss:// (secure WebSocket) in mobile environment
+- **API Configuration**: Capacitor config includes server URL and allowed navigation domains
+- **Build Process**: 
+  1. Build frontend: `npm run build`
+  2. Sync Capacitor: `npx cap sync`
+  3. Open in IDE: `npx cap open android` or `npx cap open ios`
+
 ## Development and Deployment
 - **Build System**: Vite for fast development and optimized production builds
 - **TypeScript**: Full type safety across frontend, backend, and shared schemas
 - **Database Migrations**: Drizzle Kit for schema management and migrations
 - **Environment Configuration**: Proper environment variable handling for different deployment stages
+  - `VITE_SERVER_URL`: Server URL for Capacitor mobile apps (optional, falls back to REPLIT_DOMAINS)
+  - `REPLIT_DOMAINS`: Automatically available in Replit, used for WebSocket and API connections in mobile
 - **Error Handling**: Comprehensive error boundaries and user-friendly error messages
