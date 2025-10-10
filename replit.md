@@ -73,13 +73,21 @@ Preferred communication style: Simple, everyday language.
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android native apps
 - **WebSocket Compatibility**: Automatically detects Capacitor environment and connects to production server
-  - Uses `VITE_SERVER_URL` or `REPLIT_DOMAINS` environment variable for server address
-  - Falls back to wss:// (secure WebSocket) in mobile environment
+  - Protocol mapping: `http://` → `ws://`, `https://` → `wss://`
+  - Uses `VITE_SERVER_URL` environment variable (recommended) or falls back to `REPLIT_DOMAINS`
+  - Meta tag in HTML is populated during build with server URL for WebSocket connections
+  - **Important**: For local development servers (HTTP), you MUST set `VITE_SERVER_URL` environment variable
 - **API Configuration**: Capacitor config includes server URL and allowed navigation domains
+  - Checks for existing protocol before adding `https://` to avoid double-prefixing
 - **Build Process**: 
-  1. Build frontend: `npm run build`
-  2. Sync Capacitor: `npx cap sync`
-  3. Open in IDE: `npx cap open android` or `npx cap open ios`
+  1. Set environment variable (if needed): `export VITE_SERVER_URL=http://10.0.2.2:5000`
+  2. Build frontend: `npm run build`
+  3. Sync Capacitor: `npx cap sync`
+  4. Open in IDE: `npx cap open android` or `npx cap open ios`
+- **Deployment Notes**:
+  - For HTTPS/production deployments: Works automatically with `REPLIT_DOMAINS`
+  - For HTTP/local development: Must set `VITE_SERVER_URL` before building
+  - WebSocket connections use the same server URL as API requests for consistency
 
 ## Development and Deployment
 - **Build System**: Vite for fast development and optimized production builds
