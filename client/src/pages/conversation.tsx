@@ -10,6 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
+import { ObjectUploader } from "@/components/ObjectUploader";
 
 export default function Conversation() {
   const { id } = useParams<{ id: string }>();
@@ -90,6 +91,34 @@ export default function Conversation() {
     }
   };
 
+  const handleMediaUpload = async (mediaUrl: string, messageType: "image" | "video") => {
+    try {
+      // Set ACL policy for the uploaded media
+      const response = await apiRequest("PUT", "/api/media", { mediaUrl });
+      const objectPath = response.objectPath;
+
+      // Send message with media URL
+      sendMessageMutation.mutate({
+        messageType,
+        mediaUrl: objectPath,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload media",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getUploadParameters = async () => {
+    const response = await apiRequest("POST", "/api/objects/upload", {});
+    return {
+      method: "PUT" as const,
+      url: response.uploadURL,
+    };
+  };
+
   const canSendMessage = user?.subscriptionType === "premium" || 
     (user?.dailyMessageCount || 0) < 1;
 
@@ -160,23 +189,38 @@ export default function Conversation() {
       {/* Message Input */}
       <div className="border-t border-border p-4">
         <div className="flex items-end space-x-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:bg-muted"
-            data-testid="button-camera"
+          <ObjectUploader
+            maxNumberOfFiles={1}
+            maxFileSize={10485760} // 10MB
+            onGetUploadParameters={getUploadParameters}
+            onComplete={(result) => {
+              const uploadedFile = result.successful?.[0];
+              if (uploadedFile?.uploadURL) {
+                handleMediaUpload(uploadedFile.uploadURL, "image");
+              }
+            }}
+            buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
           >
-            <Camera className="h-5 w-5" />
-          </Button>
+            <Camera className="h-5 w-5" data-testid="button-camera" />
+          </ObjectUploader>
           
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:bg-muted"
-            data-testid="button-image"
+          <ObjectUploader
+            maxNumberOfFiles={1}
+            maxFileSize={52428800} // 50MB for videos
+            onGetUploadParameters={getUploadParameters}
+            onComplete={(result) => {
+              const uploadedFile = result.successful?.[0];
+              if (uploadedFile?.uploadURL) {
+                // Determine if it's an image or video based on file type
+                const fileType = uploadedFile.type || "";
+                const messageType = fileType.startsWith("video/") ? "video" : "image";
+                handleMediaUpload(uploadedFile.uploadURL, messageType);
+              }
+            }}
+            buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
           >
-            <Image className="h-5 w-5" />
-          </Button>
+            <Image className="h-5 w-5" data-testid="button-image" />
+          </ObjectUploader>
           
           <div className="flex-1">
             <Textarea
