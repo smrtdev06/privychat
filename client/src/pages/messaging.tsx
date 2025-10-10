@@ -28,16 +28,24 @@ export default function Messaging() {
     const userCode = prompt("Enter recipient's user code:");
     if (userCode) {
       try {
-        const data = await apiRequest("POST", "/api/conversations", {
+        const newConversation = await apiRequest("POST", "/api/conversations", {
           userCode: userCode.trim()
         });
 
-        // Invalidate and refetch conversations cache before navigating
-        await queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/conversations"] });
+        // Update the conversations cache with the new conversation data
+        queryClient.setQueryData(["/api/conversations"], (old: any) => {
+          const exists = old?.some((c: any) => c.id === newConversation.id);
+          if (exists) {
+            // Update existing conversation
+            return old.map((c: any) => c.id === newConversation.id ? newConversation : c);
+          } else {
+            // Add new conversation
+            return [...(old || []), newConversation];
+          }
+        });
 
         // Success - navigate to the conversation
-        setLocation(`/conversation/${data.id}`);
+        setLocation(`/conversation/${newConversation.id}`);
       } catch (error: any) {
         console.error("Error creating conversation:", error);
         // Parse error message from response if available

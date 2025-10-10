@@ -237,7 +237,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.json(conversation);
+      // Return conversation with otherUser info (same format as GET /api/conversations)
+      res.json({
+        ...conversation,
+        otherUser: otherUser,
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors[0].message });

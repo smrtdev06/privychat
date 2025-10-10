@@ -29,12 +29,6 @@ export default function Conversation() {
 
   const conversation = (conversations as any[]).find((c: any) => c.id === id);
 
-  // Debug logging
-  console.log("Conversation page - ID from params:", id);
-  console.log("Conversation page - All conversations:", conversations);
-  console.log("Conversation page - Found conversation:", conversation);
-  console.log("Conversation page - Conversations loading:", conversationsLoading);
-
   useSwipeHandler((direction) => {
     if (direction === "right" || direction === "left") {
       setLocation("/");
