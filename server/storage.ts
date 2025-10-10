@@ -24,7 +24,7 @@ export interface IStorage {
   createMessage(message: InsertMessage & { senderId: string }): Promise<Message>;
   markMessagesAsRead(conversationId: string, userId: string): Promise<void>;
   
-  canUserSendMessage(userId: string): Promise<boolean>;
+  canUserSendMessage(userId: string, conversationId: string): Promise<boolean>;
   incrementDailyMessageCount(userId: string): Promise<void>;
   resetDailyMessageCount(userId: string): Promise<void>;
   
@@ -201,18 +201,33 @@ export class DatabaseStorage implements IStorage {
       );
   }
 
-  async canUserSendMessage(userId: string): Promise<boolean> {
+  async canUserSendMessage(userId: string, conversationId: string): Promise<boolean> {
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     if (!user) return false;
 
-    // Premium users can always send messages
-    if (user.subscriptionType === "premium" && 
+    // Get the conversation to check the other user's subscription
+    const [conversation] = await db.select().from(conversations).where(eq(conversations.id, conversationId));
+    if (!conversation) return false;
+
+    // Get the other user in the conversation
+    const otherUserId = conversation.user1Id === userId ? conversation.user2Id : conversation.user1Id;
+    const [otherUser] = await db.select().from(users).where(eq(users.id, otherUserId));
+
+    // If either user has active premium, both can send unlimited messages
+    const senderIsPremium = user.subscriptionType === "premium" && 
         user.subscriptionExpiresAt && 
-        user.subscriptionExpiresAt > new Date()) {
+        user.subscriptionExpiresAt > new Date();
+    
+    const otherIsPremium = otherUser && 
+        otherUser.subscriptionType === "premium" && 
+        otherUser.subscriptionExpiresAt && 
+        otherUser.subscriptionExpiresAt > new Date();
+
+    if (senderIsPremium || otherIsPremium) {
       return true;
     }
 
-    // Free users get 1 message per day
+    // Both users are free - apply daily message limit to sender
     const today = new Date().toDateString();
     const lastMessageDate = user.lastMessageDate?.toDateString();
     

@@ -23,11 +23,17 @@ export default function Conversation() {
     enabled: !!id,
   });
 
-  const { data: conversations = [] } = useQuery({
+  const { data: conversations = [], isLoading: conversationsLoading } = useQuery({
     queryKey: ["/api/conversations"],
   });
 
   const conversation = (conversations as any[]).find((c: any) => c.id === id);
+
+  // Debug logging
+  console.log("Conversation page - ID from params:", id);
+  console.log("Conversation page - All conversations:", conversations);
+  console.log("Conversation page - Found conversation:", conversation);
+  console.log("Conversation page - Conversations loading:", conversationsLoading);
 
   useSwipeHandler((direction) => {
     if (direction === "right" || direction === "left") {
@@ -78,10 +84,23 @@ export default function Conversation() {
   const canSendMessage = user?.subscriptionType === "premium" || 
     (user?.dailyMessageCount || 0) < 1;
 
-  if (isLoading) {
+  if (isLoading || conversationsLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <div>Loading conversation...</div>
+      </div>
+    );
+  }
+
+  // If conversation not found after loading, show error
+  if (!conversation && !conversationsLoading) {
+    console.error("Conversation not found - ID:", id, "Available conversations:", conversations);
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-destructive mb-4">Conversation not found</p>
+          <Button onClick={() => setLocation("/messaging")}>Back to Messages</Button>
+        </div>
       </div>
     );
   }

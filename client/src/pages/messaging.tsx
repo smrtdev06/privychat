@@ -32,8 +32,9 @@ export default function Messaging() {
           userCode: userCode.trim()
         });
 
-        // Invalidate conversations cache to refresh the list
-        queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+        // Invalidate and refetch conversations cache before navigating
+        await queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/conversations"] });
 
         // Success - navigate to the conversation
         setLocation(`/conversation/${data.id}`);
