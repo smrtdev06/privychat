@@ -183,6 +183,32 @@ export default function Calculator() {
 
     const inputValue = parseFloat(display);
 
+    // Check if current display could be a numeric password (no operator, just numbers)
+    if (previousValue === null && !operator && display !== "0" && /^\d+$/.test(display)) {
+      // Try to verify as numeric password
+      try {
+        await apiRequest("POST", "/api/verify-numeric-password", {
+          numericPassword: display
+        });
+        
+        // Wait a moment for session to be fully established
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Invalidate user query to refetch authentication status
+        await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+        
+        // Wait for auth state to update
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Success - navigate to messaging
+        setLocation("/messaging");
+        return;
+      } catch (error) {
+        // Not a valid password, continue with normal calculation
+        // Don't show error - it might just be a calculation
+      }
+    }
+
     if (previousValue !== null && operator) {
       const newValue = calculate(previousValue, inputValue, operator);
       
