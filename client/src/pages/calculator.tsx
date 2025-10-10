@@ -246,11 +246,8 @@ export default function Calculator() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-72">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6">
               <h2 className="text-xl font-semibold">Calculator</h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
-                <X className="h-4 w-4" />
-              </Button>
             </div>
             
             <div className="space-y-2">
