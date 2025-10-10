@@ -35,7 +35,7 @@ export const messages = pgTable("messages", {
   conversationId: varchar("conversation_id").notNull().references(() => conversations.id),
   senderId: varchar("sender_id").notNull().references(() => users.id),
   content: text("content"),
-  messageType: text("message_type").default("text"), // text, image, video
+  messageType: text("message_type").default("text"), // text, image, video, voice
   mediaUrl: text("media_url"),
   isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at").default(sql`now()`),
@@ -116,6 +116,8 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   content: true,
   messageType: true,
   mediaUrl: true,
+}).extend({
+  messageType: z.enum(["text", "image", "video", "voice"]).default("text"),
 });
 
 export const insertConversationSchema = createInsertSchema(conversations).pick({
