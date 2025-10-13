@@ -498,6 +498,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin route to view all users and their data
+  app.get("/api/admin/users", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    // Check if user is admin
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ error: "Forbidden: Admin access required" });
+    }
+
+    try {
+      // Get all users from database
+      const allUsers = await db.select().from(usersTable);
+      
+      // For each user, get their conversations
+      const usersWithConversations = await Promise.all(
+        allUsers.map(async (user) => {
+          const userConversations = await storage.getUserConversations(user.id);
+          return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            userCode: user.userCode,
+            phone: user.phone,
+            fullName: user.fullName,
+            subscriptionType: user.subscriptionType,
+            subscriptionExpiresAt: user.subscriptionExpiresAt,
+            isPhoneVerified: user.isPhoneVerified,
+            isSetupComplete: user.isSetupComplete,
+            dailyMessageCount: user.dailyMessageCount,
+            lastMessageDate: user.lastMessageDate,
+            createdAt: user.createdAt,
+            conversations: userConversations.map(conv => ({
+              id: conv.id,
+              otherUser: {
+                id: conv.otherUser.id,
+                username: conv.otherUser.username,
+                userCode: conv.otherUser.userCode,
+              },
+              lastMessageAt: conv.lastMessageAt,
+            })),
+          };
+        })
+      );
+
+      res.json(usersWithConversations);
+    } catch (error) {
+      console.error("Error fetching admin users data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Setup WebSocket server
