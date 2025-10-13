@@ -15,6 +15,7 @@ export const users = pgTable("users", {
   isPhoneVerified: boolean("is_phone_verified").default(false),
   numericPassword: text("numeric_password"),
   isSetupComplete: boolean("is_setup_complete").default(false),
+  isAdmin: boolean("is_admin").default(false),
   subscriptionType: text("subscription_type").default("free"), // free, premium
   subscriptionExpiresAt: timestamp("subscription_expires_at"),
   dailyMessageCount: integer("daily_message_count").default(0),

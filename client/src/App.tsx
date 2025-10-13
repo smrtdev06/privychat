@@ -9,6 +9,7 @@ import Calculator from "@/pages/calculator";
 import Messaging from "@/pages/messaging";
 import Settings from "@/pages/settings";
 import Conversation from "@/pages/conversation";
+import AdminPage from "@/pages/admin";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 
@@ -20,6 +21,7 @@ function Router() {
       <ProtectedRoute path="/messaging" component={Messaging} />
       <ProtectedRoute path="/settings" component={Settings} />
       <ProtectedRoute path="/conversation/:id" component={Conversation} />
+      <ProtectedRoute path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );
