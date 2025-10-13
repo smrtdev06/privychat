@@ -89,6 +89,15 @@ Preferred communication style: Simple, everyday language.
   - For HTTP/local development: Must set `VITE_SERVER_URL` before building
   - WebSocket connections use the same server URL as API requests for consistency
 
+## Email Integration (SendGrid)
+- **Email Service**: SendGrid for transactional email delivery
+- **Configuration**: Environment variables `SENDGRID_API_KEY` and `SENDGRID_FROM_EMAIL`
+- **Email Module**: `server/email.ts` provides `sendEmail()` function for sending emails
+- **Test Endpoints**: 
+  - GET `/api/sendgrid/test` - Verify SendGrid configuration
+  - POST `/api/sendgrid/send-test` - Send test email (admin only)
+- **Use Cases**: Password resets, verification emails, notifications, premium upgrade confirmations
+
 ## Development and Deployment
 - **Build System**: Vite for fast development and optimized production builds
 - **TypeScript**: Full type safety across frontend, backend, and shared schemas
@@ -96,4 +105,6 @@ Preferred communication style: Simple, everyday language.
 - **Environment Configuration**: Proper environment variable handling for different deployment stages
   - `VITE_SERVER_URL`: Server URL for Capacitor mobile apps (optional, falls back to REPLIT_DOMAINS)
   - `REPLIT_DOMAINS`: Automatically available in Replit, used for WebSocket and API connections in mobile
+  - `SENDGRID_API_KEY`: SendGrid API key for email functionality
+  - `SENDGRID_FROM_EMAIL`: Verified sender email address for SendGrid
 - **Error Handling**: Comprehensive error boundaries and user-friendly error messages

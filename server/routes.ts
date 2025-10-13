@@ -11,6 +11,7 @@ import { randomUUID } from "crypto";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { setupWebSocket } from "./websocket";
+import { testSendGridSetup, sendEmail } from "./email";
 
 // Rate limiting store for brute-force protection
 interface AttemptsStore {
@@ -546,6 +547,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching admin users data:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // SendGrid test endpoint
+  app.get("/api/sendgrid/test", async (req, res) => {
+    try {
+      const isConfigured = await testSendGridSetup();
+      res.json({ 
+        configured: isConfigured,
+        message: isConfigured ? "SendGrid is properly configured" : "SendGrid credentials are missing"
+      });
+    } catch (error: any) {
+      console.error("SendGrid test error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Test email send endpoint (for admins only)
+  app.post("/api/sendgrid/send-test", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    
+    // Check if user is admin
+    if (!req.user!.isAdmin) {
+      return res.status(403).json({ error: "Forbidden - Admin access required" });
+    }
+
+    try {
+      const { to } = req.body;
+      if (!to) {
+        return res.status(400).json({ error: "Email address required" });
+      }
+
+      await sendEmail({
+        to,
+        subject: "SendGrid Test Email from SecureCalc",
+        text: "This is a test email from your SecureCalc application to verify SendGrid integration.",
+        html: "<p>This is a <strong>test email</strong> from your SecureCalc application to verify SendGrid integration.</p>"
+      });
+
+      res.json({ success: true, message: `Test email sent to ${to}` });
+    } catch (error: any) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 
