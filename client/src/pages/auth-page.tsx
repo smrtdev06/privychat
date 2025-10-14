@@ -14,6 +14,7 @@ import { insertUserSchema, loginUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import SMSVerification from "@/components/sms-verification";
+import { PCLegalLinks, MobileLegalModal } from "@/components/legal-content";
 
 const registerSchema = insertUserSchema.extend({
   confirmPassword: z.string(),
@@ -249,6 +250,16 @@ export default function AuthPage() {
               </Card>
             </TabsContent>
           </Tabs>
+
+          {/* Legal Links - PC Mode (visible on md and up) */}
+          <div className="hidden md:flex justify-center mt-6">
+            <PCLegalLinks />
+          </div>
+
+          {/* Legal Links - Mobile Mode (visible on small screens) */}
+          <div className="flex md:hidden justify-center mt-6">
+            <MobileLegalModal />
+          </div>
         </div>
       </div>
 
