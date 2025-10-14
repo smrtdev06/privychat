@@ -98,6 +98,39 @@ Preferred communication style: Simple, everyday language.
   - POST `/api/sendgrid/send-test` - Send test email (admin only)
 - **Use Cases**: Password resets, verification emails, notifications, premium upgrade confirmations
 
+## Email Verification System
+- **Automatic Verification Emails**: Sent automatically upon user registration
+- **Email Verification Flow**:
+  1. User registers → System generates unique 32-byte hex token
+  2. Token saved to database with 24-hour expiration
+  3. Verification email sent with clickable link
+  4. User clicks link → Redirected to `/verify-email?token=...`
+  5. System verifies token validity and expiration
+  6. Email marked as verified → Welcome email sent
+- **Database Fields**:
+  - `isEmailVerified`: Boolean flag for verification status
+  - `emailVerificationToken`: Unique verification token
+  - `emailVerificationExpiry`: Token expiration timestamp (24 hours)
+- **API Endpoints**:
+  - POST `/api/email/send-verification` - Send verification email (authenticated)
+  - POST `/api/email/verify` - Verify email with token (public)
+  - POST `/api/email/resend-verification` - Resend verification email (authenticated)
+- **Email Templates**:
+  - Verification email: Professional HTML template with clickable button
+  - Welcome email: Sent after successful verification with app features guide
+- **UI Components**:
+  - `EmailVerificationBanner`: Shows reminder banner on Settings page if not verified
+  - `/verify-email` page: Handles token verification with visual feedback
+- **Security**:
+  - Cryptographically secure tokens (32-byte random)
+  - Automatic token expiration (24 hours)
+  - One-time use tokens (cleared after verification)
+- **User Experience**:
+  - Non-blocking: Registration succeeds even if email fails
+  - Resend option: Users can request new verification email
+  - Visual indicators: Banner shows verification status
+  - Auto-redirect: After verification, auto-redirects to login
+
 ## Development and Deployment
 - **Build System**: Vite for fast development and optimized production builds
 - **TypeScript**: Full type safety across frontend, backend, and shared schemas
