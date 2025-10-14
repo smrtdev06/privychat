@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { MobileSubscription } from "@/components/mobile-subscription";
+import { PromoCodeRedeem } from "@/components/promo-code-redeem";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -309,7 +310,24 @@ export default function Settings() {
         </Card>
 
         {/* Mobile Subscription */}
-        {!isPremium && <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />}
+        {!isPremium && (
+          <>
+            <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />
+            
+            {/* Promo Code Redemption */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Redeem Promo Code</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Have a promo code? Redeem it here to unlock premium features.
+                </p>
+                <PromoCodeRedeem />
+              </CardContent>
+            </Card>
+          </>
+        )}
 
         {/* Gift Subscription */}
         <Card className="mb-6">

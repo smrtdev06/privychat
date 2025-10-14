@@ -24,7 +24,17 @@ const config: CapacitorConfig = {
   appId: 'com.newhomepage.stealthchat',
   appName: 'Stealth Calculator',
   webDir: './dist/public',
-  server: serverConfig
+  server: serverConfig,
+  plugins: {
+    App: {
+      // Handle deep links for promo code redemption
+      // URL scheme: stealthchat://redeem?code=PROMO123
+      appUrlScheme: 'stealthchat',
+      appUrlOpen: {
+        webDeepLinkingEnabled: true
+      }
+    }
+  }
 };
 
 export default config;
