@@ -13,8 +13,12 @@ import AdminPage from "@/pages/admin";
 import VerifyEmail from "@/pages/verify-email";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import { useDeepLinks } from "@/hooks/use-deep-links";
 
 function Router() {
+  // Handle deep link URLs for promo code redemption
+  useDeepLinks();
+  
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />

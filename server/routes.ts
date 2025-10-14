@@ -565,6 +565,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Promo code redemption endpoints
+  app.post("/api/promo-code/log-redemption", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const schema = z.object({
+        platform: z.enum(["ios", "android"]),
+        promoCode: z.string().min(1),
+      });
+      
+      const { platform, promoCode } = schema.parse(req.body);
+      
+      const { logPromoCodeRedemption } = await import("./promo-code");
+      const redemptionId = await logPromoCodeRedemption(req.user!.id, platform, promoCode);
+      
+      res.json({ success: true, redemptionId });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Error logging promo code redemption:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/promo-code/history", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const { getUserRedemptions } = await import("./promo-code");
+      const redemptions = await getUserRedemptions(req.user!.id);
+      res.json({ redemptions });
+    } catch (error) {
+      console.error("Error getting redemption history:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/promo-code/generate-url", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const schema = z.object({
+        platform: z.enum(["ios", "android"]),
+        promoCode: z.string().min(1),
+        appId: z.string().optional(), // Required for iOS
+      });
+      
+      const { platform, promoCode, appId } = schema.parse(req.body);
+      const { generateGooglePlayRedeemUrl, generateAppleRedeemUrl } = await import("./promo-code");
+      
+      let url: string;
+      if (platform === "android") {
+        url = generateGooglePlayRedeemUrl(promoCode);
+      } else {
+        if (!appId) {
+          return res.status(400).json({ error: "appId is required for iOS" });
+        }
+        url = generateAppleRedeemUrl(promoCode, appId);
+      }
+      
+      res.json({ url });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Error generating redemption URL:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Webhook for Google Play Real-time Developer Notifications
   app.post("/api/mobile-subscription/webhook/google", async (req, res) => {
     try {

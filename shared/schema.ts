@@ -75,12 +75,25 @@ export const mobileSubscriptions = pgTable("mobile_subscriptions", {
   updatedAt: timestamp("updated_at").default(sql`now()`),
 });
 
+export const promoCodeRedemptions = pgTable("promo_code_redemptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  platform: text("platform").notNull(), // 'ios' or 'android'
+  promoCode: text("promo_code").notNull(), // The code value for analytics
+  status: text("status").notNull().default("pending"), // pending, success, failed
+  errorMessage: text("error_message"), // Error details if redemption failed
+  subscriptionId: varchar("subscription_id").references(() => mobileSubscriptions.id), // Link to created subscription if successful
+  createdAt: timestamp("created_at").default(sql`now()`),
+  updatedAt: timestamp("updated_at").default(sql`now()`),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
   sentMessages: many(messages, { relationName: "senderMessages" }),
   conversations1: many(conversations, { relationName: "user1Conversations" }),
   conversations2: many(conversations, { relationName: "user2Conversations" }),
   purchasedGifts: many(subscriptionGifts, { relationName: "giftPurchases" }),
   mobileSubscriptions: many(mobileSubscriptions),
+  promoCodeRedemptions: many(promoCodeRedemptions),
 }));
 
 export const conversationsRelations = relations(conversations, ({ one, many }) => ({
@@ -121,10 +134,22 @@ export const subscriptionGiftsRelations = relations(subscriptionGifts, ({ one })
   }),
 }));
 
-export const mobileSubscriptionsRelations = relations(mobileSubscriptions, ({ one }) => ({
+export const mobileSubscriptionsRelations = relations(mobileSubscriptions, ({ one, many }) => ({
   user: one(users, {
     fields: [mobileSubscriptions.userId],
     references: [users.id],
+  }),
+  promoCodeRedemptions: many(promoCodeRedemptions),
+}));
+
+export const promoCodeRedemptionsRelations = relations(promoCodeRedemptions, ({ one }) => ({
+  user: one(users, {
+    fields: [promoCodeRedemptions.userId],
+    references: [users.id],
+  }),
+  subscription: one(mobileSubscriptions, {
+    fields: [promoCodeRedemptions.subscriptionId],
+    references: [mobileSubscriptions.id],
   }),
 }));
 
@@ -173,6 +198,18 @@ export const insertMobileSubscriptionSchema = createInsertSchema(mobileSubscript
   platform: z.enum(["ios", "android"]),
 });
 
+export const insertPromoCodeRedemptionSchema = createInsertSchema(promoCodeRedemptions).pick({
+  userId: true,
+  platform: true,
+  promoCode: true,
+  status: true,
+  errorMessage: true,
+  subscriptionId: true,
+}).extend({
+  platform: z.enum(["ios", "android"]),
+  status: z.enum(["pending", "success", "failed"]).default("pending"),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -184,3 +221,5 @@ export type InsertSubscriptionGift = z.infer<typeof insertSubscriptionGiftSchema
 export type SubscriptionGift = typeof subscriptionGifts.$inferSelect;
 export type InsertMobileSubscription = z.infer<typeof insertMobileSubscriptionSchema>;
 export type MobileSubscription = typeof mobileSubscriptions.$inferSelect;
+export type InsertPromoCodeRedemption = z.infer<typeof insertPromoCodeRedemptionSchema>;
+export type PromoCodeRedemption = typeof promoCodeRedemptions.$inferSelect;

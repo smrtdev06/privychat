@@ -133,6 +133,33 @@ Preferred communication style: Simple, everyday language.
   - Configure product IDs in both app stores (e.g., "premium_monthly", "premium_yearly")
 - **Subscription Sync**: `syncUserSubscriptionStatus()` automatically updates user's premium status based on active mobile subscription
 
+## Promo Code Redemption
+- **Platform Support**: Google Play promo codes (Android) and Apple App Store offer codes (iOS)
+- **Code Types**:
+  - **Google Play**: One-time codes (10,000/quarter) and custom codes (up to 99,999 redemptions)
+  - **Apple**: One-time codes (100/product) and custom codes (up to 25,000 redemptions)
+- **Deep Link Support**: Custom URL scheme `stealthchat://redeem?code=PROMOCODE`
+  - Automatic app opening and code pre-population
+  - Seamless redemption from email, SMS, social media
+- **Database Schema**: `promoCodeRedemptions` table tracks redemption attempts
+  - User ID, platform, promo code value
+  - Status (pending, success, failed)
+  - Error messages for debugging
+  - Link to created subscription if successful
+- **Backend APIs**:
+  - POST `/api/promo-code/log-redemption` - Log redemption attempt
+  - GET `/api/promo-code/history` - Get user's redemption history
+  - POST `/api/promo-code/generate-url` - Generate platform-specific redemption URL
+- **Frontend Component**: `PromoCodeRedeem` in Settings page
+  - Platform detection and appropriate redemption flow
+  - Auto-population from deep links
+  - Redemption history display (last 3 attempts)
+  - Input validation and error handling
+- **Redemption Flows**:
+  - **Android**: Opens Google Play Store redemption page or in-app dialog
+  - **iOS**: Presents native StoreKit redemption sheet (iOS 14+) or web URL fallback
+- **Complete Guide**: See `PROMO_CODE_GUIDE.md` for setup, testing, and distribution strategies
+
 ## Email Verification System
 - **Automatic Verification Emails**: Sent automatically upon user registration
 - **Email Verification Flow**:
