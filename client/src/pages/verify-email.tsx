@@ -27,13 +27,7 @@ export default function VerifyEmail() {
 
   const verifyEmail = async (token: string) => {
     try {
-      const response: any = await apiRequest("/api/email/verify", {
-        method: "POST",
-        body: JSON.stringify({ token }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response: any = await apiRequest("POST", "/api/email/verify", { token });
 
       setStatus("success");
       setMessage(response.message || "Your email has been successfully verified!");

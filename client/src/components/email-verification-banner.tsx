@@ -22,9 +22,7 @@ export function EmailVerificationBanner({ user }: EmailVerificationBannerProps) 
   const handleResendEmail = async () => {
     setSending(true);
     try {
-      await apiRequest("/api/email/resend-verification", {
-        method: "POST",
-      });
+      await apiRequest("POST", "/api/email/resend-verification");
 
       toast({
         title: "Verification Email Sent",
