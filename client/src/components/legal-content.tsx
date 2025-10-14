@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Scale } from "lucide-react";
+
+const LEGAL_ACCEPTANCE_KEY = "legal_terms_accepted";
 
 // Privacy Policy Content
 const PRIVACY_POLICY = `NewhomePage Privacy Policy
@@ -228,9 +230,64 @@ export function TermsConditionsDialog() {
   );
 }
 
-// Mobile Legal Links Modal Component
+// Mobile Legal Links Modal Component with Auto-show
 export function MobileLegalModal() {
   const [open, setOpen] = useState(false);
+  const [hasAccepted, setHasAccepted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if device is mobile using matchMedia for more reliable detection
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const checkMobile = mediaQuery.matches;
+    
+    setIsMobile(checkMobile);
+
+    if (!checkMobile) {
+      // Not mobile, don't show anything
+      return;
+    }
+
+    // Check if user has already accepted terms
+    const accepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
+    if (accepted === "true") {
+      setHasAccepted(true);
+    } else {
+      // Auto-show modal on first visit (mobile only)
+      setOpen(true);
+    }
+
+    // Listen for viewport changes
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (!e.matches && open) {
+        // Switched to desktop, close modal
+        setOpen(false);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [open]);
+
+  const handleAccept = () => {
+    try {
+      localStorage.setItem(LEGAL_ACCEPTANCE_KEY, "true");
+      // Verify it was set
+      const verified = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
+      if (verified === "true") {
+        setHasAccepted(true);
+        setOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to save legal acceptance:", error);
+    }
+  };
+
+  // Don't render on desktop or if already accepted
+  if (!isMobile || hasAccepted) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -248,12 +305,21 @@ export function MobileLegalModal() {
         <DialogHeader>
           <DialogTitle>Legal Information</DialogTitle>
           <DialogDescription>
-            View our legal documents
+            Please review and accept our terms to continue
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <PrivacyPolicyDialog />
           <TermsConditionsDialog />
+        </div>
+        <div className="flex justify-end pt-4 border-t">
+          <Button 
+            onClick={handleAccept} 
+            className="w-full"
+            data-testid="button-accept-legal"
+          >
+            Accept Terms
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

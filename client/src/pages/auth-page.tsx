@@ -76,9 +76,9 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col md:flex-row">
       {/* Left Side - Auth Forms */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-primary rounded-2xl mx-auto mb-4 flex items-center justify-center">
@@ -255,16 +255,11 @@ export default function AuthPage() {
           <div className="hidden md:flex justify-center mt-6">
             <PCLegalLinks />
           </div>
-
-          {/* Legal Links - Mobile Mode (visible on small screens) */}
-          <div className="flex md:hidden justify-center mt-6">
-            <MobileLegalModal />
-          </div>
         </div>
       </div>
 
-      {/* Right Side - Hero Section */}
-      <div className="flex-1 bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center p-8">
+      {/* Right Side - Hero Section (hidden on mobile) */}
+      <div className="hidden md:flex flex-1 bg-gradient-to-br from-primary/20 to-purple-600/20 items-center justify-center p-8">
         <div className="text-center text-white max-w-md">
           <MessageCircle className="w-20 h-20 mx-auto mb-6 text-primary" />
           <h2 className="text-4xl font-bold mb-4">Secure & Private</h2>
