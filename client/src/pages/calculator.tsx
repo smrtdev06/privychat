@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { MobileLegalModal } from "@/components/legal-content";
 
 interface CalculationHistoryEntry {
   expression: string;
@@ -289,6 +290,9 @@ export default function Calculator() {
         onClearClick={handleClear}
         onEqualsClick={handleEquals}
       />
+
+      {/* Legal Modal - Auto-shows on first visit (mobile) */}
+      <MobileLegalModal />
     </div>
   );
 }
