@@ -13,6 +13,14 @@ import { z } from "zod";
 import { setupWebSocket } from "./websocket";
 import { testSendGridSetup, sendEmail } from "./email";
 import { generateVerificationToken, sendVerificationEmail, sendWelcomeEmail, isTokenExpired } from "./email-verification";
+import {
+  validateGooglePlayPurchase,
+  validateAppleAppStorePurchase,
+  upsertMobileSubscription,
+  getActiveMobileSubscription,
+  syncUserSubscriptionStatus,
+  cancelMobileSubscription,
+} from "./mobile-subscriptions";
 
 // Rate limiting store for brute-force protection
 interface AttemptsStore {
@@ -458,6 +466,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error redeeming upgrade code:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Mobile subscription routes
+  app.post("/api/mobile-subscription/validate-android", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const schema = z.object({
+        packageName: z.string(),
+        productId: z.string(),
+        purchaseToken: z.string(),
+      });
+      
+      const { packageName, productId, purchaseToken } = schema.parse(req.body);
+
+      // Validate purchase with Google Play
+      const validation = await validateGooglePlayPurchase(packageName, productId, purchaseToken);
+
+      if (!validation.isValid) {
+        return res.status(400).json({ error: "Invalid purchase token" });
+      }
+
+      // Create/update subscription in database
+      const subscription = await upsertMobileSubscription(req.user!.id, "android", {
+        productId,
+        purchaseToken,
+        purchaseDate: validation.purchaseDate || new Date(),
+        expiryDate: validation.expiryDate || new Date(),
+        autoRenewing: validation.autoRenewing || false,
+      });
+
+      // Sync user's subscription status
+      await syncUserSubscriptionStatus(req.user!.id);
+
+      res.json({ success: true, subscription });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Error validating Android purchase:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/mobile-subscription/validate-ios", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const schema = z.object({
+        receiptData: z.string(),
+        transactionId: z.string(),
+        productId: z.string(),
+      });
+      
+      const { receiptData, transactionId, productId } = schema.parse(req.body);
+
+      // Validate receipt with App Store
+      const validation = await validateAppleAppStorePurchase(receiptData, transactionId);
+
+      if (!validation.isValid) {
+        return res.status(400).json({ error: "Invalid receipt" });
+      }
+
+      // Create/update subscription in database
+      const subscription = await upsertMobileSubscription(req.user!.id, "ios", {
+        productId,
+        originalTransactionId: transactionId,
+        latestReceiptInfo: validation.latestReceiptInfo,
+        purchaseDate: validation.purchaseDate || new Date(),
+        expiryDate: validation.expiryDate || new Date(),
+        autoRenewing: validation.autoRenewing || false,
+      });
+
+      // Sync user's subscription status
+      await syncUserSubscriptionStatus(req.user!.id);
+
+      res.json({ success: true, subscription });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Error validating iOS purchase:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/mobile-subscription/status", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const subscription = await getActiveMobileSubscription(req.user!.id);
+      res.json({ subscription });
+    } catch (error) {
+      console.error("Error getting subscription status:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Webhook for Google Play Real-time Developer Notifications
+  app.post("/api/mobile-subscription/webhook/google", async (req, res) => {
+    try {
+      // Google sends notifications as base64-encoded JSON in message.data
+      const message = req.body.message;
+      if (!message || !message.data) {
+        return res.sendStatus(400);
+      }
+
+      const decodedData = Buffer.from(message.data, 'base64').toString('utf-8');
+      const notification = JSON.parse(decodedData);
+
+      // Handle different notification types
+      const notificationType = notification.subscriptionNotification?.notificationType;
+      
+      if (notificationType === 3 || notificationType === 13) {
+        // SUBSCRIPTION_CANCELED (3) or SUBSCRIPTION_EXPIRED (13)
+        const purchaseToken = notification.subscriptionNotification?.purchaseToken;
+        // Find and cancel subscription
+        // TODO: Implement subscription lookup and cancellation
+        console.log("Subscription cancelled/expired:", purchaseToken);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error processing Google webhook:", error);
+      res.sendStatus(500);
+    }
+  });
+
+  // Webhook for Apple App Store Server Notifications
+  app.post("/api/mobile-subscription/webhook/apple", async (req, res) => {
+    try {
+      const notification = req.body;
+      const notificationType = notification.notification_type;
+
+      // Handle different notification types
+      if (notificationType === 'DID_RENEW' || notificationType === 'DID_CHANGE_RENEWAL_STATUS') {
+        // Update subscription status
+        const transactionId = notification.unified_receipt?.latest_receipt_info?.[0]?.original_transaction_id;
+        // TODO: Implement subscription update logic
+        console.log("Subscription updated:", transactionId);
+      } else if (notificationType === 'CANCEL') {
+        // Handle cancellation
+        const transactionId = notification.unified_receipt?.latest_receipt_info?.[0]?.original_transaction_id;
+        // TODO: Implement cancellation logic
+        console.log("Subscription cancelled:", transactionId);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Error processing Apple webhook:", error);
+      res.sendStatus(500);
     }
   });
 
