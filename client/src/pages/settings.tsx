@@ -11,6 +11,7 @@ import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle } from "luc
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
+import { MobileSubscription } from "@/components/mobile-subscription";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -306,6 +307,9 @@ export default function Settings() {
             )}
           </CardContent>
         </Card>
+
+        {/* Mobile Subscription */}
+        {!isPremium && <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />}
 
         {/* Gift Subscription */}
         <Card className="mb-6">

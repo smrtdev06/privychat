@@ -55,6 +55,11 @@ Preferred communication style: Simple, everyday language.
   - Implementation: `canUserSendMessage()` checks both sender and receiver subscription status
   - Daily message limits only apply when BOTH users are on free tier
 - **Subscription Gifts**: Users can purchase and gift premium subscriptions via upgrade codes
+- **Mobile Subscriptions**: Native in-app purchases for iOS and Android
+  - Direct integration with Google Play Billing and Apple App Store
+  - Backend receipt validation for both platforms
+  - Automatic subscription sync and renewal handling
+  - Webhook support for real-time subscription updates
 - **User Discovery**: User code system for finding and connecting with other users
 - **Message Types**: Support for text, image, video, and voice messages with media URL storage
   - Text messages: Fully functional
@@ -97,6 +102,33 @@ Preferred communication style: Simple, everyday language.
   - GET `/api/sendgrid/test` - Verify SendGrid configuration
   - POST `/api/sendgrid/send-test` - Send test email (admin only)
 - **Use Cases**: Password resets, verification emails, notifications, premium upgrade confirmations
+
+## Mobile In-App Subscriptions
+- **Platform Support**: Direct integration with Google Play Billing (Android) and Apple App Store (iOS)
+- **Purchase Plugin**: Uses `cordova-plugin-purchase` for cross-platform in-app purchase support
+- **Database Schema**: `mobileSubscriptions` table tracks all mobile subscription purchases
+  - Platform identifier (ios/android)
+  - Product ID (subscription SKU)
+  - Purchase tokens (Android) and transaction IDs (iOS)
+  - Receipt data and expiry dates
+  - Auto-renewal status
+- **Backend Validation**:
+  - POST `/api/mobile-subscription/validate-android` - Validates Google Play purchases
+  - POST `/api/mobile-subscription/validate-ios` - Validates App Store receipts
+  - GET `/api/mobile-subscription/status` - Gets user's active subscription
+- **Webhook Handlers**:
+  - POST `/api/mobile-subscription/webhook/google` - Google Play Real-time Developer Notifications
+  - POST `/api/mobile-subscription/webhook/apple` - Apple App Store Server Notifications
+- **Frontend Component**: `MobileSubscription` component in Settings page
+  - Platform detection using Capacitor
+  - Displays available subscription products
+  - Handles purchase flow and backend validation
+  - Automatically updates user subscription status
+- **Setup Requirements**:
+  - **Google Play**: Service account JSON key, Google Play Developer API enabled
+  - **Apple App Store**: App Store Connect API key, shared secret for receipt validation
+  - Configure product IDs in both app stores (e.g., "premium_monthly", "premium_yearly")
+- **Subscription Sync**: `syncUserSubscriptionStatus()` automatically updates user's premium status based on active mobile subscription
 
 ## Email Verification System
 - **Automatic Verification Emails**: Sent automatically upon user registration
