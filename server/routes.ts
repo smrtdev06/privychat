@@ -12,6 +12,7 @@ import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { setupWebSocket } from "./websocket";
 import { testSendGridSetup, sendEmail } from "./email";
+import { generateVerificationToken, sendVerificationEmail, sendWelcomeEmail, isTokenExpired } from "./email-verification";
 
 // Rate limiting store for brute-force protection
 interface AttemptsStore {
@@ -496,6 +497,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error verifying SMS code:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Send email verification
+  app.post("/api/email/send-verification", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const user = req.user!;
+      
+      // Check if email is already verified
+      if (user.isEmailVerified) {
+        return res.status(400).json({ error: "Email is already verified" });
+      }
+
+      // Generate verification token
+      const { token, expiry } = generateVerificationToken();
+      
+      // Save token to database
+      await storage.setEmailVerificationToken(user.id, token, expiry);
+      
+      // Send verification email
+      await sendVerificationEmail(user.email, user.fullName, token);
+      
+      res.json({ 
+        success: true, 
+        message: "Verification email sent successfully" 
+      });
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+      res.status(500).json({ error: "Failed to send verification email" });
+    }
+  });
+
+  // Verify email with token
+  app.post("/api/email/verify", async (req, res) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token) {
+        return res.status(400).json({ error: "Verification token is required" });
+      }
+
+      // Find user by verification token
+      const user = await storage.getUserByVerificationToken(token);
+      
+      if (!user) {
+        return res.status(400).json({ error: "Invalid or expired verification token" });
+      }
+
+      // Check if already verified
+      if (user.isEmailVerified) {
+        return res.status(400).json({ error: "Email is already verified" });
+      }
+
+      // Check if token is expired
+      if (isTokenExpired(user.emailVerificationExpiry)) {
+        return res.status(400).json({ error: "Verification token has expired. Please request a new one." });
+      }
+
+      // Verify email
+      await storage.verifyEmail(user.id);
+      
+      // Send welcome email
+      await sendWelcomeEmail(user.email, user.fullName, user.username);
+      
+      res.json({ 
+        success: true, 
+        message: "Email verified successfully",
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          isEmailVerified: true,
+        }
+      });
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      res.status(500).json({ error: "Failed to verify email" });
+    }
+  });
+
+  // Resend verification email
+  app.post("/api/email/resend-verification", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const user = req.user!;
+      
+      // Check if email is already verified
+      if (user.isEmailVerified) {
+        return res.status(400).json({ error: "Email is already verified" });
+      }
+
+      // Generate new verification token
+      const { token, expiry } = generateVerificationToken();
+      
+      // Update token in database
+      await storage.setEmailVerificationToken(user.id, token, expiry);
+      
+      // Send verification email
+      await sendVerificationEmail(user.email, user.fullName, token);
+      
+      res.json({ 
+        success: true, 
+        message: "Verification email resent successfully" 
+      });
+    } catch (error) {
+      console.error("Error resending verification email:", error);
+      res.status(500).json({ error: "Failed to resend verification email" });
     }
   });
 
