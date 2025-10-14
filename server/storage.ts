@@ -12,8 +12,11 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByUserCode(userCode: string): Promise<User | undefined>;
+  getUserByVerificationToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
+  setEmailVerificationToken(userId: string, token: string, expiry: Date): Promise<void>;
+  verifyEmail(userId: string): Promise<void>;
   
   getConversation(user1Id: string, user2Id: string): Promise<Conversation | undefined>;
   getConversationById(id: string): Promise<Conversation | undefined>;
@@ -90,6 +93,32 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
+    return user || undefined;
+  }
+
+  async setEmailVerificationToken(userId: string, token: string, expiry: Date): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        emailVerificationToken: token,
+        emailVerificationExpiry: expiry,
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async verifyEmail(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        isEmailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpiry: null,
+      })
+      .where(eq(users.id, userId));
   }
 
   async getConversation(user1Id: string, user2Id: string): Promise<Conversation | undefined> {
