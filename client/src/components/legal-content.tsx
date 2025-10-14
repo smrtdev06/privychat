@@ -243,32 +243,44 @@ export function MobileLegalModal() {
     
     setIsMobile(checkMobile);
 
-    if (!checkMobile) {
-      // Not mobile, don't show anything
-      return;
-    }
-
     // Check if user has already accepted terms
     const accepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
-    if (accepted === "true") {
+    const isAccepted = accepted === "true";
+    
+    if (isAccepted) {
       setHasAccepted(true);
-    } else {
-      // Auto-show modal on first visit (mobile only)
+      return; // Already accepted, no need to show modal or listen to changes
+    }
+
+    // If mobile and not accepted, show modal
+    if (checkMobile) {
       setOpen(true);
     }
 
-    // Listen for viewport changes
+    // Listen for viewport changes - mandatory modal must reappear if user hasn't accepted
     const handleChange = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches);
-      if (!e.matches && open) {
-        // Switched to desktop, close modal
+      const isMobileNow = e.matches;
+      setIsMobile(isMobileNow);
+      
+      // Check acceptance status again
+      const currentAccepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY) === "true";
+      
+      if (currentAccepted) {
+        // User has accepted, close modal and stop tracking
+        setHasAccepted(true);
+        setOpen(false);
+      } else if (isMobileNow) {
+        // Switched to mobile without acceptance - must show modal again
+        setOpen(true);
+      } else {
+        // Switched to desktop - temporarily close modal but keep tracking
         setOpen(false);
       }
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [open]);
+  }, []); // Empty dependency - only run once on mount
 
   const handleAccept = () => {
     try {
@@ -290,22 +302,25 @@ export function MobileLegalModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-slate-400 hover:text-slate-200"
-          data-testid="button-legal-info"
-        >
-          Legal Information
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+    <Dialog 
+      open={open} 
+      onOpenChange={(isOpen) => {
+        // Prevent closing the dialog - user MUST accept
+        if (!isOpen) return;
+        setOpen(isOpen);
+      }}
+      modal={true}
+    >
+      <DialogContent 
+        className="sm:max-w-md" 
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        hideCloseButton
+      >
         <DialogHeader>
           <DialogTitle>Legal Information</DialogTitle>
           <DialogDescription>
-            Please review and accept our terms to continue
+            You must review and accept our terms to continue using this app
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
