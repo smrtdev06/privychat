@@ -57,11 +57,30 @@ export const subscriptionGifts = pgTable("subscription_gifts", {
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 
+export const mobileSubscriptions = pgTable("mobile_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  platform: text("platform").notNull(), // 'ios' or 'android'
+  productId: text("product_id").notNull(), // SKU from app store
+  purchaseToken: text("purchase_token"), // Android purchase token
+  originalTransactionId: text("original_transaction_id"), // iOS transaction ID
+  latestReceiptInfo: jsonb("latest_receipt_info"), // Full receipt data
+  purchaseDate: timestamp("purchase_date").notNull(),
+  expiryDate: timestamp("expiry_date").notNull(),
+  isActive: boolean("is_active").default(true),
+  autoRenewing: boolean("auto_renewing").default(true),
+  cancellationDate: timestamp("cancellation_date"),
+  lastVerifiedAt: timestamp("last_verified_at").default(sql`now()`),
+  createdAt: timestamp("created_at").default(sql`now()`),
+  updatedAt: timestamp("updated_at").default(sql`now()`),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
   sentMessages: many(messages, { relationName: "senderMessages" }),
   conversations1: many(conversations, { relationName: "user1Conversations" }),
   conversations2: many(conversations, { relationName: "user2Conversations" }),
   purchasedGifts: many(subscriptionGifts, { relationName: "giftPurchases" }),
+  mobileSubscriptions: many(mobileSubscriptions),
 }));
 
 export const conversationsRelations = relations(conversations, ({ one, many }) => ({
@@ -102,6 +121,13 @@ export const subscriptionGiftsRelations = relations(subscriptionGifts, ({ one })
   }),
 }));
 
+export const mobileSubscriptionsRelations = relations(mobileSubscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [mobileSubscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -133,6 +159,20 @@ export const insertSubscriptionGiftSchema = createInsertSchema(subscriptionGifts
   giftMessage: true,
 });
 
+export const insertMobileSubscriptionSchema = createInsertSchema(mobileSubscriptions).pick({
+  userId: true,
+  platform: true,
+  productId: true,
+  purchaseToken: true,
+  originalTransactionId: true,
+  latestReceiptInfo: true,
+  purchaseDate: true,
+  expiryDate: true,
+  autoRenewing: true,
+}).extend({
+  platform: z.enum(["ios", "android"]),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -142,3 +182,5 @@ export type InsertConversation = z.infer<typeof insertConversationSchema>;
 export type Conversation = typeof conversations.$inferSelect;
 export type InsertSubscriptionGift = z.infer<typeof insertSubscriptionGiftSchema>;
 export type SubscriptionGift = typeof subscriptionGifts.$inferSelect;
+export type InsertMobileSubscription = z.infer<typeof insertMobileSubscriptionSchema>;
+export type MobileSubscription = typeof mobileSubscriptions.$inferSelect;
