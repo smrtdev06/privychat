@@ -1,4 +1,4 @@
-package com.stealthcalc.app;
+package com.newhomepage.stealthchat;
 
 import com.getcapacitor.BridgeActivity;
 

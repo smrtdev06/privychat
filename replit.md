@@ -77,6 +77,8 @@ Preferred communication style: Simple, everyday language.
 
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android native apps
+- **Package Name**: `com.newhomepage.stealthchat`
+- **App Name**: Stealth Calculator
 - **WebSocket Compatibility**: Automatically detects Capacitor environment and connects to production server
   - Protocol mapping: `http://` → `ws://`, `https://` → `wss://`
   - Uses `VITE_SERVER_URL` environment variable (recommended) or falls back to `REPLIT_DOMAINS`
@@ -87,12 +89,13 @@ Preferred communication style: Simple, everyday language.
 - **Build Process**: 
   1. Set environment variable (if needed): `export VITE_SERVER_URL=http://10.0.2.2:5000`
   2. Build frontend: `npm run build`
-  3. Sync Capacitor: `npx cap sync`
+  3. Sync Capacitor: `npx cap sync android` or `npx cap sync ios`
   4. Open in IDE: `npx cap open android` or `npx cap open ios`
 - **Deployment Notes**:
   - For HTTPS/production deployments: Works automatically with `REPLIT_DOMAINS`
   - For HTTP/local development: Must set `VITE_SERVER_URL` before building
   - WebSocket connections use the same server URL as API requests for consistency
+- **Complete Build Guide**: See `CAPACITOR_BUILD_GUIDE.md` for detailed build, test, and publish instructions
 
 ## Email Integration (SendGrid)
 - **Email Service**: SendGrid for transactional email delivery

@@ -21,7 +21,7 @@ const serverConfig = rawUrl ? {
 };
 
 const config: CapacitorConfig = {
-  appId: 'com.stealthcalc.app',
+  appId: 'com.newhomepage.stealthchat',
   appName: 'Stealth Calculator',
   webDir: './dist/public',
   server: serverConfig
