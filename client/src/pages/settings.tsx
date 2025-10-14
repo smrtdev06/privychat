@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { EmailVerificationBanner } from "@/components/email-verification-banner";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -243,6 +244,9 @@ export default function Settings() {
           </Button>
           <h2 className="text-2xl font-bold">Settings</h2>
         </div>
+
+        {/* Email Verification Banner */}
+        {user && <EmailVerificationBanner user={user} />}
 
         {/* User Code */}
         <Card className="mb-6">
