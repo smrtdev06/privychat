@@ -22,13 +22,17 @@ App icons and splash screens have been successfully generated for both Android a
   - Light and dark mode versions
   - Located in: `ios/App/App/Assets.xcassets/Splash.imageset/`
 
-## 🎨 Icon Design
+## 🎨 Icon Design - Stealth Calculator
 
-The icon features a modern calculator design with:
-- Blue gradient background (#1e3a8a to #1e40af)
-- Calculator display and buttons
-- Professional, clean aesthetic
-- Maintains the "stealth" appearance (looks like a normal calculator app)
+The icon is designed to look like a **legitimate calculator app** to maintain stealth:
+- Blue gradient background matching app colors (#1e3a8a to #3b82f6)
+- Calculator display showing "0" in cyan (#22d3ee)
+- 4x4 button grid with numbers 0-9 and operators (÷, ×, -, +, =)
+- Blue number buttons (#3b82f6)
+- Purple operator buttons (#6366f1)
+- Green equals button (#10b981)
+- **Purpose**: Disguises the messaging app as a normal calculator
+- **Stealth Factor**: Looks completely innocent in app drawer/home screen
 
 ## 🔄 How to Update Icons in the Future
 
@@ -118,9 +122,21 @@ To verify icons are properly installed:
 
 All files should be present with appropriate sizes and naming conventions.
 
+## 🕵️ Stealth Design Philosophy
+
+This is a **stealth messaging app** disguised as a calculator. The icons and splash screens are designed to:
+
+✅ **Look completely legitimate** - Appears as a normal calculator in app drawer  
+✅ **Avoid suspicion** - No hint of messaging functionality  
+✅ **Match the calculator UI** - Consistent with the in-app calculator interface  
+✅ **Professional appearance** - High-quality design that looks like a real calculator app  
+
+**Security through obscurity**: Anyone looking at your phone will see "Calculator" and think nothing of it!
+
 ## 💡 Tips
 
-- **Keep Source Files**: Always keep your source `resources/icon.png` file for future updates
+- **Keep Source Files**: Always keep `resources/icon.png` and `resources/splash.png` for future updates
 - **Test on Device**: Icons may look different on actual devices vs simulators
 - **App Store Requirements**: iOS requires 1024x1024 icon for App Store listing (already generated)
 - **Google Play Requirements**: Feature graphic is separate from app icon (create separately)
+- **Stealth Matters**: The icon should ALWAYS look like a calculator - never add messaging hints!
