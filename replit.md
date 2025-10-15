@@ -79,23 +79,24 @@ Preferred communication style: Simple, everyday language.
 - **Platform**: Capacitor for iOS and Android native apps
 - **Package Name**: `com.newhomepage.stealthchat`
 - **App Name**: Stealth Calculator
+- **Deployment Mode**: **REMOTE MODE** - App loads from published Replit server instead of bundled files
+  - ✅ Publish mobile app **ONCE** to app stores
+  - ✅ All frontend updates automatic (no app store review)
+  - ✅ Users get updates instantly by publishing to Replit
+  - ✅ No rebuilding for frontend changes
+- **Configuration**:
+  - Set published URL: `export VITE_PUBLISHED_URL=yourapp.replit.app`
+  - Or edit `capacitor.config.ts` to replace `YOUR_PUBLISHED_URL.replit.app`
+  - Sync only (no build): `npx cap sync android` or `npx cap sync ios`
 - **WebSocket Compatibility**: Automatically detects Capacitor environment and connects to production server
   - Protocol mapping: `http://` → `ws://`, `https://` → `wss://`
-  - Uses `VITE_SERVER_URL` environment variable (recommended) or falls back to `REPLIT_DOMAINS`
-  - Meta tag in HTML is populated during build with server URL for WebSocket connections
-  - **Important**: For local development servers (HTTP), you MUST set `VITE_SERVER_URL` environment variable
-- **API Configuration**: Capacitor config includes server URL and allowed navigation domains
-  - Checks for existing protocol before adding `https://` to avoid double-prefixing
-- **Build Process**: 
-  1. Set environment variable (if needed): `export VITE_SERVER_URL=http://10.0.2.2:5000`
-  2. Build frontend: `npm run build`
-  3. Sync Capacitor: `npx cap sync android` or `npx cap sync ios`
-  4. Open in IDE: `npx cap open android` or `npx cap open ios`
-- **Deployment Notes**:
-  - For HTTPS/production deployments: Works automatically with `REPLIT_DOMAINS`
-  - For HTTP/local development: Must set `VITE_SERVER_URL` before building
-  - WebSocket connections use the same server URL as API requests for consistency
-- **Complete Build Guide**: See `CAPACITOR_BUILD_GUIDE.md` for detailed build, test, and publish instructions
+  - Uses published URL for both HTTP and WebSocket connections
+- **Update Workflow**:
+  - Frontend changes: Just publish to Replit → Users updated instantly
+  - Native changes (plugins, permissions): Sync and resubmit to app stores
+- **Complete Guides**: 
+  - `CAPACITOR_BUILD_GUIDE.md` - Detailed build and publish instructions
+  - `REMOTE_MODE_GUIDE.md` - Remote mode setup and workflow
 
 ## Email Integration (SendGrid)
 - **Email Service**: SendGrid for transactional email delivery
