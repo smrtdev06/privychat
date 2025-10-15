@@ -1,5 +1,18 @@
 # Capacitor Mobile App Build Guide
 
+## 🌐 Remote Mode Configuration
+
+**This app is configured in REMOTE MODE** - it loads content from your published Replit server instead of bundling local files.
+
+### Benefits:
+✅ **Publish mobile app ONCE** to app stores  
+✅ **All frontend updates happen automatically** (no app store review)  
+✅ **Users always get the latest version** instantly  
+✅ **No rebuilding for frontend changes**
+
+### How It Works:
+The mobile app is just a native "wrapper" that opens your published web app. When you update your frontend and publish to Replit, all users get the update immediately.
+
 ## Package Information
 - **Package Name**: `com.newhomepage.stealthchat`
 - **App Name**: Stealth Calculator
@@ -23,27 +36,43 @@
 
 ## Build Steps
 
-### 1. Build the Web App
+### 1. Publish Your Replit App
+
+First, publish your app to get a permanent URL:
+
+1. Click the **Publish** button in Replit
+2. Follow the publishing wizard
+3. Copy your published URL (e.g., `yourapp.replit.app`)
+
+### 2. Configure Remote URL
+
+Set your published URL as an environment variable:
+
 ```bash
-# Build the frontend
-npm run build
+# Set your published Replit URL
+export VITE_PUBLISHED_URL=yourapp.replit.app
+
+# Or use the full URL
+export VITE_PUBLISHED_URL=https://yourapp.replit.app
 ```
 
-### 2. Sync Capacitor
+Alternatively, edit `capacitor.config.ts` and replace `YOUR_PUBLISHED_URL.replit.app` with your actual URL.
+
+### 3. Sync Capacitor
+
+Since we're using remote mode, we don't need to build the frontend. Just sync the configuration:
 
 #### For Android:
 ```bash
-# Sync web assets to Android
 npx cap sync android
 ```
 
 #### For iOS:
 ```bash
-# Sync web assets to iOS
 npx cap sync ios
 ```
 
-### 3. Open in Native IDE
+### 4. Open in Native IDE
 
 #### Android:
 ```bash
@@ -70,25 +99,25 @@ Then in Xcode:
 
 ## Environment Configuration
 
-### Server URL Configuration
+### Remote URL Configuration
 
-For **production builds**, set the server URL before building:
+The app is configured to load from your published Replit server. Set one of these:
 
+**Option 1: Environment Variable (Recommended)**
 ```bash
-# Using REPLIT_DOMAINS (automatic in Replit)
-export REPLIT_DOMAINS=yourdomain.replit.app
-npm run build
+export VITE_PUBLISHED_URL=yourapp.replit.app
 npx cap sync
 ```
 
-For **local development** with HTTP server:
-```bash
-export VITE_SERVER_URL=http://10.0.2.2:5000  # Android emulator
-# or
-export VITE_SERVER_URL=http://localhost:5000  # iOS simulator
-npm run build
-npx cap sync
-```
+**Option 2: Edit capacitor.config.ts Directly**
+Replace `YOUR_PUBLISHED_URL.replit.app` with your actual published URL.
+
+### Important Notes
+
+- ✅ **No frontend build required** - The app loads from your live server
+- ✅ **Update anytime** - Just publish to Replit, users get updates instantly
+- ✅ **One-time mobile publish** - Only rebuild if changing native features (permissions, plugins, etc.)
+- ⚠️ **Requires published Replit app** - Make sure your app is published before testing
 
 ### In-App Purchase Configuration
 
