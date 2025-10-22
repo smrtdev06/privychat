@@ -13,6 +13,8 @@ import { z } from "zod";
 import { setupWebSocket } from "./websocket";
 import { testSendGridSetup, sendEmail } from "./email";
 import { generateVerificationToken, sendVerificationEmail, sendWelcomeEmail, isTokenExpired } from "./email-verification";
+import { generatePasswordResetToken, sendPasswordResetEmail, isTokenExpired as isResetTokenExpired } from "./password-reset";
+import { hashPassword } from "./auth";
 import {
   validateGooglePlayPurchase,
   validateAppleAppStorePurchase,
@@ -838,6 +840,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error resending verification email:", error);
       res.status(500).json({ error: "Failed to resend verification email" });
+    }
+  });
+
+  // Request password reset
+  app.post("/api/password/request-reset", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      
+      // Don't reveal if user exists or not (security best practice)
+      if (!user) {
+        return res.json({ 
+          success: true, 
+          message: "If an account with that email exists, a password reset link has been sent." 
+        });
+      }
+
+      // Generate reset token
+      const { token, expiry } = generatePasswordResetToken();
+      
+      // Save token to database
+      await storage.setPasswordResetToken(user.id, token, expiry);
+      
+      // Send reset email
+      await sendPasswordResetEmail(user.email, user.fullName, token);
+      
+      res.json({ 
+        success: true, 
+        message: "If an account with that email exists, a password reset link has been sent." 
+      });
+    } catch (error) {
+      console.error("Error requesting password reset:", error);
+      res.status(500).json({ error: "Failed to process password reset request" });
+    }
+  });
+
+  // Complete password reset
+  app.post("/api/password/reset", async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      
+      if (!token || !newPassword) {
+        return res.status(400).json({ error: "Token and new password are required" });
+      }
+
+      // Validate password strength
+      if (newPassword.length < 6) {
+        return res.status(400).json({ error: "Password must be at least 6 characters long" });
+      }
+
+      // Find user by reset token
+      const user = await storage.getUserByPasswordResetToken(token);
+      
+      if (!user) {
+        return res.status(400).json({ error: "Invalid or expired reset token" });
+      }
+
+      // Check if token is expired
+      if (isResetTokenExpired(user.passwordResetExpiry)) {
+        return res.status(400).json({ error: "Reset token has expired. Please request a new one." });
+      }
+
+      // Hash new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update password and clear reset token
+      await storage.resetPassword(user.id, hashedPassword);
+      
+      res.json({ 
+        success: true, 
+        message: "Password has been reset successfully. You can now log in with your new password." 
+      });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ error: "Failed to reset password" });
     }
   });
 

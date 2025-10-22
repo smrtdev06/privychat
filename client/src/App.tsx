@@ -11,6 +11,7 @@ import Settings from "@/pages/settings";
 import Conversation from "@/pages/conversation";
 import AdminPage from "@/pages/admin";
 import VerifyEmail from "@/pages/verify-email";
+import ResetPasswordPage from "@/pages/reset-password";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { useDeepLinks } from "@/hooks/use-deep-links";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/" component={Calculator} />
       <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/reset-password" component={ResetPasswordPage} />
       <ProtectedRoute path="/messaging" component={Messaging} />
       <ProtectedRoute path="/settings" component={Settings} />
       <ProtectedRoute path="/conversation/:id" component={Conversation} />

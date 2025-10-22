@@ -45,6 +45,8 @@ export default function Calculator() {
   const [isPasswordMode, setIsPasswordMode] = useState(false);
   const [calculationHistory, setCalculationHistory] = useState<CalculationHistoryEntry[]>([]);
   const [currentExpression, setCurrentExpression] = useState("");
+  const [correctPinAttempts, setCorrectPinAttempts] = useState(0);
+  const [lastCheckedDisplay, setLastCheckedDisplay] = useState("");
   const { toast } = useToast();
 
   useSwipeHandler((direction) => {
@@ -57,6 +59,52 @@ export default function Calculator() {
       setLocation("/settings");
     }
   }, [user, setLocation]);
+
+  // Smart hint system: Check if display matches numeric password
+  useEffect(() => {
+    // Only check if:
+    // 1. User is setup and has a password
+    // 2. Display has changed and is numeric
+    // 3. Not in password mode
+    // 4. Haven't already checked this exact value
+    // 5. No operator is active (pure number entry)
+    if (!user?.isSetupComplete || isPasswordMode || !display || display === "0" || display === lastCheckedDisplay || operator !== null) {
+      return;
+    }
+
+    // Only check if it's purely numeric
+    if (!/^\d+$/.test(display)) {
+      return;
+    }
+
+    // Silently check if the display matches the numeric password
+    const checkPassword = async () => {
+      try {
+        await apiRequest("POST", "/api/verify-numeric-password", {
+          numericPassword: display,
+        });
+        
+        // Password is correct! Increment counter
+        setLastCheckedDisplay(display);
+        const newCount = correctPinAttempts + 1;
+        setCorrectPinAttempts(newCount);
+
+        // Show hint after 3rd correct entry
+        if (newCount === 3) {
+          toast({
+            title: "Hint: Press = to Unlock",
+            description: "You've entered your password correctly. Press the = button to access messaging.",
+            duration: 8000,
+          });
+        }
+      } catch (error) {
+        // Password doesn't match, ignore silently
+        setLastCheckedDisplay(display);
+      }
+    };
+
+    checkPassword();
+  }, [display, user, isPasswordMode, lastCheckedDisplay, operator, correctPinAttempts, toast]);
 
   const handleNumberInput = (value: string) => {
     if (isPasswordMode) {
