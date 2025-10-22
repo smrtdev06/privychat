@@ -44,6 +44,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Security Features
 - **Password Security**: Dual-layer password system (standard + numeric for calculator mode)
+  - **PIN Setup with Instructions**: New users see step-by-step guide explaining how to unlock messaging (type PIN on calculator, press =)
+  - **Practice Modal**: Success modal after PIN setup offers optional practice session to reinforce learning
+  - **Smart Hint System**: Tracks when users type correct PIN 3 times without pressing =, shows helpful toast reminder
+- **Password Recovery**: Email-based password reset system
+  - Database fields: passwordResetToken, passwordResetExpiry (1-hour expiration)
+  - Security: Tokens are cryptographically secure (32-byte random), one-time use, privacy-preserving (doesn't reveal account existence)
+  - Frontend: "Forgot Password?" dialog on login page, dedicated /reset-password page
+  - Backend: `/api/password/request-reset` and `/api/password/reset` endpoints with SendGrid email notifications
 - **Stealth Mode**: Calculator interface disguises the messaging functionality
 - **File Security**: Object storage with granular access control and metadata-based permissions
 - **Session Management**: Secure session handling with proper expiration and cleanup
