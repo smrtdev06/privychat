@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calculator, Shield, MessageCircle, Lock } from "lucide-react";
+import { Calculator, Shield, MessageCircle, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema, loginUserSchema } from "@shared/schema";
@@ -15,6 +15,9 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import SMSVerification from "@/components/sms-verification";
 import { PCLegalLinks, MobileLegalModal } from "@/components/legal-content";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const registerSchema = insertUserSchema.extend({
   confirmPassword: z.string(),
@@ -28,6 +31,10 @@ export default function AuthPage() {
   const [, setLocation] = useLocation();
   const [showSMSVerification, setShowSMSVerification] = useState(false);
   const [registrationData, setRegistrationData] = useState<any>(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
 
   const loginForm = useForm({
     resolver: zodResolver(loginUserSchema),
@@ -68,6 +75,50 @@ export default function AuthPage() {
     if (registrationData) {
       const { confirmPassword, ...userData } = registrationData;
       registerMutation.mutate(userData);
+    }
+  };
+
+  const { toast } = useToast();
+
+  const handleForgotPassword = async () => {
+    if (!resetEmail) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setResetLoading(true);
+    setResetMessage("");
+
+    try {
+      const result = await apiRequest("POST", "/api/password/request-reset", {
+        email: resetEmail,
+      });
+
+      setResetMessage(result.message);
+      setResetEmail("");
+      
+      toast({
+        title: "Password Reset Email Sent",
+        description: "If an account with that email exists, you'll receive a password reset link shortly.",
+      });
+
+      // Close dialog after 2 seconds
+      setTimeout(() => {
+        setShowForgotPassword(false);
+        setResetMessage("");
+      }, 2000);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.error || "Failed to send reset email",
+        variant: "destructive",
+      });
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -136,6 +187,15 @@ export default function AuthPage() {
                       >
                         {loginMutation.isPending ? "Signing In..." : "Sign In"}
                       </Button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-sm text-primary hover:underline text-center w-full mt-2"
+                        data-testid="link-forgot-password"
+                      >
+                        Forgot Password?
+                      </button>
                     </form>
                   </Form>
                 </CardContent>
@@ -283,6 +343,49 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Your Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you a link to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="reset-email">Email Address</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                placeholder="your@email.com"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                disabled={resetLoading}
+                data-testid="input-reset-email"
+              />
+            </div>
+
+            {resetMessage && (
+              <Alert>
+                <Mail className="h-4 w-4" />
+                <AlertDescription>{resetMessage}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="w-full"
+              data-testid="button-send-reset"
+            >
+              {resetLoading ? "Sending..." : "Send Reset Link"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

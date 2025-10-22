@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
@@ -22,6 +23,7 @@ export default function Settings() {
   const [upgradeCode, setUpgradeCode] = useState("");
   const [giftEmail, setGiftEmail] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -32,11 +34,8 @@ export default function Settings() {
       });
     },
     onSuccess: () => {
-      toast({
-        title: "Password set successfully",
-        description: "Your numeric password has been configured.",
-      });
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      setShowSuccessModal(true);
     },
   });
 
@@ -162,6 +161,33 @@ export default function Settings() {
           </div>
 
           <div className="space-y-6">
+            {/* How It Works Instructions */}
+            <div className="bg-blue-50 border border-blue-200 p-5 rounded-xl">
+              <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
+                <Calculator className="w-5 h-5 mr-2" />
+                How to Access Your Messages
+              </h3>
+              <div className="space-y-3 text-sm text-blue-800">
+                <div className="flex items-start">
+                  <span className="font-bold mr-2 mt-0.5 bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-xs flex-shrink-0">1</span>
+                  <p>The app will show a <strong>calculator screen</strong> (this is the disguise!)</p>
+                </div>
+                <div className="flex items-start">
+                  <span className="font-bold mr-2 mt-0.5 bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-xs flex-shrink-0">2</span>
+                  <p>Type your numeric password using the calculator buttons</p>
+                </div>
+                <div className="flex items-start">
+                  <span className="font-bold mr-2 mt-0.5 bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-xs flex-shrink-0">3</span>
+                  <p>Press the <strong>=</strong> button to unlock messaging</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-blue-200">
+                <p className="text-xs text-blue-700 font-medium">
+                  Example: If your password is "1234", type 1-2-3-4 then press =
+                </p>
+              </div>
+            </div>
+
             <div>
               <Label htmlFor="numeric-password">Numeric Password (Numbers Only)</Label>
               <Input
@@ -226,6 +252,61 @@ export default function Settings() {
             </Button>
           </div>
         </div>
+
+        {/* Success Modal with Practice Option */}
+        <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+              </div>
+              <DialogTitle className="text-center text-2xl">Password Set Successfully!</DialogTitle>
+              <DialogDescription className="text-center space-y-4 pt-4">
+                <p>Your numeric password has been configured.</p>
+                
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg text-left">
+                  <p className="text-sm text-blue-900 font-medium mb-2">Quick Reminder:</p>
+                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                    <li>Open the calculator screen</li>
+                    <li>Type your password using the number buttons</li>
+                    <li>Press the <strong>=</strong> button to unlock</li>
+                  </ol>
+                </div>
+
+                <p className="text-sm text-muted-foreground">
+                  Would you like to practice entering your password now?
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="flex flex-col gap-3 mt-4">
+              <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setLocation("/");
+                }}
+                className="w-full"
+                data-testid="button-practice-now"
+              >
+                <Calculator className="w-4 h-4 mr-2" />
+                Practice Now
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setLocation("/");
+                }}
+                className="w-full"
+                data-testid="button-skip-practice"
+              >
+                Skip - I Got It
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
