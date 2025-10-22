@@ -10,7 +10,7 @@ const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'YOUR_PUBLISHED_URL.
 
 const config: CapacitorConfig = {
   appId: 'com.newhomepage.stealthchat',
-  appName: 'Stealth Calculator',
+  appName: 'PrivyCalc',
   webDir: './dist/public', // Still needed for initial sync, but won't be used at runtime
   
   server: {
@@ -30,8 +30,8 @@ const config: CapacitorConfig = {
   plugins: {
     App: {
       // Handle deep links for promo code redemption
-      // URL scheme: stealthchat://redeem?code=PROMO123
-      appUrlScheme: 'stealthchat',
+      // URL scheme: privycalc://redeem?code=PROMO123
+      appUrlScheme: 'privycalc',
       appUrlOpen: {
         webDeepLinkingEnabled: true
       }

@@ -1,6 +1,6 @@
 # Overview
 
-This is a secure messaging application built as a single-page application (SPA) with a React frontend and Express.js backend. The application features a unique calculator interface that doubles as a secure messaging app, allowing users to communicate privately while maintaining the appearance of a simple calculator. The system includes user authentication, subscription management with freemium model, file uploads with access control, and comprehensive security features.
+**PrivyCalc** is a secure messaging application built as a single-page application (SPA) with a React frontend and Express.js backend. The application features a unique calculator interface that doubles as a secure messaging app, allowing users to communicate privately while maintaining the appearance of a simple calculator. The system includes user authentication, subscription management with freemium model, file uploads with access control, and comprehensive security features.
 
 # User Preferences
 
@@ -78,7 +78,7 @@ Preferred communication style: Simple, everyday language.
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android native apps
 - **Package Name**: `com.newhomepage.stealthchat`
-- **App Name**: Stealth Calculator
+- **App Name**: PrivyCalc
 - **Deployment Mode**: **REMOTE MODE** - App loads from published Replit server instead of bundled files
   - ✅ Publish mobile app **ONCE** to app stores
   - ✅ All frontend updates automatic (no app store review)

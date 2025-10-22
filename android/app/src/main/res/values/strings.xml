@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Stealth Calculator</string>
-    <string name="title_activity_main">Stealth Calculator</string>
+    <string name="app_name">PrivyCalc</string>
+    <string name="title_activity_main">PrivyCalc</string>
     <string name="package_name">com.stealthcalc.app</string>
     <string name="custom_url_scheme">com.stealthcalc.app</string>
 </resources>

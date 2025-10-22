@@ -1,8 +1,8 @@
-# 🕵️ Stealth Calculator Icons & Splash Screens
+# 🕵️ PrivyCalc - Stealth Calculator Icons & Splash Screens
 
 ## ✅ What Was Created
 
-Custom calculator-themed icons and splash screens designed specifically for your **stealth messaging app**.
+Custom calculator-themed icons and splash screens designed specifically for **PrivyCalc**, your stealth messaging app.
 
 ## 🎯 Design Purpose
 

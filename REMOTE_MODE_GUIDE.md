@@ -1,8 +1,8 @@
-# Remote Mode Setup - Quick Guide
+# Remote Mode Setup - PrivyCalc
 
 ## What is Remote Mode?
 
-Your Capacitor app is configured in **REMOTE MODE** - it loads content from your published Replit server instead of bundled files.
+Your PrivyCalc Capacitor app is configured in **REMOTE MODE** - it loads content from your published Replit server instead of bundled files.
 
 ## Benefits
 
@@ -47,7 +47,12 @@ const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'YOUR_PUBLISHED_URL.
 
 With your actual URL:
 ```typescript
-const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'stealth-chat-abc123.replit.app';
+const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'privycalc.replit.app';
+```
+
+Or use your custom domain:
+```typescript
+const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'PrivyCalc.com';
 ```
 
 ### Step 3: Sync to Mobile

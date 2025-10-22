@@ -1,4 +1,4 @@
-# Capacitor Mobile App Build Guide
+# Capacitor Mobile App Build Guide - PrivyCalc
 
 ## 🌐 Remote Mode Configuration
 
@@ -14,8 +14,9 @@
 The mobile app is just a native "wrapper" that opens your published web app. When you update your frontend and publish to Replit, all users get the update immediately.
 
 ## Package Information
+- **App Name**: PrivyCalc
 - **Package Name**: `com.newhomepage.stealthchat`
-- **App Name**: Stealth Calculator
+- **Website**: PrivyCalc.com
 - **Platforms**: Android & iOS
 
 ## Prerequisites

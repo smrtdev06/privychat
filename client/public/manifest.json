@@ -1,6 +1,6 @@
 {
-  "name": "Stealth Calculator",
-  "short_name": "Calculator",
+  "name": "PrivyCalc",
+  "short_name": "PrivyCalc",
   "description": "A calculator app with secure messaging capabilities",
   "start_url": "/",
   "display": "standalone",

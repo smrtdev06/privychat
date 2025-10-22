@@ -1,6 +1,6 @@
-# Promo Code Redemption Guide
+# Promo Code Redemption Guide - PrivyCalc
 
-Complete guide for implementing and using promo code redemption in the Stealth Chat mobile app.
+Complete guide for implementing and using promo code redemption in the PrivyCalc mobile app.
 
 ## Overview
 
@@ -92,7 +92,7 @@ The app supports custom deep links for seamless code redemption:
 
 **Deep Link Format:**
 ```
-stealthchat://redeem?code=PROMOCODE123
+privycalc://redeem?code=PROMOCODE123
 ```
 
 **Native Configuration Required:**
@@ -105,7 +105,7 @@ Add this to `ios/App/App/Info.plist` inside the `<dict>` tag:
   <dict>
     <key>CFBundleURLSchemes</key>
     <array>
-      <string>stealthchat</string>
+      <string>privycalc</string>
     </array>
     <key>CFBundleURLName</key>
     <string>com.newhomepage.stealthchat</string>
@@ -120,7 +120,7 @@ Add this to `android/app/src/main/AndroidManifest.xml` inside the `<activity>` t
   <action android:name="android.intent.action.VIEW" />
   <category android:name="android.intent.category.DEFAULT" />
   <category android:name="android.intent.category.BROWSABLE" />
-  <data android:scheme="stealthchat" android:host="redeem" />
+  <data android:scheme="privycalc" android:host="redeem" />
 </intent-filter>
 ```
 
