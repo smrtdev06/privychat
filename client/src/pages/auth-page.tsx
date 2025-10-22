@@ -29,6 +29,7 @@ const registerSchema = insertUserSchema.extend({
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const [showSMSVerification, setShowSMSVerification] = useState(false);
   const [registrationData, setRegistrationData] = useState<any>(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -77,8 +78,6 @@ export default function AuthPage() {
       registerMutation.mutate(userData);
     }
   };
-
-  const { toast } = useToast();
 
   const handleForgotPassword = async () => {
     if (!resetEmail) {
