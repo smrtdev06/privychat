@@ -10,7 +10,7 @@ const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'YOUR_PUBLISHED_URL.
 
 const config: CapacitorConfig = {
   appId: 'com.newhomepage.stealthchat',
-  appName: 'Calculator',
+  appName: 'StealthChat',
   webDir: './dist/public', // Still needed for initial sync, but won't be used at runtime
   
   server: {
