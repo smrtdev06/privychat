@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 /**
  * Hook to handle deep link URLs in Capacitor apps
  * Supports promo code redemption via custom URL scheme
- * Example: stealthchat://redeem?code=PROMO123
+ * Example: privycalc://redeem?code=PROMO123
  */
 export function useDeepLinks() {
   const { toast } = useToast();
@@ -23,7 +23,7 @@ export function useDeepLinks() {
         const urlObj = new URL(url);
         
         // Handle promo code redemption deep links
-        // Format: stealthchat://redeem?code=PROMO123
+        // Format: privycalc://redeem?code=PROMO123
         if (urlObj.hostname === "redeem" || urlObj.pathname === "/redeem") {
           const promoCode = urlObj.searchParams.get("code");
           

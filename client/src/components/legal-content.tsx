@@ -2,352 +2,410 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Scale } from "lucide-react";
+import { FileText, Scale, Shield } from "lucide-react";
 
 const LEGAL_ACCEPTANCE_KEY = "legal_terms_accepted";
 
 // Privacy Policy Content
-const PRIVACY_POLICY = `NewhomePage Privacy Policy
+const PRIVACY_POLICY = `PrivyCalc Privacy Policy
 
-NewhomePage delivers analytics and other data-related services to small and medium-sized businesses, marketing companies, enterprises, and other organizations. The data is typically used by our customers for research, validation and verification services, marketing communications, targeting advertising, and similar uses.
+Effective Date: ${new Date().toLocaleDateString()}
 
-Privacy Notice for California Residents
-Privacy Notice for Colorado Residents
-Privacy Notice for Connecticut Residents
-Privacy Notice for Virginia Residents
+PrivyCalc ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application and services.
 
-Scope of this Privacy Policy
+1. Information We Collect
 
-NewhomePage has created this privacy policy to demonstrate its commitment to privacy. This privacy policy applies to all visitors (individuals or businesses) to NewhomePage.com and all NewhomePage subsidiaries and describes how we use and share the personal information that we gather on our website. This policy does not apply to the practices of third parties that NewhomePage does not own or control, or to individuals and businesses that NewhomePage does not employ or manage. Further, our customers' use of our services and any data we provide to them is subject to the customers' privacy policies and practices, not this one.
+Account Information:
+- Username, email address, and phone number
+- Password (encrypted and never stored in plain text)
+- Full name and user code
 
-NewhomePage does not knowingly collect personal information about children. If we discover we have collected personal information from an individual under 18, we will delete that information from our systems.
+Message Content:
+- Text messages between users
+- Media files (images, videos, voice messages) uploaded by you
+- Message metadata (timestamps, read status)
 
-Opt-Out
+Usage Information:
+- App usage patterns and features accessed
+- Device information (model, operating system)
+- IP address and connection information
 
-NewhomePage appreciates and understands the importance of privacy. Any individual visitor (consumer or business) to NewhomePage can choose to Opt-Out, so information about them is not shared with NewhomePage customers. To "Opt-Out", please fill out the form on our Opt-Out page or send an email to sales@NewhomePage.com with your email address, full name, street address, date of birth and phone number.
+Subscription Information:
+- Subscription type (free or premium)
+- Payment information processed through app store providers
+- Subscription renewal status
 
-Collection of Information on Our Website
+2. How We Use Your Information
 
-Information We Collect Directly. NewhomePage collects personal information when visitors provide such information on our website, such as during registration, to request services, or through contact forms. We also may collect payment and authentication information depending on the services that you request from us.
+We use your information to:
+- Provide secure messaging services
+- Authenticate and manage your account
+- Process subscription upgrades and premium features
+- Send verification emails and important account notifications
+- Improve app functionality and user experience
+- Prevent fraud and ensure platform security
 
-Information We Collect Automatically. NewhomePage automatically receives and stores certain types of information whenever a visitor interacts with the NewhomePage website. For example, NewhomePage automatically receives and records certain "traffic data" on our server logs, including a visitor's IP address, the page requested, and interactions with the NewhomePage website. NewhomePage also automatically collects usage information, such as the number of and frequency of visitors to our site and their use of the NewhomePage service.
+3. Data Storage and Security
 
-How We Use the Information We Collect
+- All passwords are hashed using industry-standard encryption
+- Messages are stored securely in our database
+- Media files are stored in secure cloud storage with access controls
+- We implement security measures to protect against unauthorized access
+- Sessions use secure cookies and CSRF protection
 
-We use your information to provide our services and as described below.
+4. Information Sharing
 
-Customer Service. To contact subscribers regarding their account status and changes to subscriber agreements, to respond to sales inquiries, and for other customer service-related purposes.
+We do NOT sell your personal information. We may share information only in these limited cases:
+- With your consent
+- To comply with legal obligations
+- To protect our rights and prevent fraud
+- With service providers (email, cloud storage) under strict confidentiality agreements
 
-Marketing. To contact customers about special promotions, product release notices, and other information we think may be of interest to customers, including to send promotions via email.
+5. Your Data Rights
 
-Optimization and Personalization. To tailor the content and information that we may send or display, to offer location customization (where permitted by applicable law), personalized help and instructions, and to otherwise personalize your experiences while using our website or our services.
+You have the right to:
+- Access your personal information
+- Delete your account and associated data
+- Opt-out of marketing communications
+- Export your data
+- Update or correct your information
 
-Improve and Analyze Services. To assess how customers use our services, to improve our services, to develop new products and services, and to provide statistical information to our partners about how customers use Versium.
+To exercise these rights, contact us at support@PrivyCalc.com
 
-Email Campaigns. To assess the success of marketing campaigns. For example, NewhomePage may receive a confirmation when an email sent by NewhomePage is opened. This enables us to make emails more relevant and interesting.
+6. Data Retention
 
-In addition, we may use aggregate and de-identified information for various other marketing, research and analysis purposes.
+- Active accounts: Data retained while account is active
+- Deleted accounts: Data permanently deleted within 30 days
+- Messages: Retained until deleted by users
+- Backup copies: Removed within 90 days of account deletion
 
-How We Share the Information We Collect
+7. Children's Privacy
 
-We may share your information as follows:
+PrivyCalc is not intended for users under 18. We do not knowingly collect information from children. If we discover we have collected data from someone under 18, we will delete it immediately.
 
-‍Marketing Partners. We do not share your information with companies that we believe might offer products and services of interest to you.
+8. Third-Party Services
 
-‍Our customers. We also may share information with those customers who hire us to perform analytics on their behalf. For information on how to opt-out, please see the opt-out section above.
+We use third-party services for:
+- Email delivery (SendGrid)
+- Cloud storage (Google Cloud Storage)
+- Mobile payments (Google Play, Apple App Store)
 
-‍Service Providers. We do not share the information we collect from you to third party vendors, service providers, contractors or agents who perform functions on our behalf.
+Each service has its own privacy policy governing their use of your information.
 
-We also may share your information in the following circumstances and with the following persons/entities:
+9. International Data Transfers
 
-‍Business Transfers. If we are acquired by or merge with another company, or if substantially all of our assets are transferred to another company (including as part of bankruptcy proceedings), we may transfer the information we have collected from you to the other company.
+Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data.
 
-‍‍In Response to Legal Process. We may disclose the information we collect from you in order to comply with the law, judicial proceedings, a court order, subpoena or other legal process.
+10. California Privacy Rights (CCPA)
 
-‍‍To Protect Us and Others. We may disclose the information we collect from you where we believe it is necessary to investigate, prevent or take action regarding illegal activities, suspected fraud, situations involving potential threats to the safety of any person, violations of our Terms of Use or this Policy, or as evidence in litigation in which we are involved.
+California residents have additional rights:
+- Right to know what personal information is collected
+- Right to delete personal information
+- Right to opt-out of sale of personal information (we don't sell data)
+- Right to non-discrimination for exercising privacy rights
 
-Aggregate and De-Identified Information. We may share aggregate or de-identified information about users with third parties for marketing, advertising, research or similar purposes.
+11. European Privacy Rights (GDPR)
 
-Third Party Links and Services
+EU residents have rights including:
+- Right of access and portability
+- Right to rectification
+- Right to erasure ("right to be forgotten")
+- Right to restrict processing
+- Right to object to processing
 
-NewhomePage may permit third parties to offer subscription or registration-based services through the NewhomePage website and may provide links to third party websites. NewhomePage is not responsible for any actions or policies of such third parties. Visitors should check the applicable privacy policy of such party when providing personally identifiable information. Visitors should be aware that when they voluntarily disclose personal information to such third parties, that this information may result in unsolicited messages. Such activities are beyond the control of Versium.
+12. Cookies and Tracking
 
-Security
+We use:
+- Session cookies for authentication
+- Local storage for app preferences
+- No third-party tracking or advertising cookies
 
-NewhomePage uses systems and procedures to safeguard its data. However, as no protection measure is 100% secure, we cannot guarantee against unauthorized or illegal access, disclosure, modification, or loss of data.
+13. Changes to This Policy
 
-Cookies and Other Tracking Technologies
+We may update this Privacy Policy from time to time. We will notify you of material changes via email or in-app notification.
 
-Visitors should be aware that we may collect information (for example, domain names or IP addresses) through our website using cookies and other technologies.
+14. Contact Us
 
-Cookies. Cookies are small unique strings of letters and numbers that are stored on your computer to make it easier for a website to recognize repeat visitors, facilitate a visitor's ongoing access to and use of our website, track usage behavior and compile aggregate data that will allow content improvements and targeted advertising. If a visitor does not want information collected through the use of cookies, most browsers allow the visitor to deny or block cookies. However, certain features and functionality on the NewhomePage website will not function if cookies are disabled.
+For privacy questions or concerns:
+Email: privacy@PrivyCalc.com
+Website: https://PrivyCalc.com
+`;
 
-LSOs. We may use Local Storage Objects ("LSOs"), to store your website preferences and to personalize your visit to our website. LSOs are different from browser cookies because of the amount and type of data stored. Typically, you cannot control, delete, or disable the acceptance of LSOs through your web browser.
+// Terms of Use Content
+const TERMS_OF_USE = `PrivyCalc Terms of Use
 
-Clear GIFs, tracking pixels and pixel tags, and other technologies. Clear GIFs are tiny graphics with a unique identifier, similar in functionality to cookies. In contrast to cookies, which are stored on your computer's hard drive, clear GIFs are embedded invisibly on web pages. We may use clear GIFs (a.k.a. web beacons, web bugs or pixel tags), in connection with our website to, among other things, track the activities of website visitors, help us manage content, and compile statistics about website usage. We and our third-party service providers also use clear GIFs in HTML emails to our customers, to help us track email response rates, identify when our emails are viewed, and track whether our emails are forwarded.
+Effective Date: ${new Date().toLocaleDateString()}
 
-Third-Party Analytics. We use automated devices and applications, such as Google Analytics, along with other analytic means, to evaluate usage of our website and services. We use these tools to help us improve our website and services, including the performance and user experiences for each. These third-party devices and applications may use cookies and other tracking technologies to perform their services. Such third parties may combine the information that we provide about you with other information that they have collected. This privacy policy does not cover such third parties' use of data they collect or obtain.
+Welcome to PrivyCalc. By using our application, you agree to these Terms of Use.
 
-Do-Not-Track. Currently, our website does not honor browser Do-Not-Track signals.
+1. Acceptance of Terms
 
-Third-Party Ad Network
+By creating an account or using PrivyCalc, you agree to be bound by these Terms. If you don't agree, don't use our services.
 
-We use third parties such as network advertisers to display advertisements about NewhomePage on third party websites, and to display third-party ads on our website. Network advertisers display advertisements on our sites and on other third-party sites, based on your visits to our website as well as other websites. This enables us and these third parties to target advertisements by displaying ads for products and services in which you might be interested.
+2. Description of Service
 
-Third party ad network providers, advertisers, sponsors and/or traffic measurement services may use cookies, JavaScript, web beacons (including clear GIFs), Flash LSOs and other technologies to measure the effectiveness of their ads, to personalize advertising content to you, and to track your movements on website and on other third-party sites. These third party cookies and other technologies are governed by each third party's specific privacy policy, and not this one. We may provide these third-party advertisers with de-identified information about your usage of our website and our services, as well as aggregate information about visitors to our website and users of our services; however, we do not share your personal information with these third parties.
+PrivyCalc is a secure messaging application disguised as a calculator. Features include:
+- End-to-end encrypted messaging
+- Calculator interface for privacy
+- Media sharing (images, videos, voice messages)
+- Premium subscription options
+- User discovery via user codes
 
-You may opt-out of many third-party ad networks, including those operated by members of the Network Advertising Initiative ("NAI") and the Digital Advertising Alliance ("DAA"). For more information regarding this practice by NAI members and DAA members, and your choices regarding having this information used by these companies, including how to opt-out of third-party ad networks operated by NAI and DAA members, please visit their respective websites: http://www.networkadvertising.org/optout and http://www.aboutads.info/choices.
+3. Eligibility
 
-Your California Privacy Rights
+You must be at least 18 years old to use PrivyCalc. By using our service, you represent that you meet this age requirement.
 
-Please refer to our Privacy Notice for California Residents.
+4. Account Registration
 
-Your Colorado Privacy Rights
+- You must provide accurate and complete information
+- You are responsible for maintaining account security
+- You must not share your account credentials
+- One account per person
+- We reserve the right to terminate accounts that violate these terms
 
-Please refer to our Privacy Notice for Colorado Residents.
+5. Acceptable Use
 
-Your Connecticut Privacy Rights
+You agree NOT to:
+- Use PrivyCalc for illegal activities
+- Harass, threaten, or harm other users
+- Share content that is illegal, harmful, or violates others' rights
+- Attempt to hack, compromise, or disrupt the service
+- Create multiple accounts to abuse free tier limits
+- Impersonate others or misrepresent your identity
+- Spam or send unsolicited bulk messages
+- Share child sexual abuse material (zero tolerance)
+- Distribute malware or viruses
 
-Please refer to our Privacy Notice for Connecticut Residents.
+6. Content and Messages
 
-Your Virginia Privacy Rights
+- You own the content you create and share
+- You grant us limited rights to store and transmit your messages
+- We may remove content that violates these terms
+- We don't monitor private messages unless required by law
+- Deleted messages are permanently removed from our servers
 
-Please refer to our Privacy Notice for Virginia Residents.
+7. Intellectual Property
 
-To Unsubscribe from Our Communications
+- PrivyCalc name, logo, and design are our property
+- You may not copy, modify, or distribute our intellectual property
+- User-generated content remains your property
 
-You may unsubscribe from our marketing communications by clicking on the "unsubscribe" link located on the bottom of our e-mails, updating your communication preferences, or by sending us email us at sales@NewhomePage.com with Subject: Unsubscribe or postal mail to NewhomePage 10053 Whittwood Dr #1201 Whittier, CA 90603 Attention: Unsubscribe. Customers cannot opt out of receiving transactional emails related to their account with us or the Subscription Service.
+8. Subscriptions and Payments
 
-Updates to the Privacy Policy
+Free Tier:
+- Limited to 1 message per day
+- Unlimited if either user in conversation has premium
 
-NewhomePage may make changes to this privacy statement from time to time. Notice will be provided on this page privacy-policy to any material changes made the policy. These policies outlined above are not intended to and do not create any contractual obligations or other legal rights in or on behalf of any other person or entity.
+Premium Subscription:
+- Unlimited messaging
+- Processed through App Store or Google Play
+- Subject to platform payment terms
+- Automatic renewal unless cancelled
+- No refunds for partial subscription periods
 
-Contact Information
+9. Shared Premium Benefits
 
-If you have any questions or comments about this Privacy Statement, the ways in which we obtain and use your personal information, your choices and rights regarding such use, please do not hesitate to contact us at:
+If either user in a conversation has premium, both users can send unlimited messages to each other.
 
-Phone: 877-399-1476
-Website: www.NewhomePage.com
-Email: sales@NewhomePage.com
+10. Third-Party Services
 
-10053 Whittwood Dr #1201
-Whittier, CA 90603
-Toll free: 877-399-1476
-FAX: 626 608 2082
+- Payments processed by Apple App Store and Google Play
+- Email services provided by SendGrid
+- Cloud storage by Google Cloud Platform
+- We're not responsible for third-party service issues
 
-Copyright © 2023 NewHomePage`;
+11. Privacy and Data
 
-// Terms & Conditions Content
-const TERMS_CONDITIONS = `TERMS & CONDITIONS
-NewHomePage LLC Hosted Services License Agreement
+- Your privacy is important to us
+- See our Privacy Policy for details on data handling
+- We don't sell your personal information
+- We use industry-standard security measures
 
-THIS LICENSE AGREEMENT ("AGREEMENT") IS A LEGAL AGREEMENT BETWEEN YOU ("YOU", "YOUR") AND NewHomePage ANALYTICS, A CALIFORNIA LLC CORPORATION WITH ITS PRINCIPAL OFFICE LOCATED AT 10053 Whittwood Dr #1201 Whittier, CA 90603 ("NewHomePage"). BY CHECKING THE BOX INDICATING ACCEPTANCE OF THIS AGREEMENT AND CLICKING THE BUTTON TO CONTINUE, ACCEPTING AN ORDERING DOCUMENT THAT INCORPORATES THIS AGREEMENT BY REFERENCE, OR BY OTHER MEANS PROVIDED BY NewHomePage LLC FOR ACCEPTANCE, YOU (A) ACKNOWLEDGE THAT YOU HAVE REVIEWED AND ACCEPT THIS AGREEMENT AND AGREE THAT YOU ARE LEGALLY BOUND BY ITS TERMS EFFECTIVE AS OF THE DATE OF ACCEPTANCE ("EFFECTIVE DATE"); AND (B) REPRESENT AND WARRANT THAT: (I) YOU ARE OF LEGAL AGE TO ENTER INTO A BINDING AGREEMENT; AND (II) IF YOU ARE ENTERING INTO THIS AGREEMENT ON BEHALF OF A CORPORATION, GOVERNMENTAL ORGANIZATION, OR OTHER LEGAL ENTITY, YOU HAVE THE RIGHT, POWER, AND AUTHORITY TO ENTER INTO THIS AGREEMENT ON BEHALF OF SUCH LEGAL ENTITY AND TO BIND SUCH LEGAL ENTITY TO THIS AGREEMENT AND, IN SUCH CASE, ANY REFERENCES TO "YOU" OR "YOUR" IN THIS AGREEMENT REFER TO SUCH ENTITY AND ALL OF ITS EMPLOYEES, CONTRACTORS, AGENTS AND REPRESENTATIVES. IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT, YOU MUST NOT ACCEPT OR SIGN THIS AGREEMENT AND MAY NOT USE THE LICENSED MATERIALS OR NewHomePage LLC PLATFORM.
+12. Termination
 
-IF YOU HAVE EXECUTED AN ORDERING DOCUMENT IN CONNECTION WITH THIS AGREEMENT, THE ORDERING DOCUMENT AND THE TERMS OF THIS AGREEMENT TOGETHER CONSTITUTE THE AGREEMENT OF THE PARTIES AND ARE REFERRED TO COLLECTIVELY HEREIN AS THE "AGREEMENT." IN THE EVENT OF ANY CONFLICT BETWEEN THESE TERMS AND AN ORDERING DOCUMENT, THESE TERMS SHALL GOVERN EXCEPT TO THE EXTENT A TERM IN AN APPLICABLE ORDERING DOCUMENT IS EXPRESSLY INTENDED TO MODIFY THESE TERMS.
+We may suspend or terminate your account if you:
+- Violate these Terms of Use
+- Engage in illegal activity
+- Abuse the service or other users
+- Fail to pay for premium subscriptions
 
-NOTE: If you use a "beta" or other pre-release version of the NewHomePage Platform ("Beta Release"), you acknowledge and agree that the Beta Release may contain more, fewer or different features than a subsequent commercial release version of the NewHomePage LLC Platform. While NewHomePage generally intends to distribute commercial release versions of the NewHomePage LLC Platform, NewHomePage LLC reserves the right not to release later commercial release versions of any Beta Release. Without limiting any disclaimer of warranty or other limitation stated herein, you agree that any Beta Release is not considered by NewHomePage LLC to be suitable for commercial use, and that it may contain errors affecting its proper operation. BY ACCEPTING THIS AGREEMENT, YOU ACKNOWLEDGE AND AGREE THAT USE OF A BETA RELEASE MAY EXHIBIT SPORADIC DISRUPTIONS THAT HAVE THE POTENTIAL TO DISRUPT YOUR USE OF THE BETA RELEASE. YOU AGREE THAT NewHomePage v HAS NO LIABILITY OR RESPONSIBILITY FOR ANY DAMAGES THAT MAY RESULT FROM YOUR USE OF ANY BETA RELEASE.
+You may delete your account at any time from Settings.
 
-1. Scope, Grant of License
+13. Disclaimers
 
-1.1 Scope
-This Agreement governs your access to and use of the NewHomePage LLC Platform (NewHomePage Paid Products, NewHomePage LLC or any other NewHomePage product or service) and Licensed Materials identified in your Ordering Document. For purposes of this Agreement "Licensed Materials" means the electronic information content and data made available by NewHomePage LLC to you via the NewHomePage LLC Platform, and "NewHomePage LLC Platform" means the NewHomePage LLC software-as-a-service identified in your applicable Ordering Document. The definition of NewHomePage LLC Platform does not include and specifically excludes Third Party Applications (defined below).
+- PrivyCalc is provided "AS IS" without warranties
+- We don't guarantee uninterrupted or error-free service
+- We're not liable for data loss or service interruptions
+- Use at your own risk
 
-1.2 Access and Use License
-Subject to your compliance with the terms and conditions of this Agreement, NewHomePage v hereby grants you and your Authorized Users (as defined below), during the Term of this Agreement, a non-exclusive license as more particularly described below in Section 3 to access and use the NewHomePage LLC Platform and to download and use the Licensed Materials.
+14. Limitation of Liability
 
-1.3 API
-If your applicable Ordering Document permits you to use NewHomePage's application programming interface to build applications that are compatible with the NewHomePage Platform (the "API"), then subject to your compliance with our API documentation and this Agreement, including, without limitation, your payment of all applicable fees, we hereby grant you an additional limited, revocable, non-transferable, non-exclusive, non-sublicensable license to access and use the API and its documentation for the sole purpose of interfacing the NewHomePage LLC Platform with your web-based applications (each a "Subscriber Application"), solely for your own internal business use, and not for timesharing, application service provider or service bureau use. You acknowledge and agree that your use of the API may be subject to volume and other restrictions imposed by NewHomePage LLC from time to time. We may monitor your use of the API to ensure quality, improve our products and services, and verify your compliance with this Agreement. Each Subscriber Application must maintain 100% compatibility with the NewHomePage LLC Platform. If any Subscriber Application implements an outdated version of the API, you acknowledge and agree that such Subscriber Application may not be able to communicate with the NewHomePage LLC Platform. You understand that we may cease support of old versions of the API.
+To the maximum extent permitted by law:
+- We're not liable for indirect, incidental, or consequential damages
+- Our total liability is limited to the amount you paid in the last 12 months
+- Some jurisdictions don't allow these limitations
 
-1.4 Third Party Applications
-"Third Party Applications" means computer software programs and other technology that are provided or made available to you or Authorized Users by third parties, including those with which the NewHomePage LLC Platform may interoperate, including, for example, your CRM software, marketing automation software, or sales enablement software, if any. NewHomePage LLC is not responsible for and does not endorse any Third Party Applications, services or websites linked to by the NewHomePage LLC Platform.
+15. Indemnification
 
-2. Fees & Taxes
+You agree to indemnify and hold PrivyCalc harmless from claims arising from:
+- Your use of the service
+- Your violation of these terms
+- Your violation of others' rights
 
-2.1 Fees and Payment
-You shall pay all fees stated in the Ordering Document (the "Subscription Fee"). All Subscription Fees are due upon execution of the Ordering Document and payable on the terms set forth therein. If no payment schedule is specified, the entire amount of the Subscription Fee shall be payable within 30 days of invoice. All amounts payable by You under this Agreement will be paid to NewHomePage LLC without setoff or counterclaim, and without any deduction or withholding.
+16. Changes to Terms
 
-2.2 Certain Remedies for Non-Payment
-In the event that you fail to timely make any payment of Subscription Fees, NewHomePage LLC may, in its sole discretion, (i) restrict or suspend your and your Authorized Users' access to the NewHomePage LLC Platform and/or Licensed Materials until all past-due payments are made, (ii) terminate this Agreement, or (iii) accelerate the payment of Subscription Fees such that all unpaid Subscription Fees shall be immediately payable. NewHomePage LLC shall have the right to charge interest at the rate of 1.5% per month (or, if less, the highest rate permitted by law) on any late payments. Restriction or suspension of online access to the Licensed Materials during a period of non-payment shall have no effect on the Term of this Agreement nor on your obligation to pay the Subscription Fee.
+We may modify these Terms at any time. Continued use after changes constitutes acceptance.
 
-2.3 Taxes
-You are responsible for any applicable taxes, including, without limitation, any sales, use, levies, duties, or any value added or similar taxes payable with respect to your and your Authorized Users access to and use of the NewHomePage LLC Platform and/or Licensed Materials and assessable by any local, state, provincial, federal, or foreign jurisdiction.
+17. Governing Law
 
-For full terms and conditions, please contact us at sales@NewhomePage.com
+These Terms are governed by the laws of the State of California, USA.
 
-Copyright © 2023 NewHomePage`;
+18. Dispute Resolution
 
-// Privacy Policy Dialog Component
-export function PrivacyPolicyDialog() {
+Disputes will be resolved through binding arbitration in California, not in court, except for small claims court matters.
+
+19. Severability
+
+If any provision is found unenforceable, the remaining provisions continue in full effect.
+
+20. Contact
+
+Questions about these Terms?
+Email: legal@PrivyCalc.com
+Website: https://PrivyCalc.com
+
+By using PrivyCalc, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use and our Privacy Policy.
+`;
+
+interface LegalDialogProps {
+  title: string;
+  icon: React.ReactNode;
+  content: string;
+  trigger?: React.ReactNode;
+  dataTestId?: string;
+}
+
+function LegalDialog({ title, icon, content, trigger, dataTestId }: LegalDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="link" className="p-0 h-auto text-sm" data-testid="link-privacy-policy">
-          <FileText className="w-4 h-4 mr-1" />
-          Privacy Policy
-        </Button>
+      <DialogTrigger asChild data-testid={dataTestId}>
+        {trigger || (
+          <Button variant="link" className="text-sm h-auto p-0">
+            {title}
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh]">
+      <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Privacy Policy</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {icon}
+            {title}
+          </DialogTitle>
           <DialogDescription>
-            Please review our privacy policy
+            Last updated: {new Date().toLocaleDateString()}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="h-[60vh] w-full rounded-md border p-4">
-          <div className="whitespace-pre-wrap text-sm" data-testid="text-privacy-policy-content">
-            {PRIVACY_POLICY}
-          </div>
+        <ScrollArea className="h-[60vh] pr-4">
+          <div className="whitespace-pre-wrap text-sm">{content}</div>
         </ScrollArea>
       </DialogContent>
     </Dialog>
   );
 }
 
-// Terms & Conditions Dialog Component
-export function TermsConditionsDialog() {
+// For desktop/tablet - inline links
+export function PCLegalLinks() {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="link" className="p-0 h-auto text-sm" data-testid="link-terms-conditions">
-          <Scale className="w-4 h-4 mr-1" />
-          Terms & Conditions
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle>Terms & Conditions</DialogTitle>
-          <DialogDescription>
-            Please review our terms and conditions
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="h-[60vh] w-full rounded-md border p-4">
-          <div className="whitespace-pre-wrap text-sm" data-testid="text-terms-content">
-            {TERMS_CONDITIONS}
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+    <div className="flex gap-4 text-sm text-muted-foreground justify-center" data-testid="legal-links">
+      <LegalDialog
+        title="Privacy Policy"
+        icon={<Shield className="w-4 h-4" />}
+        content={PRIVACY_POLICY}
+        dataTestId="link-privacy-policy"
+      />
+      <span>•</span>
+      <LegalDialog
+        title="Terms of Use"
+        icon={<Scale className="w-4 h-4" />}
+        content={TERMS_OF_USE}
+        dataTestId="link-terms-of-use"
+      />
+    </div>
   );
 }
 
-// Mobile Legal Links Modal Component with Auto-show
+// For mobile - modal with buttons
 export function MobileLegalModal() {
   const [open, setOpen] = useState(false);
-  const [hasAccepted, setHasAccepted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
-    // Check if device is mobile using matchMedia for more reliable detection
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    const checkMobile = mediaQuery.matches;
-    
-    setIsMobile(checkMobile);
-
-    // Check if user has already accepted terms
-    const accepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
-    const isAccepted = accepted === "true";
-    
-    if (isAccepted) {
-      setHasAccepted(true);
-      return; // Already accepted, no need to show modal or listen to changes
-    }
-
-    // If mobile and not accepted, show modal
-    if (checkMobile) {
+    const hasAccepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
+    if (!hasAccepted) {
       setOpen(true);
+    } else {
+      setAccepted(true);
     }
-
-    // Listen for viewport changes - mandatory modal must reappear if user hasn't accepted
-    const handleChange = (e: MediaQueryListEvent) => {
-      const isMobileNow = e.matches;
-      setIsMobile(isMobileNow);
-      
-      // Check acceptance status again
-      const currentAccepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY) === "true";
-      
-      if (currentAccepted) {
-        // User has accepted, close modal and stop tracking
-        setHasAccepted(true);
-        setOpen(false);
-      } else if (isMobileNow) {
-        // Switched to mobile without acceptance - must show modal again
-        setOpen(true);
-      } else {
-        // Switched to desktop - temporarily close modal but keep tracking
-        setOpen(false);
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []); // Empty dependency - only run once on mount
+  }, []);
 
   const handleAccept = () => {
-    try {
-      localStorage.setItem(LEGAL_ACCEPTANCE_KEY, "true");
-      // Verify it was set
-      const verified = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
-      if (verified === "true") {
-        setHasAccepted(true);
-        setOpen(false);
-      }
-    } catch (error) {
-      console.error("Failed to save legal acceptance:", error);
-    }
+    localStorage.setItem(LEGAL_ACCEPTANCE_KEY, "true");
+    setAccepted(true);
+    setOpen(false);
   };
 
-  // Don't render on desktop or if already accepted
-  if (!isMobile || hasAccepted) {
+  if (accepted) {
     return null;
   }
 
   return (
-    <Dialog 
-      open={open} 
-      onOpenChange={(isOpen) => {
-        // Prevent closing the dialog - user MUST accept
-        if (!isOpen) return;
-        setOpen(isOpen);
-      }}
-      modal={true}
-    >
-      <DialogContent 
-        className="sm:max-w-md" 
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        hideCloseButton
-      >
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-w-md" data-testid="modal-legal-acceptance">
         <DialogHeader>
-          <DialogTitle>Legal Information</DialogTitle>
+          <DialogTitle>Welcome to PrivyCalc</DialogTitle>
           <DialogDescription>
-            You must review and accept our terms to continue using this app
+            Please review and accept our legal terms to continue
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 py-4">
-          <PrivacyPolicyDialog />
-          <TermsConditionsDialog />
-        </div>
-        <div className="flex justify-end pt-4 border-t">
-          <Button 
-            onClick={handleAccept} 
+
+        <div className="space-y-4 py-4">
+          <LegalDialog
+            title="Privacy Policy"
+            icon={<Shield className="w-4 h-4" />}
+            content={PRIVACY_POLICY}
+            trigger={
+              <Button variant="outline" className="w-full justify-start" data-testid="button-view-privacy">
+                <FileText className="w-4 h-4 mr-2" />
+                View Privacy Policy
+              </Button>
+            }
+          />
+
+          <LegalDialog
+            title="Terms of Use"
+            icon={<Scale className="w-4 h-4" />}
+            content={TERMS_OF_USE}
+            trigger={
+              <Button variant="outline" className="w-full justify-start" data-testid="button-view-terms">
+                <Scale className="w-4 h-4 mr-2" />
+                View Terms of Use
+              </Button>
+            }
+          />
+
+          <Button
+            onClick={handleAccept}
             className="w-full"
             data-testid="button-accept-legal"
           >
-            Accept Terms
+            Accept and Continue
           </Button>
+
+          <p className="text-xs text-center text-muted-foreground">
+            By clicking "Accept and Continue", you agree to our Terms of Use and Privacy Policy
+          </p>
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-// PC Legal Links Component (always visible)
-export function PCLegalLinks() {
-  return (
-    <div className="flex items-center gap-4 text-slate-400">
-      <PrivacyPolicyDialog />
-      <span className="text-slate-600">•</span>
-      <TermsConditionsDialog />
-    </div>
   );
 }
