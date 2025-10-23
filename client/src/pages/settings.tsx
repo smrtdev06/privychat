@@ -14,6 +14,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { MobileSubscription } from "@/components/mobile-subscription";
 import { PromoCodeRedeem } from "@/components/promo-code-redeem";
+import { Capacitor } from "@capacitor/core";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -26,6 +27,9 @@ export default function Settings() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Check if running on mobile platform
+  const isMobilePlatform = Capacitor.getPlatform() === "ios" || Capacitor.getPlatform() === "android";
 
   const setupPasswordMutation = useMutation({
     mutationFn: async (password: string) => {
@@ -376,15 +380,17 @@ export default function Settings() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Messages remaining today: <strong>{1 - (user?.dailyMessageCount || 0)}</strong>
                 </p>
-                <Button
-                  onClick={() => upgradeMutation.mutate()}
-                  disabled={upgradeMutation.isPending}
-                  className="w-full"
-                  data-testid="button-upgrade"
-                >
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  {upgradeMutation.isPending ? "Upgrading..." : "Upgrade to Premium - $29/year"}
-                </Button>
+                {!isMobilePlatform && (
+                  <Button
+                    onClick={() => upgradeMutation.mutate()}
+                    disabled={upgradeMutation.isPending}
+                    className="w-full"
+                    data-testid="button-upgrade"
+                  >
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    {upgradeMutation.isPending ? "Upgrading..." : "Upgrade to Premium - $29/year"}
+                  </Button>
+                )}
               </>
             )}
           </CardContent>
