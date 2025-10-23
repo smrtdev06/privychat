@@ -6,7 +6,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 // Your published Replit app URL (e.g., "yourapp.replit.app")
 // You can find this in the Publishing tool after you publish your app
-const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'YOUR_PUBLISHED_URL.replit.app';
+const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://privycalc.com/';
 
 const config: CapacitorConfig = {
   appId: 'com.newhomepage.stealthchat',
