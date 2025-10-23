@@ -104,7 +104,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           // Validate purchase with backend
           if (platformType === "android") {
             await apiRequest("POST", "/api/mobile-subscription/validate-android", {
-              packageName: "com.newhomepage.stealthchat",
+              packageName: "com.newhomepage.privychat",
               productId: transaction.products[0].id,
               purchaseToken: transaction.nativePurchase.purchaseToken,
             });

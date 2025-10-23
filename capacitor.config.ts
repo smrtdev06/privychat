@@ -9,7 +9,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://privycalc.com/';
 
 const config: CapacitorConfig = {
-  appId: 'com.newhomepage.stealthchat',
+  appId: 'com.newhomepage.privychat',
   appName: 'Calculator+',
   webDir: './dist/public', // Still needed for initial sync, but won't be used at runtime
   
