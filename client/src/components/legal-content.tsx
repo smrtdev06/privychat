@@ -359,8 +359,14 @@ export function MobileLegalModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md" data-testid="modal-legal-acceptance">
+    <Dialog open={open}>
+      <DialogContent 
+        className="max-w-md" 
+        data-testid="modal-legal-acceptance"
+        hideCloseButton={true}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Welcome to PrivyCalc</DialogTitle>
           <DialogDescription>
