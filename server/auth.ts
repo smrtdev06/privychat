@@ -5,7 +5,10 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { generateVerificationToken, sendVerificationEmail } from "./email-verification";
+import {
+  generateVerificationToken,
+  sendVerificationEmail,
+} from "./email-verification";
 import { User as SelectUser } from "@shared/schema";
 
 declare module "express-session" {
@@ -25,6 +28,7 @@ const scryptAsync = promisify(scrypt);
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  console.log("");
   return `${buf.toString("hex")}.${salt}`;
 }
 
@@ -37,7 +41,7 @@ async function comparePasswords(supplied: string, stored: string) {
 
 // CSRF protection functions
 function generateCSRFToken(): string {
-  return randomBytes(32).toString('hex');
+  return randomBytes(32).toString("hex");
 }
 
 function verifyCSRFToken(sessionToken: string, requestToken: string): boolean {
@@ -50,7 +54,7 @@ function verifyCSRFToken(sessionToken: string, requestToken: string): boolean {
 // CSRF middleware
 function csrfProtection(req: any, res: any, next: any) {
   // Skip CSRF for GET, HEAD, OPTIONS
-  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     return next();
   }
 
@@ -60,10 +64,10 @@ function csrfProtection(req: any, res: any, next: any) {
   }
 
   const sessionToken = req.session.csrfToken;
-  const requestToken = req.headers['x-csrf-token'] || req.body._csrfToken;
+  const requestToken = req.headers["x-csrf-token"] || req.body._csrfToken;
 
   if (!verifyCSRFToken(sessionToken, requestToken)) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
+    return res.status(403).json({ error: "Invalid CSRF token" });
   }
 
   next();
@@ -87,7 +91,7 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
-  
+
   // Apply CSRF protection middleware
   app.use(csrfProtection);
 
@@ -98,7 +102,7 @@ export function setupAuth(app: Express) {
       if (!user) {
         user = await storage.getUserByEmail(username); // username field can contain email
       }
-      
+
       if (!user || !(await comparePasswords(password, user.password))) {
         return done(null, false);
       } else {
@@ -130,7 +134,10 @@ export function setupAuth(app: Express) {
       await storage.setEmailVerificationToken(user.id, token, expiry);
       await sendVerificationEmail(user.email, user.fullName, token);
     } catch (error) {
-      console.error("Error sending verification email during registration:", error);
+      console.error(
+        "Error sending verification email during registration:",
+        error,
+      );
       // Don't fail registration if email fails - user can resend later
     }
 
@@ -172,12 +179,12 @@ export function setupAuth(app: Express) {
   // CSRF token endpoint
   app.get("/api/csrf-token", (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+
     // Generate or retrieve CSRF token from session
     if (!req.session.csrfToken) {
       req.session.csrfToken = generateCSRFToken();
     }
-    
+
     res.json({ csrfToken: req.session.csrfToken });
   });
 }
