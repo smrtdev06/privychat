@@ -1,4 +1,4 @@
-package com.newhomepage.stealthchat;
+package com.newhomepage.privychat;
 
 import com.getcapacitor.BridgeActivity;
 

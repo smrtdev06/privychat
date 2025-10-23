@@ -1,4 +1,4 @@
-package com.newhomepage.stealthchat;
+package com.newhomepage.privychat;
 
 import static org.junit.Assert.*;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.newhomepage.stealthchat", appContext.getPackageName());
+        assertEquals("com.newhomepage.privychat", appContext.getPackageName());
     }
 }

@@ -85,7 +85,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android native apps
-- **Package Name**: `com.newhomepage.stealthchat`
+- **Package Name**: `com.newhomepage.privychat`
 - **App Name**: PrivyCalc
 - **Deployment Mode**: **REMOTE MODE** - App loads from published Replit server instead of bundled files
   - ✅ Publish mobile app **ONCE** to app stores
