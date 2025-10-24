@@ -27,28 +27,38 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   const [products, setProducts] = useState<SubscriptionProduct[]>([]);
   const [platform, setPlatform] = useState<"ios" | "android" | null>(null);
   const [storeReady, setStoreReady] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const { toast } = useToast();
 
+  const addDebug = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugInfo(prev => [...prev, `[${timestamp}] ${message}`]);
+    console.log(message);
+  };
+
   useEffect(() => {
+    addDebug("🚀 MobileSubscription component initializing...");
+    
     // Detect platform - use bridge method that works in both direct and iframe mode
     capacitorBridge.getPlatform().then((currentPlatform) => {
-      console.log("🔍 Platform detected:", currentPlatform);
+      addDebug(`🔍 Platform detected: ${currentPlatform}`);
       
       if (currentPlatform === "ios" || currentPlatform === "android") {
         setPlatform(currentPlatform);
         
         // Check if we're in remote bridge mode
         if (capacitorBridge.isRemoteMode()) {
-          console.log("🌉 Using remote bridge mode");
+          addDebug("🌉 Using remote bridge mode (iframe)");
           initializeStoreRemote(currentPlatform);
         } else {
-          console.log("🏠 Using direct mode");
+          addDebug("🏠 Using direct mode (local)");
           initializeStore(currentPlatform);
         }
       } else {
-        console.log("⚠️ Not a mobile platform:", currentPlatform);
+        addDebug(`⚠️ Not a mobile platform: ${currentPlatform}`);
       }
     }).catch((error) => {
+      addDebug(`❌ Error detecting platform: ${error.message}`);
       console.error("Error detecting platform:", error);
     });
   }, []);
@@ -255,33 +265,34 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   };
 
   const initializeStoreRemote = async (platformType: "ios" | "android") => {
-    console.log("=== REMOTE BRIDGE MODE START ===");
-    console.log("Platform detected:", platformType);
+    addDebug("=== REMOTE BRIDGE MODE START ===");
+    addDebug(`Platform: ${platformType}`);
 
     try {
       // Setup event listeners for bridge messages
       capacitorBridge.on("PRODUCT_UPDATED", (product: any) => {
-        console.log("📦 Product updated via bridge:", product);
+        addDebug(`📦 Product updated: ${product.id} - ${product.title || 'No title'}`);
+        addDebug(`   Price: ${product.price}, CanPurchase: ${product.canPurchase}, State: ${product.state}`);
         
         if (product.canPurchase) {
-          console.log("✅ Product can be purchased! Adding to list:", product.id);
+          addDebug(`✅ Product ${product.id} can be purchased! Adding to list.`);
           setProducts((prev) => {
             const existing = prev.find((p) => p.id === product.id);
             if (existing) {
-              console.log("Product already in list, skipping");
+              addDebug("   Product already in list, skipping");
               return prev;
             }
             
-            console.log("Adding new product to list");
+            addDebug("   Adding new product to list");
             return [...prev, product];
           });
         } else {
-          console.warn("⚠️ Product cannot be purchased. State:", product.state);
+          addDebug(`⚠️ Product ${product.id} cannot be purchased. State: ${product.state}`);
         }
       });
 
       capacitorBridge.on("STORE_READY", (payload: any) => {
-        console.log("✅ Store ready via bridge!");
+        addDebug("✅ Store ready via bridge!");
         setStoreReady(true);
       });
 
@@ -326,7 +337,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       });
 
       capacitorBridge.on("STORE_ERROR", (error: any) => {
-        console.error("❌ Store error via bridge:", error);
+        addDebug(`❌ Store error via bridge: ${error.message}`);
         toast({
           title: "Store Error",
           description: error.message || "Failed to initialize app store",
@@ -335,12 +346,26 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       });
 
       // Initialize the store via bridge
-      console.log("🚀 Initializing store via bridge...");
+      addDebug("🚀 Initializing store via bridge...");
       await capacitorBridge.initStore(platformType);
-      console.log("✅ Bridge initialization complete!");
+      addDebug("✅ Bridge initialization complete!");
+      addDebug("⏳ Waiting for products from Google Play/App Store...");
 
-      console.log("=== REMOTE BRIDGE MODE END ===");
+      // Set a timeout to check if products loaded
+      setTimeout(() => {
+        if (products.length === 0) {
+          addDebug("⚠️ No products loaded after 5 seconds");
+          addDebug("Possible reasons:");
+          addDebug("  1. Product not created in Play Console");
+          addDebug("  2. Product ID mismatch (must be 'premium_yearly')");
+          addDebug("  3. Product still propagating (takes 1-2 hours)");
+          addDebug("  4. App package name mismatch");
+        }
+      }, 5000);
+
+      addDebug("=== REMOTE BRIDGE MODE END ===");
     } catch (error: any) {
+      addDebug(`❌ Error initializing remote bridge: ${error.message}`);
       console.error("❌ Error initializing remote bridge:", error);
       toast({
         title: "Bridge Error",
@@ -481,6 +506,36 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             <li>• No ads</li>
           </ul>
         </div>
+
+        {/* Debug Information */}
+        {debugInfo.length > 0 && (
+          <div className="bg-gray-100 border border-gray-300 p-4 rounded-lg mt-4">
+            <h4 className="font-semibold text-gray-900 mb-2 flex items-center justify-between">
+              Debug Log
+              <button
+                onClick={() => setDebugInfo([])}
+                className="text-xs text-gray-600 hover:text-gray-900"
+              >
+                Clear
+              </button>
+            </h4>
+            <div className="space-y-1 max-h-64 overflow-y-auto">
+              {debugInfo.map((msg, idx) => (
+                <div 
+                  key={idx} 
+                  className="text-xs font-mono text-gray-700 bg-white px-2 py-1 rounded"
+                >
+                  {msg}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Product ID: <code className="bg-gray-200 px-1 rounded">premium_yearly</code> | 
+              Platform: <code className="bg-gray-200 px-1 rounded">{platform}</code> | 
+              Products Found: <code className="bg-gray-200 px-1 rounded">{products.length}</code>
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
