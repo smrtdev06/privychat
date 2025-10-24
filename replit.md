@@ -62,4 +62,5 @@ Preferred communication style: Simple, everyday language.
 - **Database**: Neon (PostgreSQL serverless)
 - **Email Service**: SendGrid
 - **Mobile In-App Purchases**: Google Play Billing, Apple App Store
+  - Product ID: `premium_yearly` at $29.99/year
 - **Mobile Purchase Plugin**: `cordova-plugin-purchase`
