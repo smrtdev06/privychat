@@ -49,6 +49,7 @@ Preferred communication style: Simple, everyday language.
 - **Platform**: Capacitor for iOS and Android (package: `com.newhomepage.privychat`, name: PrivyCalc).
 - **Deployment Mode**: **REMOTE MODE** - App loads from published Replit server, enabling instant frontend updates without app store resubmission.
 - **WebSocket**: Automatic detection of Capacitor environment and connection to production WebSocket server.
+- **Loading Screen**: Custom calculator-themed loading indicator prevents blank white screen during initial app load from remote server.
 
 ## Development and Deployment
 - **Tooling**: Vite for fast development, TypeScript for type safety, Drizzle Kit for database migrations.
