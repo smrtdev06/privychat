@@ -47,9 +47,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android (package: `com.newhomepage.privychat`, name: PrivyCalc).
-- **Deployment Mode**: **REMOTE MODE** - App loads from published Replit server, enabling instant frontend updates without app store resubmission.
+- **Deployment Mode**: **HYBRID IFRAME BRIDGE** - Local app loads Capacitor plugins, displays remote Replit server in iframe with postMessage bridge.
+  - Alternative: **LOCAL BUNDLE** mode available (recommended for production).
+- **Plugin Bridge**: Secure postMessage communication between local Capacitor context and remote app.
+  - Strict origin validation (only allowed domains)
+  - Secure targetOrigin for postMessage
+  - Both direct mode (local) and bridge mode (iframe) supported
 - **WebSocket**: Automatic detection of Capacitor environment and connection to production WebSocket server.
-- **Loading Screen**: Custom calculator-themed loading indicator prevents blank white screen during initial app load from remote server.
+- **Loading Screen**: Custom calculator-themed loading indicator prevents blank white screen during initial app load.
+- **Security**: Origin allowlist, specific targetOrigin, bidirectional validation (see CAPACITOR_REMOTE_MODE_ANALYSIS.md for details).
 
 ## Development and Deployment
 - **Tooling**: Vite for fast development, TypeScript for type safety, Drizzle Kit for database migrations.
