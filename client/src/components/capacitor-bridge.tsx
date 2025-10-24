@@ -148,6 +148,17 @@ export function CapacitorBridge() {
               });
               break;
             }
+
+            case "GET_PLATFORM": {
+              const platform = Capacitor.getPlatform();
+              
+              sendToRemote({
+                type: "PLATFORM_INFO",
+                id,
+                payload: { platform },
+              });
+              break;
+            }
           }
         } catch (error: any) {
           console.error("Bridge error:", error);

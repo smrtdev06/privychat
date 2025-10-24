@@ -30,20 +30,27 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   const { toast } = useToast();
 
   useEffect(() => {
-    // Detect platform
-    const currentPlatform = Capacitor.getPlatform();
-    if (currentPlatform === "ios" || currentPlatform === "android") {
-      setPlatform(currentPlatform);
+    // Detect platform - use bridge method that works in both direct and iframe mode
+    capacitorBridge.getPlatform().then((currentPlatform) => {
+      console.log("🔍 Platform detected:", currentPlatform);
       
-      // Check if we're in remote bridge mode
-      if (capacitorBridge.isRemoteMode()) {
-        console.log("🌉 Using remote bridge mode");
-        initializeStoreRemote(currentPlatform);
+      if (currentPlatform === "ios" || currentPlatform === "android") {
+        setPlatform(currentPlatform);
+        
+        // Check if we're in remote bridge mode
+        if (capacitorBridge.isRemoteMode()) {
+          console.log("🌉 Using remote bridge mode");
+          initializeStoreRemote(currentPlatform);
+        } else {
+          console.log("🏠 Using direct mode");
+          initializeStore(currentPlatform);
+        }
       } else {
-        console.log("🏠 Using direct mode");
-        initializeStore(currentPlatform);
+        console.log("⚠️ Not a mobile platform:", currentPlatform);
       }
-    }
+    }).catch((error) => {
+      console.error("Error detecting platform:", error);
+    });
   }, []);
 
   const initializeStore = async (platformType: "ios" | "android") => {

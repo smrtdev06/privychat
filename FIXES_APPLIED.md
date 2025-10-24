@@ -98,11 +98,27 @@ const serverUrl = import.meta.env.VITE_SERVER_URL ||
 
 ---
 
+### 6. **Fixed Mobile Platform Detection in Iframe Mode**
+**Problem:** Mobile subscription option not showing when running in iframe (remote mode) because `Capacitor.getPlatform()` only works in parent window
+
+**Fix Applied:**
+- Added `getPlatform()` method to capacitor-remote-bridge
+- Parent window handles "GET_PLATFORM" message and responds with platform info
+- MobileSubscription component now uses bridge method instead of direct Capacitor call
+
+**Files:** 
+- `client/src/lib/capacitor-remote-bridge.ts`
+- `client/src/components/capacitor-bridge.tsx`
+- `client/src/components/mobile-subscription.tsx`
+
+---
+
 ## 📦 Build Status
 
 ✅ **Frontend build:** Success
-✅ **Capacitor sync:** Success
+✅ **Capacitor sync:** Success  
 ✅ **Security review:** Passed with fixes applied
+✅ **Platform detection:** Fixed for iframe mode
 
 ---
 

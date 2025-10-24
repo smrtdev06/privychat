@@ -115,6 +115,21 @@ class CapacitorRemoteBridge {
   isRemoteMode(): boolean {
     return this.isInIframe;
   }
+
+  async getPlatform(): Promise<"ios" | "android" | "web"> {
+    if (!this.isInIframe) {
+      // Direct mode - check Capacitor directly
+      if (typeof (window as any).Capacitor !== "undefined") {
+        const platform = (window as any).Capacitor.getPlatform();
+        return platform === "ios" || platform === "android" ? platform : "web";
+      }
+      return "web";
+    }
+    
+    // Remote mode - ask parent for platform
+    const result = await this.sendMessage("GET_PLATFORM");
+    return result.platform;
+  }
 }
 
 export const capacitorBridge = new CapacitorRemoteBridge();
