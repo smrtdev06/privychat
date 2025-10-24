@@ -80,10 +80,11 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      // For Capacitor apps, we need secure cookies on HTTPS
+      secure: process.env.NODE_ENV === "production" || true, // Always use secure in dev (Replit uses HTTPS)
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: "lax",
+      sameSite: "none", // Required for cross-origin requests from Capacitor apps
     },
   };
 

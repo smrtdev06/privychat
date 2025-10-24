@@ -1,0 +1,95 @@
+onscript loading complete
+VM3:4770 Create CdvPurchase...
+622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/:1 Third-party cookie will be blocked. Learn more in the Issues tab.
+622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/:1 Third-party cookie will be blocked. Learn more in the Issues tab.
+client:536 WebSocket connection to 'wss://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/?token=bI9JAP6DP6L-' failed: Error during WebSocket handshake: Unexpected response code: 400
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) DOMException: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=bI9JAP6DP6L-' is invalid.
+    at setupWebSocket (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@vite/client:536:19)
+    at fallback (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@vite/client:509:16)
+    at WebSocket.<anonymous> (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@vite/client:555:7)
+VM3:2297 deviceready has not fired after 5 seconds.
+VM3:2290 Channel not fired: onDOMContentLoaded
+chunk-RPCDYKBN.js?v=01494d6c:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+VM3:348 native App.addListener (#40324684)
+api/user:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)
+@radix-ui_react-dialog.js?v=01494d6c:1398 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1398
+Show 1 more frame
+Show less
+@radix-ui_react-dialog.js?v=01494d6c:1412 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1412
+Show 1 more frame
+Show less
+api/csrf-token:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)
+chunk-RPCDYKBN.js?v=01494d6c:521 Warning: Cannot update a component (`Switch`) while rendering a different component (`AuthPage`). To locate the bad setState() call inside `AuthPage`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at AuthPage (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/src/pages/auth-page.tsx:46:53)
+    at Route (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=01494d6c:191:16)
+    at Switch (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=01494d6c:247:17)
+    at Router (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/src/App.tsx?v=ksNpHt_j-LiKt10qP7RIZ:37:3)
+    at Provider (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q2ULLL56.js?v=01494d6c:51:15)
+    at TooltipProvider (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=01494d6c:2248:5)
+    at AuthProvider (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=01494d6c:2805:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=01494d6c:521
+Show 1 more frame
+Show less
+@radix-ui_react-dialog.js?v=01494d6c:1398 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1398
+Show 1 more frame
+Show less
+@radix-ui_react-dialog.js?v=01494d6c:1412 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1412
+Show 1 more frame
+Show less
+@radix-ui_react-dialog.js?v=01494d6c:1398 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1398
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=01494d6c:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=01494d6c:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=01494d6c:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=01494d6c:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=01494d6c:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=01494d6c:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=01494d6c:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=01494d6c:19416
+commitRoot @ chunk-RPCDYKBN.js?v=01494d6c:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=01494d6c:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=01494d6c:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=01494d6c:18627
+Show 13 more frames
+Show less
+@radix-ui_react-dialog.js?v=01494d6c:1412 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ @radix-ui_react-dialog.js?v=01494d6c:1412
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=01494d6c:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=01494d6c:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=01494d6c:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=01494d6c:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=01494d6c:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=01494d6c:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=01494d6c:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=01494d6c:19416
+commitRoot @ chunk-RPCDYKBN.js?v=01494d6c:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=01494d6c:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=01494d6c:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=01494d6c:18627
+Show 13 more frames
+Show less

@@ -212,3 +212,6 @@ Preferred communication style: Simple, everyday language.
   - `SENDGRID_API_KEY`: SendGrid API key for email functionality
   - `SENDGRID_FROM_EMAIL`: Verified sender email address for SendGrid
 - **Error Handling**: Comprehensive error boundaries and user-friendly error messages
+- **CORS Support**: Configured for cross-origin requests from Capacitor mobile apps
+  - Session cookies use `sameSite: "none"` and `secure: true` for cross-origin compatibility
+  - CORS allows all origins with credentials support for development testing
