@@ -15,6 +15,8 @@ import ResetPasswordPage from "@/pages/reset-password";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { useDeepLinks } from "@/hooks/use-deep-links";
+import { Capacitor } from "@capacitor/core";
+import { CapacitorBridge } from "@/components/capacitor-bridge";
 
 function Router() {
   // Handle deep link URLs for promo code redemption
@@ -37,6 +39,16 @@ function Router() {
 }
 
 function App() {
+  // Check if running in native Capacitor environment
+  // If so, use the bridge to load remote app with plugin support
+  const isNative = Capacitor.isNativePlatform();
+  
+  if (isNative) {
+    console.log("🚀 Running in native Capacitor - using bridge mode");
+    return <CapacitorBridge />;
+  }
+  
+  console.log("🌐 Running in web browser - standard mode");
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

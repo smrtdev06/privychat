@@ -1,31 +1,21 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
-// REMOTE MODE: App loads from published Replit server
-// This means you only publish the mobile app ONCE to app stores
-// All frontend updates happen automatically through your published web app
+// HYBRID MODE: App loads locally to initialize Capacitor plugins,
+// then immediately redirects to remote Replit server for the actual app
+// This gives you:
+// ✅ Remote updates (no app store resubmission)
+// ✅ Native plugins work (in-app purchases, etc.)
 
-// DEV MODE: Using development URL for testing
-// Switch back to 'https://privycalc.com/' for production builds
-const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/';
+// Remote server URL - the actual app location
+export const REMOTE_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/';
 
 const config: CapacitorConfig = {
   appId: 'com.newhomepage.privychat',
   appName: 'Calculator+',
-  webDir: './dist/public', // Still needed for initial sync, but won't be used at runtime
+  webDir: './dist/public',
   
-  server: {
-    // Load from remote server instead of bundled files
-    url: PUBLISHED_APP_URL.startsWith('http') ? PUBLISHED_APP_URL : `https://${PUBLISHED_APP_URL}`,
-    androidScheme: 'https',
-    cleartext: false, // Require HTTPS for security
-    
-    // Allow navigation to your domains
-    allowNavigation: [
-      PUBLISHED_APP_URL,
-      '*.replit.dev',
-      '*.replit.app'
-    ]
-  },
+  // Load locally to enable native plugins
+  // The local app will redirect to REMOTE_APP_URL automatically
   
   plugins: {
     App: {
