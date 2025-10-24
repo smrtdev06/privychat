@@ -4,9 +4,9 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // This means you only publish the mobile app ONCE to app stores
 // All frontend updates happen automatically through your published web app
 
-// Your published Replit app URL (e.g., "yourapp.replit.app")
-// You can find this in the Publishing tool after you publish your app
-const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://privycalc.com/';
+// DEV MODE: Using development URL for testing
+// Switch back to 'https://privycalc.com/' for production builds
+const PUBLISHED_APP_URL = process.env.VITE_PUBLISHED_URL || 'https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/';
 
 const config: CapacitorConfig = {
   appId: 'com.newhomepage.privychat',
