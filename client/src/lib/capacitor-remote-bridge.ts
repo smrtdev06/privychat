@@ -23,6 +23,12 @@ class CapacitorRemoteBridge {
   }
 
   private handleMessage(event: MessageEvent) {
+    // Security: validate message origin
+    if (event.origin !== "capacitor://localhost" && !event.origin.startsWith("http://localhost") && !event.origin.startsWith("https://localhost")) {
+      console.warn("🚫 Blocked message from untrusted parent origin:", event.origin);
+      return;
+    }
+    
     const { type, payload, id } = event.data;
 
     // Handle callback-based responses

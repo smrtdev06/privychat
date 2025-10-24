@@ -20,8 +20,29 @@ export function CapacitorBridge() {
       
       // Setup message handler for remote app
       window.addEventListener("message", async (event) => {
-        // Security: verify origin
-        if (!event.origin.includes("replit.dev") && !event.origin.includes("replit.app")) {
+        // Security: strict origin validation
+        const allowedOrigins = [
+          "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev",
+          "https://privycalc.com",
+        ];
+        
+        let isAllowed = false;
+        try {
+          const eventOriginUrl = new URL(event.origin);
+          for (const allowed of allowedOrigins) {
+            const allowedUrl = new URL(allowed);
+            if (eventOriginUrl.origin === allowedUrl.origin) {
+              isAllowed = true;
+              break;
+            }
+          }
+        } catch (e) {
+          console.error("Invalid origin:", event.origin);
+          return;
+        }
+        
+        if (!isAllowed) {
+          console.warn("🚫 Blocked message from untrusted origin:", event.origin);
           return;
         }
 
@@ -146,7 +167,8 @@ export function CapacitorBridge() {
 
   const sendToRemote = (data: any) => {
     if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(data, "*");
+      // Security: use specific target origin instead of wildcard
+      iframeRef.current.contentWindow.postMessage(data, REMOTE_APP_URL);
     }
   };
 
