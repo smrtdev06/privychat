@@ -38,19 +38,36 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   }, []);
 
   const initializeStore = async (platformType: "ios" | "android") => {
+    console.log("=== MOBILE SUBSCRIPTION DEBUG START ===");
+    console.log("Platform detected:", platformType);
+    console.log("CdvPurchase available:", typeof CdvPurchase !== "undefined");
+    
     if (typeof CdvPurchase === "undefined") {
-      console.log("In-app purchase plugin not available");
+      console.error("❌ CdvPurchase plugin not available!");
+      console.log("Make sure you ran: npx cap sync");
+      toast({
+        title: "Plugin Not Found",
+        description: "In-app purchase plugin not loaded. Try reinstalling the app.",
+        variant: "destructive",
+      });
       return;
     }
 
     try {
-      const { store, ProductType, Platform } = CdvPurchase;
+      const { store, ProductType, Platform, LogLevel } = CdvPurchase;
+      
+      // Enable verbose logging for debugging
+      store.verbosity = LogLevel.DEBUG;
+      console.log("Store verbosity set to DEBUG");
 
       console.log(`Initializing ${platformType} store...`);
+      console.log("Available ProductType:", ProductType);
+      console.log("Available Platform:", Platform);
 
       // Register products based on platform
       if (platformType === "android") {
-        console.log("Registering Google Play product: premium_yearly");
+        console.log("🤖 Registering Google Play product: premium_yearly");
+        console.log("Platform.GOOGLE_PLAY value:", Platform.GOOGLE_PLAY);
         store.register([
           {
             id: "premium_yearly",
@@ -58,8 +75,10 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             platform: Platform.GOOGLE_PLAY,
           },
         ]);
+        console.log("✅ Product registered successfully");
       } else if (platformType === "ios") {
-        console.log("Registering App Store product: premium_yearly");
+        console.log("🍎 Registering App Store product: premium_yearly");
+        console.log("Platform.APPLE_APPSTORE value:", Platform.APPLE_APPSTORE);
         store.register([
           {
             id: "premium_yearly",
@@ -67,32 +86,51 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             platform: Platform.APPLE_APPSTORE,
           },
         ]);
+        console.log("✅ Product registered successfully");
       }
 
       // Set up event handlers
       store.when().productUpdated((product: any) => {
-        console.log("Product updated:", product);
-        console.log("Can purchase:", product.canPurchase);
-        console.log("Product state:", product.state);
+        console.log("📦 Product updated:", {
+          id: product.id,
+          title: product.title,
+          description: product.description,
+          canPurchase: product.canPurchase,
+          state: product.state,
+          pricing: product.pricing,
+          offers: product.offers,
+          platform: product.platform,
+        });
         
         if (product.canPurchase) {
-          console.log("Adding product to list:", product.id);
+          console.log("✅ Product can be purchased! Adding to list:", product.id);
           setProducts((prev) => {
             const existing = prev.find((p) => p.id === product.id);
-            if (existing) return prev;
+            if (existing) {
+              console.log("Product already in list, skipping");
+              return prev;
+            }
             
+            console.log("Adding new product to list");
             return [
               ...prev,
               {
                 id: product.id,
                 title: product.title || product.id,
                 description: product.description || "",
-                price: product.pricing?.price || "$29/year",
+                price: product.pricing?.price || "$29.99/year",
                 platform: platformType,
               },
             ];
           });
+        } else {
+          console.warn("⚠️ Product cannot be purchased. State:", product.state);
         }
+      });
+      
+      // Add error handler
+      store.when().error((error: any) => {
+        console.error("❌ Store error:", error);
       });
 
       store.when().approved(async (transaction: any) => {
@@ -143,25 +181,58 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       });
 
       // Initialize the store
-      console.log("Calling store.initialize()...");
-      await store.initialize();
-      console.log("Store initialized successfully!");
+      console.log("🚀 Calling store.initialize()...");
+      const initResult = await store.initialize();
+      console.log("✅ Store initialized successfully!");
+      console.log("Init result:", initResult);
+      console.log("Store ready:", store.ready);
       setStoreReady(true);
 
-      // Check what products we got
+      // Check what products we got immediately
+      const allProducts = store.products;
+      console.log("📊 Immediate products count:", allProducts.length);
+      console.log("📊 All products:", allProducts);
+      
+      // Wait and check again
       setTimeout(() => {
-        const allProducts = store.products;
-        console.log("All products after initialization:", allProducts);
-        if (allProducts.length === 0) {
-          console.warn("No products found. Make sure you've created 'premium_yearly' in Google Play Console/App Store Connect");
+        const productsAfterDelay = store.products;
+        console.log("📊 Products after 2s:", productsAfterDelay.length);
+        console.log("📊 Product details:", productsAfterDelay);
+        
+        if (productsAfterDelay.length === 0) {
+          console.warn("⚠️ NO PRODUCTS FOUND!");
+          console.warn("Possible reasons:");
+          console.warn("1. Product not created in Google Play Console");
+          console.warn("2. Product ID mismatch (must be exactly 'premium_yearly')");
+          console.warn("3. App not properly signed/configured for Google Play");
+          console.warn("4. Product still propagating (takes 1-2 hours after creation)");
+          console.warn("5. App package name mismatch in Google Play Console");
+          
+          toast({
+            title: "No Products Found",
+            description: "Check console for debugging info. Product may still be propagating.",
+            variant: "destructive",
+          });
+        } else {
+          console.log("✅ Products loaded successfully!");
+          productsAfterDelay.forEach((p: any) => {
+            console.log(`  - ${p.id}: ${p.title} (${p.state})`);
+          });
         }
       }, 2000);
 
-    } catch (error) {
-      console.error("Error initializing store:", error);
+      console.log("=== MOBILE SUBSCRIPTION DEBUG END ===");
+
+    } catch (error: any) {
+      console.error("❌ Error initializing store:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
       toast({
         title: "Store Error",
-        description: "Failed to initialize app store",
+        description: error.message || "Failed to initialize app store",
         variant: "destructive",
       });
     }
