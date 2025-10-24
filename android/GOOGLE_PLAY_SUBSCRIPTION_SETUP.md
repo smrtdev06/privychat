@@ -1,19 +1,18 @@
 # 📱 Google Play Subscription Setup Guide for PrivyCalc
 
-This guide will walk you through creating the subscription products needed for your app.
+This guide will walk you through creating the yearly subscription product for your app.
 
 ---
 
-## 📋 **Required Product IDs**
+## 📋 **Required Product ID**
 
-Your app is configured to use these exact product IDs:
+Your app is configured to use this exact product ID:
 
-| Product ID | Type | Recommended Duration | Recommended Price |
-|------------|------|---------------------|-------------------|
-| `premium_monthly` | Auto-renewing subscription | 1 month | $2.99 - $4.99/month |
-| `premium_yearly` | Auto-renewing subscription | 1 year | $19.99 - $29.99/year |
+| Product ID | Type | Duration | Price |
+|------------|------|----------|-------|
+| `premium_yearly` | Auto-renewing subscription | 1 year | $29.99/year |
 
-⚠️ **IMPORTANT:** Use these exact IDs - they're hardcoded in your app!
+⚠️ **IMPORTANT:** Use this exact ID - it's hardcoded in your app and cannot be changed!
 
 ---
 
@@ -48,7 +47,7 @@ You should see a page that says "No subscriptions created yet"
 
 ---
 
-### **Step 3: Create Monthly Subscription**
+### **Step 3: Create Yearly Subscription**
 
 #### 3.1 - Create Subscription Product
 
@@ -57,19 +56,19 @@ You should see a page that says "No subscriptions created yet"
 
    **Product ID:**
    ```
-   premium_monthly
+   premium_yearly
    ```
    ⚠️ **CRITICAL:** Use exactly this ID - it cannot be changed later!
 
    **Name:**
    ```
-   Premium Monthly
+   Premium Yearly
    ```
    This is what users see in emails and the subscription center.
 
    **Description (Optional):**
    ```
-   Unlimited messaging, media sharing, and no ads
+   Unlimited secure messaging for one year - hidden in plain sight
    ```
 
 3. Click **"Create"**
@@ -83,7 +82,7 @@ Now you need to create a "base plan" (the actual subscription offering):
 
    **Base plan ID:**
    ```
-   monthly-autorenewing
+   yearly-autorenewing
    ```
 
    **Type:**
@@ -93,7 +92,7 @@ Now you need to create a "base plan" (the actual subscription offering):
 
    **Billing period:**
    ```
-   1 Month
+   1 Year
    ```
 
    **Grace period (Optional but Recommended):**
@@ -104,7 +103,7 @@ Now you need to create a "base plan" (the actual subscription offering):
 
    **Tags (Optional):**
    ```
-   premium, monthly
+   premium, yearly
    ```
 
 3. Click **"Continue"**
@@ -116,13 +115,18 @@ Now you need to create a "base plan" (the actual subscription offering):
    - **Option A:** Set a default price for all countries
    - **Option B:** Set custom prices per country
 
-   **Recommended Default Price:**
+   **Price:**
    ```
-   $2.99 USD (or your preferred price)
+   $29.99 USD
    ```
 
 3. Google will auto-convert to other currencies
 4. Click **"Apply prices"**
+
+**Pricing Breakdown:**
+- $29.99 per year = $2.50/month
+- Much cheaper than typical messaging apps ($10-15/month)
+- Excellent value for unlimited secure messaging
 
 #### 3.4 - Add Free Trial (Optional but Recommended)
 
@@ -159,7 +163,7 @@ Now you need to create a "base plan" (the actual subscription offering):
    **Phase 2 - Full Price:**
    - Type: `Regular price`
    - Duration: Automatically set to subscription duration
-   - Price: Uses base plan price ($2.99)
+   - Price: Uses base plan price ($29.99)
 
 4. Click **"Save"** then **"Activate"**
 
@@ -167,104 +171,24 @@ Now you need to create a "base plan" (the actual subscription offering):
 
 1. Review all settings
 2. Click **"Activate"** to make the base plan live
-3. ✅ Monthly subscription is now ready!
-
----
-
-### **Step 4: Create Yearly Subscription**
-
-Repeat the same process for the yearly subscription:
-
-#### 4.1 - Create Subscription Product
-
-1. Click **"Create subscription"** button
-2. Fill in:
-
-   **Product ID:**
-   ```
-   premium_yearly
-   ```
-
-   **Name:**
-   ```
-   Premium Yearly
-   ```
-
-   **Description:**
-   ```
-   Best value - Unlimited messaging for a full year
-   ```
-
-3. Click **"Create"**
-
-#### 4.2 - Add Base Plan
-
-1. Click **"Add base plan"**
-2. Fill in:
-
-   **Base plan ID:**
-   ```
-   yearly-autorenewing
-   ```
-
-   **Type:**
-   ```
-   Auto-renewing ✓
-   ```
-
-   **Billing period:**
-   ```
-   1 Year
-   ```
-
-   **Grace period:**
-   ```
-   3 days
-   ```
-
-3. Click **"Continue"**
-
-#### 4.3 - Set Pricing
-
-**Recommended Yearly Price:**
-```
-$19.99 - $29.99 USD
-```
-
-**Pricing Strategy:**
-- Monthly: $2.99/month = $35.88/year
-- Yearly: $19.99/year = **44% savings!**
-- Or: $29.99/year = **16% savings**
-
-💡 **Tip:** Price yearly at 8-10 months worth of monthly cost to incentivize yearly purchases.
-
-#### 4.4 - Add Free Trial (Optional)
-
-Same as monthly - offer 7-day free trial for new users.
-
-#### 4.5 - Activate
-
-Click **"Activate"** to make the yearly subscription live.
+3. ✅ Yearly subscription is now ready!
 
 ---
 
 ## ✅ **Verify Your Setup**
 
-After creating both subscriptions, you should see:
+After creating the subscription, you should see:
 
 ```
-Subscriptions (2)
-├── premium_monthly
-│   └── Base plan: monthly-autorenewing ($2.99/month)
-│       └── Offer: free-trial-7days (7-day free trial)
+Subscriptions (1)
 └── premium_yearly
-    └── Base plan: yearly-autorenewing ($19.99/year)
+    └── Base plan: yearly-autorenewing ($29.99/year)
         └── Offer: free-trial-7days (7-day free trial)
 ```
 
 ---
 
-## 🧪 **Test Your Subscriptions**
+## 🧪 **Test Your Subscription**
 
 ### Enable License Testing
 
@@ -278,8 +202,7 @@ Subscriptions (2)
 2. Sign in with a test account
 3. Navigate to Settings → Mobile Subscription
 4. You should see:
-   - ✅ "Premium Monthly - $2.99/month"
-   - ✅ "Premium Yearly - $19.99/year"
+   - ✅ "Premium Yearly - $29.99/year"
 5. Click "Subscribe" to test the purchase flow
 
 ---
@@ -315,23 +238,28 @@ Here you can:
 
 ---
 
-## 💰 **Pricing Recommendations**
+## 💰 **Premium Features Included**
 
-Based on your freemium model (1 message/day free):
+What users get for $29.99/year:
 
-### Conservative Pricing:
-- Monthly: $2.99
-- Yearly: $19.99 (44% savings)
+✅ **Unlimited Messaging**
+   - No daily message limits (free users get 1 message/day)
+   
+✅ **Media Sharing**
+   - Send images, videos, voice messages
+   
+✅ **Stealth Mode**
+   - Calculator disguise with PIN unlock
+   - No visible messaging app on phone
+   
+✅ **Priority Support**
+   - Faster response to issues
+   
+✅ **Ad-Free Experience**
+   - No advertisements
 
-### Competitive Pricing:
-- Monthly: $4.99
-- Yearly: $29.99 (50% savings)
-
-### Premium Pricing:
-- Monthly: $9.99
-- Yearly: $59.99 (50% savings)
-
-💡 **Tip:** Start with conservative pricing, then increase based on user feedback and retention metrics.
+✅ **Future Features**
+   - Access to new premium features as they're released
 
 ---
 
@@ -340,22 +268,51 @@ Based on your freemium model (1 message/day free):
 ### "No subscriptions found" in app
 
 **Causes:**
-1. Product IDs don't match exactly (`premium_monthly` vs `premium_monthly_sub`)
+1. Product ID doesn't match exactly (`premium_yearly`)
 2. Base plan not activated
 3. App not published to at least Internal Testing
 4. License testing not configured for test account
 
 **Fix:**
-1. Double-check product IDs are exactly: `premium_monthly` and `premium_yearly`
-2. Ensure base plans are **Activated** (not Draft)
+1. Double-check product ID is exactly: `premium_yearly`
+2. Ensure base plan is **Activated** (not Draft)
 3. Upload APK to Internal Testing and wait 1-2 hours for propagation
 4. Add test email to License Testing
 
-### Products show as "pending" in app
+### Product shows as "pending" in app
 
 **Cause:** Google Play takes 1-2 hours to propagate new products
 
-**Fix:** Wait 1-2 hours after creating/activating subscriptions
+**Fix:** Wait 1-2 hours after creating/activating subscription
+
+### Can't find "Subscriptions" menu
+
+**Cause:** App not uploaded or Merchant Account not set up
+
+**Fix:**
+1. Upload at least one APK/AAB to Internal Testing
+2. Set up Google Merchant Account (in Play Console settings)
+
+---
+
+## 💡 **Why $29.99/year?**
+
+**Value Proposition:**
+- Equivalent to $2.50/month
+- Less than one coffee per month
+- Cheaper than any streaming service
+- Much less than competitors ($10-15/month)
+
+**Conversion Strategy:**
+- Free users experience the 1 message/day limit
+- They see the value of unlimited messaging
+- $29.99 feels reasonable for a full year
+- 7-day free trial lets them try before buying
+
+**Revenue Projection:**
+- 100 subscribers = $2,999/year
+- 500 subscribers = $14,995/year
+- 1,000 subscribers = $29,990/year
 
 ---
 
@@ -369,15 +326,17 @@ Based on your freemium model (1 message/day free):
 
 ## ✨ **Next Steps After Setup**
 
-1. ✅ Create both subscription products
-2. ✅ Upload signed APK to Internal Testing
-3. ✅ Add yourself as a license tester
-4. ✅ Install app and test subscription flow
-5. ✅ Monitor the browser console for detailed purchase logs
-6. ✅ Once working, promote to production!
+1. ✅ Create premium_yearly subscription
+2. ✅ Set price to $29.99/year
+3. ✅ (Optional) Add 7-day free trial
+4. ✅ Upload signed APK to Internal Testing
+5. ✅ Add yourself as a license tester
+6. ✅ Install app and test subscription flow
+7. ✅ Monitor the browser console for detailed purchase logs
+8. ✅ Once working, promote to production!
 
 ---
 
-**Your subscriptions will appear in the app within 1-2 hours of activation!** 🎉
+**Your subscription will appear in the app within 1-2 hours of activation!** 🎉
 
 Good luck with your launch! 🚀

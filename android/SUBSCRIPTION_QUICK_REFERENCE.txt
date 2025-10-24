@@ -2,25 +2,17 @@
 ║              PRIVYCALC GOOGLE PLAY SUBSCRIPTION QUICK REFERENCE          ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 
-📱 REQUIRED PRODUCT IDS
+📱 REQUIRED PRODUCT ID
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-⚠️  USE THESE EXACT IDs - They're hardcoded in your app!
+⚠️  USE THIS EXACT ID - It's hardcoded in your app!
 
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ Product ID #1:  premium_monthly                                         │
-│ Name:           Premium Monthly                                         │
-│ Type:           Auto-renewing subscription                              │
-│ Duration:       1 month                                                 │
-│ Suggested:      $2.99 - $4.99/month                                     │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│ Product ID #2:  premium_yearly                                          │
+│ Product ID:     premium_yearly                                          │
 │ Name:           Premium Yearly                                          │
 │ Type:           Auto-renewing subscription                              │
 │ Duration:       1 year                                                  │
-│ Suggested:      $19.99 - $29.99/year                                    │
+│ Price:          $29.99/year                                             │
 └─────────────────────────────────────────────────────────────────────────┘
 
 📍 NAVIGATION PATH
@@ -33,27 +25,25 @@ Google Play Console
         → Subscriptions 
           → Create subscription
 
-⚡ QUICK SETUP (5 MINUTES)
+⚡ QUICK SETUP (3 MINUTES)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-FOR EACH SUBSCRIPTION (premium_monthly & premium_yearly):
 
 1. CREATE SUBSCRIPTION
    ├─ Click "Create subscription"
-   ├─ Product ID: premium_monthly (or premium_yearly)
-   ├─ Name: Premium Monthly (or Premium Yearly)
+   ├─ Product ID: premium_yearly
+   ├─ Name: Premium Yearly
    └─ Click "Create"
 
 2. ADD BASE PLAN
    ├─ Click "Add base plan"
-   ├─ Base plan ID: monthly-autorenewing (or yearly-autorenewing)
+   ├─ Base plan ID: yearly-autorenewing
    ├─ Type: Auto-renewing ✓
-   ├─ Billing period: 1 Month (or 1 Year)
+   ├─ Billing period: 1 Year
    └─ Click "Continue"
 
 3. SET PRICING
    ├─ Click "Set prices"
-   ├─ Enter price: $2.99 (monthly) or $19.99 (yearly)
+   ├─ Enter price: $29.99 USD
    └─ Click "Apply prices"
 
 4. ACTIVATE
@@ -67,21 +57,22 @@ After creating base plan:
    ├─ Offer ID: free-trial-7days
    ├─ Eligibility: New customer acquisition ✓
    ├─ Add Phase 1: Free trial for 7 days
-   ├─ Add Phase 2: Regular price (automatic)
+   ├─ Add Phase 2: Regular price ($29.99/year automatic)
    └─ Click "Save" → "Activate"
 
-💰 PRICING RECOMMENDATIONS
+💰 PRICING DETAILS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-┌──────────────────┬─────────────┬──────────────┬────────────────┐
-│ Tier             │ Monthly     │ Yearly       │ Savings        │
-├──────────────────┼─────────────┼──────────────┼────────────────┤
-│ Conservative     │ $2.99       │ $19.99       │ 44% off        │
-│ Competitive      │ $4.99       │ $29.99       │ 50% off        │
-│ Premium          │ $9.99       │ $59.99       │ 50% off        │
-└──────────────────┴─────────────┴──────────────┴────────────────┘
+Price:           $29.99 per year
+Cost per month:  $2.50/month (83% savings vs typical $14.99/month apps)
+Benefits:        • Unlimited messaging
+                 • Send images, videos, voice messages
+                 • Priority support
+                 • No ads
+                 • Stealth calculator interface
 
-💡 Tip: Price yearly at 8-10 months worth of monthly to incentivize annual.
+💡 Pricing Strategy: At $29.99/year, users get premium features for less 
+   than the cost of one streaming service - excellent value proposition!
 
 🧪 TESTING SETUP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -90,44 +81,42 @@ Before testing:
    1. Go to: Setup → License testing
    2. Add your email address (comma-separated for multiple)
    3. Upload APK to Internal Testing track
-   4. Wait 1-2 hours for products to propagate
+   4. Wait 1-2 hours for product to propagate
    5. Install app on device with test account
    6. Navigate to Settings → Mobile Subscription
-   7. Products should appear! ✓
+   7. Product should appear! ✓
 
 ⚠️  COMMON ISSUES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+❌ "Loading subscription options..." (stuck)
+   → Product not created in Google Play Console yet
+   → Create premium_yearly subscription
+
 ❌ "No subscriptions found"
-   → Product ID typo (must be EXACT)
+   → Product ID typo (must be exactly: premium_yearly)
    → Base plan not activated
-   → App not uploaded to Internal Testing
    → Wait 1-2 hours for propagation
 
 ❌ Products show "pending"
    → Wait 1-2 hours after creating/activating
 
 ❌ Can't find "Subscriptions" menu
-   → Need to upload APK first
+   → Need to upload APK to Internal Testing first
    → Need Google Merchant Account setup
 
 ✅ VERIFICATION CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-□ Created subscription: premium_monthly
-  □ Base plan activated
-  □ Pricing set
-  □ (Optional) Free trial offer added
-
 □ Created subscription: premium_yearly
   □ Base plan activated
-  □ Pricing set
+  □ Pricing set to $29.99/year
   □ (Optional) Free trial offer added
 
 □ License testing configured
 □ APK uploaded to Internal Testing
 □ Test account signed in
-□ Products appear in app
+□ Product appears in app
 
 📚 FULL GUIDE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -141,5 +130,5 @@ Google Play Console: https://play.google.com/console
 Help Center: https://support.google.com/googleplay/android-developer
 
 ╔══════════════════════════════════════════════════════════════════════════╗
-║    REMEMBER: Use exact Product IDs - premium_monthly & premium_yearly    ║
+║      REMEMBER: Use exact Product ID - premium_yearly at $29.99/year     ║
 ╚══════════════════════════════════════════════════════════════════════════╝

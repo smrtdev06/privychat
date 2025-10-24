@@ -50,13 +50,8 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
       // Register products based on platform
       if (platformType === "android") {
-        console.log("Registering Google Play products: premium_monthly, premium_yearly");
+        console.log("Registering Google Play product: premium_yearly");
         store.register([
-          {
-            id: "premium_monthly",
-            type: ProductType.PAID_SUBSCRIPTION,
-            platform: Platform.GOOGLE_PLAY,
-          },
           {
             id: "premium_yearly",
             type: ProductType.PAID_SUBSCRIPTION,
@@ -64,13 +59,8 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           },
         ]);
       } else if (platformType === "ios") {
-        console.log("Registering App Store products: premium_monthly, premium_yearly");
+        console.log("Registering App Store product: premium_yearly");
         store.register([
-          {
-            id: "premium_monthly",
-            type: ProductType.PAID_SUBSCRIPTION,
-            platform: Platform.APPLE_APPSTORE,
-          },
           {
             id: "premium_yearly",
             type: ProductType.PAID_SUBSCRIPTION,
@@ -163,7 +153,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         const allProducts = store.products;
         console.log("All products after initialization:", allProducts);
         if (allProducts.length === 0) {
-          console.warn("No products found. Make sure you've created 'premium_monthly' and 'premium_yearly' in Google Play Console/App Store Connect");
+          console.warn("No products found. Make sure you've created 'premium_yearly' in Google Play Console/App Store Connect");
         }
       }, 2000);
 
@@ -254,11 +244,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             </div>
             <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
               <p className="text-xs text-yellow-800">
-                <strong>Dev Mode:</strong> Products must be created in Google Play Console first:
+                <strong>Dev Mode:</strong> Product must be created in Google Play Console first:
               </p>
               <ul className="text-xs text-yellow-700 mt-2 space-y-1 ml-4">
-                <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium_monthly</code></li>
                 <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium_yearly</code></li>
+                <li>• Price: <code className="bg-yellow-100 px-1 rounded">$29.99/year</code></li>
               </ul>
               <p className="text-xs text-yellow-700 mt-2">
                 Check the browser console for detailed logs.
