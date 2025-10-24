@@ -46,8 +46,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     try {
       const { store, ProductType, Platform } = CdvPurchase;
 
+      console.log(`Initializing ${platformType} store...`);
+
       // Register products based on platform
       if (platformType === "android") {
+        console.log("Registering Google Play products: premium_monthly, premium_yearly");
         store.register([
           {
             id: "premium_monthly",
@@ -61,6 +64,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           },
         ]);
       } else if (platformType === "ios") {
+        console.log("Registering App Store products: premium_monthly, premium_yearly");
         store.register([
           {
             id: "premium_monthly",
@@ -78,7 +82,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       // Set up event handlers
       store.when().productUpdated((product: any) => {
         console.log("Product updated:", product);
+        console.log("Can purchase:", product.canPurchase);
+        console.log("Product state:", product.state);
+        
         if (product.canPurchase) {
+          console.log("Adding product to list:", product.id);
           setProducts((prev) => {
             const existing = prev.find((p) => p.id === product.id);
             if (existing) return prev;
@@ -145,8 +153,19 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       });
 
       // Initialize the store
+      console.log("Calling store.initialize()...");
       await store.initialize();
+      console.log("Store initialized successfully!");
       setStoreReady(true);
+
+      // Check what products we got
+      setTimeout(() => {
+        const allProducts = store.products;
+        console.log("All products after initialization:", allProducts);
+        if (allProducts.length === 0) {
+          console.warn("No products found. Make sure you've created 'premium_monthly' and 'premium_yearly' in Google Play Console/App Store Connect");
+        }
+      }, 2000);
 
     } catch (error) {
       console.error("Error initializing store:", error);
@@ -228,7 +247,24 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       </CardHeader>
       <CardContent className="space-y-4">
         {products.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Loading subscription options...</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mr-2" />
+              <p className="text-sm text-muted-foreground">Loading subscription options...</p>
+            </div>
+            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+              <p className="text-xs text-yellow-800">
+                <strong>Dev Mode:</strong> Products must be created in Google Play Console first:
+              </p>
+              <ul className="text-xs text-yellow-700 mt-2 space-y-1 ml-4">
+                <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium_monthly</code></li>
+                <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium_yearly</code></li>
+              </ul>
+              <p className="text-xs text-yellow-700 mt-2">
+                Check the browser console for detailed logs.
+              </p>
+            </div>
+          </div>
         ) : (
           products.map((product) => (
             <div
