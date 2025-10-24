@@ -25,34 +25,24 @@ export function useWebSocket(
     let wsUrl: string;
     
     if (isCapacitor) {
-      // In Capacitor, the app loads from a Capacitor URL but API requests are proxied 
-      // to the server configured in capacitor.config.ts. We need to build the WebSocket
-      // URL using the same server that serves the API.
-      // Since we can't access the Capacitor config from here, we'll get it from the document's base URL
-      // or use a meta tag that can be set during build
+      // In Capacitor bridge mode, use the production server URL
+      const serverUrl = import.meta.env.VITE_SERVER_URL || "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev";
       
-      const serverUrlMeta = document.querySelector<HTMLMetaElement>('meta[name="server-url"]');
-      const serverUrl = serverUrlMeta?.content && serverUrlMeta.content !== '%VITE_SERVER_URL%' 
-        ? serverUrlMeta.content 
-        : window.location.origin.replace('capacitor://', 'https://');
+      // Respect the original protocol: http→ws, https→wss
+      let wsProtocol = 'wss';
+      let cleanUrl = serverUrl;
       
-      // Respect the original protocol: http→ws, https→wss, or use as-is if already ws/wss
       if (serverUrl.startsWith('ws://') || serverUrl.startsWith('wss://')) {
         // Already has WebSocket protocol
         wsUrl = `${serverUrl}/ws?userId=${userId}&conversationId=${conversationId}`;
       } else {
-        let wsProtocol = 'wss';
-        let cleanUrl = serverUrl;
-        
+        // Convert HTTP to WebSocket protocol
         if (serverUrl.startsWith('http://')) {
           wsProtocol = 'ws';
           cleanUrl = serverUrl.replace(/^http:\/\//, '');
         } else if (serverUrl.startsWith('https://')) {
           wsProtocol = 'wss';
           cleanUrl = serverUrl.replace(/^https:\/\//, '');
-        } else {
-          // No protocol, remove any remaining protocol prefixes and default to wss
-          cleanUrl = serverUrl.replace(/^(capacitor|ionic):\/\//, '');
         }
         
         wsUrl = `${wsProtocol}://${cleanUrl}/ws?userId=${userId}&conversationId=${conversationId}`;
