@@ -5,6 +5,7 @@ import { Smartphone, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Capacitor } from "@capacitor/core";
+import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
 
 // Declare CdvPurchase type for TypeScript
 declare const CdvPurchase: any;
@@ -33,7 +34,15 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     const currentPlatform = Capacitor.getPlatform();
     if (currentPlatform === "ios" || currentPlatform === "android") {
       setPlatform(currentPlatform);
-      initializeStore(currentPlatform);
+      
+      // Check if we're in remote bridge mode
+      if (capacitorBridge.isRemoteMode()) {
+        console.log("🌉 Using remote bridge mode");
+        initializeStoreRemote(currentPlatform);
+      } else {
+        console.log("🏠 Using direct mode");
+        initializeStore(currentPlatform);
+      }
     }
   }, []);
 
@@ -238,29 +247,125 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     }
   };
 
-  const handlePurchase = async (productId: string) => {
-    if (typeof CdvPurchase === "undefined") {
+  const initializeStoreRemote = async (platformType: "ios" | "android") => {
+    console.log("=== REMOTE BRIDGE MODE START ===");
+    console.log("Platform detected:", platformType);
+
+    try {
+      // Setup event listeners for bridge messages
+      capacitorBridge.on("PRODUCT_UPDATED", (product: any) => {
+        console.log("📦 Product updated via bridge:", product);
+        
+        if (product.canPurchase) {
+          console.log("✅ Product can be purchased! Adding to list:", product.id);
+          setProducts((prev) => {
+            const existing = prev.find((p) => p.id === product.id);
+            if (existing) {
+              console.log("Product already in list, skipping");
+              return prev;
+            }
+            
+            console.log("Adding new product to list");
+            return [...prev, product];
+          });
+        } else {
+          console.warn("⚠️ Product cannot be purchased. State:", product.state);
+        }
+      });
+
+      capacitorBridge.on("STORE_READY", (payload: any) => {
+        console.log("✅ Store ready via bridge!");
+        setStoreReady(true);
+      });
+
+      capacitorBridge.on("TRANSACTION_APPROVED", async (transaction: any) => {
+        console.log("✅ Transaction approved via bridge:", transaction);
+        
+        try {
+          // Validate purchase with backend
+          if (platformType === "android") {
+            await apiRequest("POST", "/api/mobile-subscription/validate-android", {
+              packageName: "com.newhomepage.privychat",
+              productId: transaction.products[0].id,
+              purchaseToken: transaction.nativePurchase.purchaseToken,
+            });
+          } else if (platformType === "ios") {
+            await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
+              receiptData: transaction.nativePurchase.appStoreReceipt,
+              transactionId: transaction.nativePurchase.transactionId,
+              productId: transaction.products[0].id,
+            });
+          }
+
+          // Refresh user data
+          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          
+          if (onSubscriptionUpdate) {
+            onSubscriptionUpdate();
+          }
+
+          toast({
+            title: "Subscription Activated",
+            description: "Your premium subscription is now active!",
+          });
+        } catch (error: any) {
+          console.error("Error validating purchase:", error);
+          toast({
+            title: "Validation Error",
+            description: error.message || "Failed to validate purchase",
+            variant: "destructive",
+          });
+        }
+      });
+
+      capacitorBridge.on("STORE_ERROR", (error: any) => {
+        console.error("❌ Store error via bridge:", error);
+        toast({
+          title: "Store Error",
+          description: error.message || "Failed to initialize app store",
+          variant: "destructive",
+        });
+      });
+
+      // Initialize the store via bridge
+      console.log("🚀 Initializing store via bridge...");
+      await capacitorBridge.initStore(platformType);
+      console.log("✅ Bridge initialization complete!");
+
+      console.log("=== REMOTE BRIDGE MODE END ===");
+    } catch (error: any) {
+      console.error("❌ Error initializing remote bridge:", error);
       toast({
-        title: "Not Available",
-        description: "In-app purchases not available on this platform",
+        title: "Bridge Error",
+        description: error.message || "Failed to initialize bridge",
         variant: "destructive",
       });
-      return;
     }
+  };
 
+  const handlePurchase = async (productId: string) => {
     setLoading(true);
     try {
-      const { store } = CdvPurchase;
-      const product = store.get(productId);
-      
-      if (!product) {
-        throw new Error("Product not found");
+      if (capacitorBridge.isRemoteMode()) {
+        // Use bridge for remote mode
+        console.log("🌉 Purchasing via bridge:", productId);
+        await capacitorBridge.purchaseProduct(productId);
+      } else {
+        // Direct mode
+        if (typeof CdvPurchase === "undefined") {
+          throw new Error("In-app purchases not available");
+        }
+
+        const { store } = CdvPurchase;
+        const product = store.get(productId);
+        
+        if (!product) {
+          throw new Error("Product not found");
+        }
+
+        const offer = product.getOffer();
+        await offer.order();
       }
-
-      // Initiate purchase
-      const offer = product.getOffer();
-      await offer.order();
-
     } catch (error: any) {
       console.error("Purchase error:", error);
       toast({
