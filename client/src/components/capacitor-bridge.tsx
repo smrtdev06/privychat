@@ -108,7 +108,37 @@ export function CapacitorBridge() {
                 });
               });
 
+              console.log("🏪 Calling store.initialize()...");
               await store.initialize();
+              console.log("✅ Store initialized!");
+              console.log("📊 All products registered:", store.products);
+              console.log("📊 Product count:", store.products.length);
+              
+              // Log each product in detail
+              store.products.forEach((p: any) => {
+                console.log(`  📦 Product: ${p.id}`);
+                console.log(`     - Title: ${p.title}`);
+                console.log(`     - State: ${p.state}`);
+                console.log(`     - Can Purchase: ${p.canPurchase}`);
+                console.log(`     - Pricing: ${JSON.stringify(p.pricing)}`);
+              });
+              
+              // Wait a bit and check again
+              setTimeout(() => {
+                console.log("📊 Products after 3s delay:", store.products.length);
+                store.products.forEach((p: any) => {
+                  console.log(`  📦 ${p.id}: ${p.state} (canPurchase: ${p.canPurchase})`);
+                });
+                
+                if (store.products.length === 0) {
+                  console.error("⚠️ NO PRODUCTS FOUND!");
+                  console.error("Troubleshooting:");
+                  console.error("1. Is license testing Gmail added to Play Console?");
+                  console.error("2. Is app downloaded from Internal Testing link?");
+                  console.error("3. Did you wait 15-30 min after first upload?");
+                  console.error("4. Check: adb logcat | grep -i billing");
+                }
+              }, 3000);
               
               sendToRemote({
                 type: "STORE_READY",
