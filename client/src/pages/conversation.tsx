@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ export default function Conversation() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const [messageText, setMessageText] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isSubmittingRef = useRef(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -45,6 +47,11 @@ export default function Conversation() {
   // Setup WebSocket connection
   useWebSocket(id, user?.id, handleWebSocketMessage);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   useSwipeHandler((direction) => {
     if (direction === "right" || direction === "left") {
       setLocation("/");
@@ -64,9 +71,12 @@ export default function Conversation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/conversations", id, "messages"] });
       queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
-      setMessageText("");
     },
-    onError: (error: any) => {
+    onError: (error: any, variables) => {
+      // Restore the message text on error so user can retry
+      if (variables.content) {
+        setMessageText(variables.content);
+      }
       toast({
         title: "Failed to send message",
         description: error.message,
@@ -76,11 +86,23 @@ export default function Conversation() {
   });
 
   const handleSendMessage = () => {
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || isSubmittingRef.current) return;
+    
+    // Prevent duplicate submissions
+    isSubmittingRef.current = true;
+    const messageToSend = messageText.trim();
+    
+    // Clear input immediately to prevent re-submission
+    setMessageText("");
 
     sendMessageMutation.mutate({
-      content: messageText.trim(),
+      content: messageToSend,
       messageType: "text",
+    }, {
+      onSettled: () => {
+        // Re-enable submissions after request completes
+        isSubmittingRef.current = false;
+      }
     });
   };
 
@@ -184,6 +206,8 @@ export default function Conversation() {
             isOwnMessage={message.senderId === user?.id}
           />
         ))}
+        {/* Invisible element to scroll to */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
