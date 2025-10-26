@@ -99,6 +99,20 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     }
 
     try {
+      // Set up event listeners for purchase updates
+      addDebug("🎧 Setting up purchase update listeners...");
+      
+      // Listen for purchase updates
+      if (inAppPurchases.onPurchaseUpdate) {
+        inAppPurchases.onPurchaseUpdate((purchase: any) => {
+          addDebug(`🔔 Purchase update received: ${JSON.stringify(purchase)}`);
+          handlePurchaseUpdate(purchase, platformType);
+        });
+        addDebug("✅ Purchase update listener registered");
+      } else {
+        addDebug("⚠️ onPurchaseUpdate not available on plugin");
+      }
+
       // Use correct product ID per platform
       const productId = platformType === "android" ? "premium_yearly" : "premium-yearly";
       
@@ -284,6 +298,57 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     }
   };
 
+  // Handle purchase updates from the plugin
+  const handlePurchaseUpdate = async (purchase: any, platformType: "ios" | "android") => {
+    try {
+      addDebug(`📦 Processing purchase update: ${purchase.productId}`);
+      addDebug(`   Purchase ID: ${purchase.purchaseId}`);
+      addDebug(`   State: ${purchase.state || 'N/A'}`);
+      
+      // Acknowledge the purchase
+      addDebug("✓ Acknowledging purchase...");
+      await inAppPurchases.completePurchase(purchase.productId, false);
+      addDebug("✅ Purchase acknowledged");
+
+      // Validate with backend
+      if (platformType === "android") {
+        addDebug("🔐 Validating with backend (Android)...");
+        await apiRequest("POST", "/api/mobile-subscription/validate-android", {
+          packageName: "com.newhomepage.privychat",
+          productId: purchase.productId,
+          purchaseToken: purchase.purchaseToken,
+        });
+      } else if (platformType === "ios") {
+        addDebug("🔐 Validating with backend (iOS)...");
+        await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
+          receiptData: purchase.receipt || "",
+          transactionId: purchase.purchaseId,
+          productId: purchase.productId,
+        });
+      }
+
+      // Refresh user data
+      addDebug("🔄 Refreshing user data...");
+      await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      if (onSubscriptionUpdate) {
+        onSubscriptionUpdate();
+      }
+
+      addDebug("🎉 Subscription activated via update listener!");
+      toast({
+        title: "Subscription Activated",
+        description: "Your premium subscription is now active!",
+      });
+      
+      // Clear loading state if it was set
+      setLoading(false);
+    } catch (error: any) {
+      addDebug(`❌ Purchase update error: ${error.message}`);
+      setLoading(false);
+    }
+  };
+
   const handleRestorePurchases = async () => {
     setRestoring(true);
     addDebug("🔄 Restoring purchases...");
@@ -375,52 +440,41 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         }
 
         addDebug(`💳 Calling plugin.purchase(${productId})`);
+        addDebug("⏳ Opening Google Play dialog...");
         
         try {
           // Purchase the product - this opens Google Play dialog
-          const purchaseData = await inAppPurchases.purchase(productId);
-          addDebug(`✅ Purchase completed by user! ID: ${purchaseData.purchaseId}`);
-          addDebug(`   Token: ${purchaseData.purchaseToken ? purchaseData.purchaseToken.substring(0, 20) + '...' : 'N/A'}`);
+          // The result will come via the onPurchaseUpdate listener
+          await inAppPurchases.purchase(productId);
           
-          // Complete/acknowledge the purchase immediately
-          addDebug("✓ Acknowledging purchase with store...");
-          await inAppPurchases.completePurchase(productId, false);
-          addDebug("✅ Purchase acknowledged");
-
-          // Validate with backend
-          if (platform === "android") {
-            addDebug("🔐 Validating with backend...");
-            await apiRequest("POST", "/api/mobile-subscription/validate-android", {
-              packageName: "com.newhomepage.privychat",
-              productId: productId,
-              purchaseToken: purchaseData.purchaseToken || purchaseData.receipt,
-            });
-            addDebug("✅ Validation successful");
-          } else if (platform === "ios") {
-            addDebug("🔐 Validating with backend...");
-            await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
-              receiptData: purchaseData.receipt,
-              transactionId: purchaseData.purchaseId,
-              productId: productId,
-            });
-            addDebug("✅ Validation successful");
-          }
-
-          // Refresh user data
-          addDebug("🔄 Refreshing user data...");
-          await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          addDebug("✅ Purchase dialog completed");
+          addDebug("⏳ Waiting for purchase confirmation...");
           
-          if (onSubscriptionUpdate) {
-            onSubscriptionUpdate();
+          // Wait a bit for the purchase update event to fire
+          // The actual processing happens in handlePurchaseUpdate
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          // Check if purchase was successful by querying backend
+          const result = await queryClient.fetchQuery({ queryKey: ["/api/user"] });
+          if (result && typeof result === 'object' && 'subscriptionType' in result) {
+            const isPremium = (result as any).subscriptionType === 'premium';
+            if (isPremium) {
+              addDebug("✅ Purchase confirmed!");
+              clearTimeout(timeoutId);
+              setLoading(false);
+              return;
+            }
           }
-
-          addDebug("🎉 Subscription activated!");
+          
+          // If still not premium, suggest using restore
+          addDebug("⚠️ Purchase may need manual restore");
           toast({
-            title: "Subscription Activated",
-            description: "Your premium subscription is now active!",
+            title: "Purchase Processing",
+            description: "If your subscription doesn't activate, use 'Restore Purchases' button.",
           });
-          
           clearTimeout(timeoutId);
+          setLoading(false);
+          
         } catch (purchaseError: any) {
           // Handle purchase cancelled or already owned
           const errMsg = purchaseError.message || purchaseError.toString();
