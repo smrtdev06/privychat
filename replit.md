@@ -54,6 +54,7 @@ Preferred communication style: Simple, everyday language.
   - Strict origin validation (only allowed domains)
   - Secure targetOrigin for postMessage
   - Both direct mode (local) and bridge mode (iframe) supported
+  - **IMPORTANT**: Always use `capacitorBridge.getPlatform()` instead of `Capacitor.getPlatform()` to correctly detect platform in iframe mode
 - **WebSocket**: Automatic detection of Capacitor environment and connection to production WebSocket server.
 - **Loading Screen**: Custom calculator-themed loading indicator prevents blank white screen during initial app load.
 - **Security**: Origin allowlist, specific targetOrigin, bidirectional validation (see CAPACITOR_REMOTE_MODE_ANALYSIS.md for details).
@@ -73,7 +74,7 @@ Preferred communication style: Simple, everyday language.
   - Product ID: `premium_yearly` at $29.99/year
   - Backwards compatible subscription (no offers required)
   - **Validation**: Google Play Developer API v3 (googleapis npm package)
-    - TEST MODE: Accepts all purchases when `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` not set
+    - FAIL-CLOSED: Rejects all purchases when `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` not set (secure)
     - PRODUCTION MODE: Real API validation with service account credentials
     - See GOOGLE_PLAY_API_SETUP.md for complete setup instructions
 - **Mobile Purchase Plugin**: `cordova-plugin-inapppurchases` v3.1.1

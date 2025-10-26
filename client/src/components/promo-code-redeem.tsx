@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Capacitor } from "@capacitor/core";
+import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
 import { Gift, Loader2 } from "lucide-react";
 import type { PromoCodeRedemption } from "@shared/schema";
 
@@ -17,9 +17,17 @@ interface RedemptionHistory {
 export function PromoCodeRedeem() {
   const [open, setOpen] = useState(false);
   const [promoCode, setPromoCode] = useState("");
+  const [platform, setPlatform] = useState<string>("web");
+  const [isNative, setIsNative] = useState(false);
   const { toast } = useToast();
-  const platform = Capacitor.getPlatform();
-  const isNative = platform === "ios" || platform === "android";
+  
+  // Detect platform using capacitorBridge (works in iframe mode too)
+  useEffect(() => {
+    capacitorBridge.getPlatform().then((detectedPlatform) => {
+      setPlatform(detectedPlatform);
+      setIsNative(detectedPlatform === "ios" || detectedPlatform === "android");
+    });
+  }, []);
 
   // Check for pending promo code from deep link
   useEffect(() => {

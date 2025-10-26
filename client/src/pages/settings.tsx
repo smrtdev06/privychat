@@ -14,7 +14,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { MobileSubscription } from "@/components/mobile-subscription";
 import { PromoCodeRedeem } from "@/components/promo-code-redeem";
-import { Capacitor } from "@capacitor/core";
+import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
+import { useEffect } from "react";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -25,11 +26,16 @@ export default function Settings() {
   const [giftEmail, setGiftEmail] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isMobilePlatform, setIsMobilePlatform] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Check if running on mobile platform
-  const isMobilePlatform = Capacitor.getPlatform() === "ios" || Capacitor.getPlatform() === "android";
+  // Check if running on mobile platform (works in both direct and iframe bridge mode)
+  useEffect(() => {
+    capacitorBridge.getPlatform().then((platform) => {
+      setIsMobilePlatform(platform === "ios" || platform === "android");
+    });
+  }, []);
 
   const setupPasswordMutation = useMutation({
     mutationFn: async (password: string) => {
