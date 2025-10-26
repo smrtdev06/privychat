@@ -64,13 +64,13 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   }, []);
 
   const initializeStore = async (platformType: "ios" | "android") => {
-    console.log("=== MOBILE SUBSCRIPTION DEBUG START ===");
-    console.log("Platform detected:", platformType);
-    console.log("inAppPurchases available:", typeof inAppPurchases !== "undefined");
+    addDebug("=== DIRECT MODE: STORE INIT START ===");
+    addDebug(`Platform: ${platformType}`);
+    addDebug(`Plugin available: ${typeof inAppPurchases !== "undefined"}`);
     
     if (typeof inAppPurchases === "undefined") {
-      console.error("❌ inAppPurchases plugin not available!");
-      console.log("Make sure you ran: npx cap sync");
+      addDebug("❌ inAppPurchases plugin NOT available!");
+      addDebug("Make sure you ran: npx cap sync");
       toast({
         title: "Plugin Not Found",
         description: "In-app purchase plugin not loaded. Try reinstalling the app.",
@@ -83,13 +83,13 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       // Use correct product ID per platform
       const productId = platformType === "android" ? "premium_yearly" : "premium-yearly";
       
-      console.log(`🚀 Loading products for ${platformType}...`);
-      console.log(`Product ID: ${productId}`);
+      addDebug(`🚀 Loading products for ${platformType}...`);
+      addDebug(`Product ID: ${productId}`);
 
       // Load products using new plugin API
       const loadedProducts = await inAppPurchases.getAllProductInfo([productId]);
-      console.log("✅ Products loaded:", loadedProducts);
-      console.log("📊 Product count:", loadedProducts.length);
+      addDebug(`✅ Products loaded: ${JSON.stringify(loadedProducts)}`);
+      addDebug(`📊 Product count: ${loadedProducts.length}`);
       
       // Convert to our format
       const formattedProducts = loadedProducts.map((p: any) => ({
@@ -104,35 +104,31 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       setStoreReady(true);
 
       if (formattedProducts.length === 0) {
-        console.warn("⚠️ NO PRODUCTS FOUND!");
-        console.warn("Possible reasons:");
-        console.warn("1. Product not created in Google Play Console / App Store Connect");
-        console.warn("2. Product ID mismatch (must be exactly 'premium_yearly')");
-        console.warn("3. App not properly signed/configured");
-        console.warn("4. Product still propagating (takes 1-2 hours after creation)");
-        console.warn("5. App package name mismatch");
+        addDebug("⚠️ NO PRODUCTS FOUND!");
+        addDebug("Possible reasons:");
+        addDebug("1. Product not created in store console");
+        addDebug(`2. Product ID mismatch (need: ${productId})`);
+        addDebug("3. App not properly signed/configured");
+        addDebug("4. Product still propagating (1-2 hours)");
+        addDebug("5. App package name mismatch");
         
         toast({
           title: "No Products Found",
-          description: "Check console for debugging info. Product may still be propagating.",
+          description: "Check debug log below. Product may still be propagating.",
           variant: "destructive",
         });
       } else {
-        console.log("✅ Products loaded successfully!");
+        addDebug("✅ Products loaded successfully!");
         formattedProducts.forEach((p: any) => {
-          console.log(`  - ${p.id}: ${p.title} (${p.price})`);
+          addDebug(`  - ${p.id}: ${p.title} (${p.price})`);
         });
       }
 
       console.log("=== MOBILE SUBSCRIPTION DEBUG END ===");
 
     } catch (error: any) {
-      console.error("❌ Error loading products:", error);
-      console.error("Error details:", {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-      });
+      addDebug(`❌ Error loading products: ${error.message}`);
+      addDebug(`Error details: ${error.name} - ${error.stack?.substring(0, 100)}`);
       toast({
         title: "Store Error",
         description: error.message || "Failed to load products from store",
@@ -254,10 +250,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
   const handlePurchase = async (productId: string) => {
     setLoading(true);
+    addDebug(`💳 Starting purchase: ${productId}`);
     try {
       if (capacitorBridge.isRemoteMode()) {
         // Use bridge for remote mode
-        console.log("🌉 Purchasing via bridge:", productId);
+        addDebug("🌉 Purchasing via remote bridge");
         await capacitorBridge.purchaseProduct(productId);
       } else {
         // Direct mode - use new plugin API
@@ -265,29 +262,34 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           throw new Error("In-app purchases not available");
         }
 
-        console.log("💳 Starting purchase:", productId);
+        addDebug(`💳 Calling plugin.purchase(${productId})`);
         
         // Purchase the product
         const purchaseData = await inAppPurchases.purchase(productId);
-        console.log("✅ Purchase successful:", purchaseData);
+        addDebug(`✅ Purchase successful! ID: ${purchaseData.purchaseId}`);
+        addDebug(`   Token: ${purchaseData.purchaseToken ? 'present' : 'N/A'}`);
         
         // Complete the purchase (consume = false for subscriptions)
         await inAppPurchases.completePurchase(productId, false);
-        console.log("✅ Purchase completed");
+        addDebug("✅ Purchase completed");
 
         // Validate with backend
         if (platform === "android") {
+          addDebug("🔐 Validating with Android backend...");
           await apiRequest("POST", "/api/mobile-subscription/validate-android", {
             packageName: "com.newhomepage.privychat",
             productId: productId,
             purchaseToken: purchaseData.purchaseToken || purchaseData.receipt,
           });
+          addDebug("✅ Android validation successful");
         } else if (platform === "ios") {
+          addDebug("🔐 Validating with iOS backend...");
           await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
             receiptData: purchaseData.receipt,
             transactionId: purchaseData.purchaseId,
             productId: productId,
           });
+          addDebug("✅ iOS validation successful");
         }
 
         // Refresh user data
@@ -297,13 +299,14 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           onSubscriptionUpdate();
         }
 
+        addDebug("🎉 Subscription activated!");
         toast({
           title: "Subscription Activated",
           description: "Your premium subscription is now active!",
         });
       }
     } catch (error: any) {
-      console.error("Purchase error:", error);
+      addDebug(`❌ Purchase error: ${error.message}`);
       toast({
         title: "Purchase Failed",
         description: error.message || "Failed to process purchase",
@@ -338,7 +341,9 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           ))}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">premium_yearly</code> | 
+          Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">
+            {platform === "android" ? "premium_yearly" : platform === "ios" ? "premium-yearly" : "detecting..."}
+          </code> | 
           Platform: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{platform || 'detecting...'}</code> | 
           Products Found: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{products.length}</code>
         </p>
