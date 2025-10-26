@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema, insertUserSchema, users as usersTable } from "@shared/schema";
+import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSchema, insertUserSchema, users as usersTable, mobileSubscriptions } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
@@ -641,29 +641,186 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook for Google Play Real-time Developer Notifications
   app.post("/api/mobile-subscription/webhook/google", async (req, res) => {
     try {
+      console.log("🔔 Google Play webhook received");
+      
+      // TODO: Add Google Cloud Pub/Sub message verification
+      // For production, verify the JWT signature or use the Pub/Sub client library
+      // to authenticate webhook calls and prevent spoofing
+      // See: https://cloud.google.com/pubsub/docs/push#authentication
+      
       // Google sends notifications as base64-encoded JSON in message.data
       const message = req.body.message;
       if (!message || !message.data) {
+        console.log("❌ Invalid webhook payload - missing message.data");
         return res.sendStatus(400);
       }
 
       const decodedData = Buffer.from(message.data, 'base64').toString('utf-8');
       const notification = JSON.parse(decodedData);
+      
+      console.log("📦 Decoded notification:", JSON.stringify(notification, null, 2));
 
       // Handle different notification types
       const notificationType = notification.subscriptionNotification?.notificationType;
+      const purchaseToken = notification.subscriptionNotification?.purchaseToken;
       
-      if (notificationType === 3 || notificationType === 13) {
-        // SUBSCRIPTION_CANCELED (3) or SUBSCRIPTION_EXPIRED (13)
-        const purchaseToken = notification.subscriptionNotification?.purchaseToken;
-        // Find and cancel subscription
-        // TODO: Implement subscription lookup and cancellation
-        console.log("Subscription cancelled/expired:", purchaseToken);
+      if (!purchaseToken) {
+        console.log("⚠️ No purchase token in notification");
+        return res.sendStatus(200);
+      }
+      
+      // Notification type reference:
+      // 1 = SUBSCRIPTION_RECOVERED
+      // 2 = SUBSCRIPTION_RENEWED
+      // 3 = SUBSCRIPTION_CANCELED
+      // 4 = SUBSCRIPTION_PURCHASED
+      // 5 = SUBSCRIPTION_ON_HOLD
+      // 6 = SUBSCRIPTION_IN_GRACE_PERIOD
+      // 7 = SUBSCRIPTION_RESTARTED
+      // 12 = SUBSCRIPTION_REVOKED
+      // 13 = SUBSCRIPTION_EXPIRED
+      
+      if (notificationType === 3) {
+        // SUBSCRIPTION_CANCELED - User canceled, but keeps access until expiry
+        console.log(`🚫 Subscription canceled: ${purchaseToken.substring(0, 20)}...`);
+        
+        // Find subscription by purchase token
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, purchaseToken))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          console.log(`   Found subscription: ${subscription.id} for user ${subscription.userId}`);
+          
+          // Mark as canceled BUT keep active until expiry
+          // DO NOT set isActive = false yet - user keeps access until expiry date
+          await db
+            .update(mobileSubscriptions)
+            .set({
+              autoRenewing: false,  // Will not renew
+              cancellationDate: new Date(),  // Record when canceled
+              updatedAt: new Date()
+              // NOTE: isActive stays true, user keeps premium until expiryDate
+            })
+            .where(eq(mobileSubscriptions.id, subscription.id));
+          
+          console.log(`✅ Subscription marked as canceled - user keeps access until ${subscription.expiryDate}`);
+          console.log(`   autoRenewing: false, isActive: true (until expiry)`);
+        } else {
+          console.log(`⚠️ Subscription not found for purchase token: ${purchaseToken.substring(0, 20)}...`);
+        }
+      } 
+      else if (notificationType === 13) {
+        // SUBSCRIPTION_EXPIRED - Subscription expired, remove access
+        console.log(`⏰ Subscription expired: ${purchaseToken.substring(0, 20)}...`);
+        
+        // Find subscription by purchase token
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, purchaseToken))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          console.log(`   Found subscription: ${subscription.id} for user ${subscription.userId}`);
+          
+          // Mark as inactive
+          await db
+            .update(mobileSubscriptions)
+            .set({ 
+              isActive: false,
+              updatedAt: new Date()
+            })
+            .where(eq(mobileSubscriptions.id, subscription.id));
+          
+          // Downgrade user to free plan
+          await syncUserSubscriptionStatus(subscription.userId);
+          
+          console.log(`✅ Subscription expired and user downgraded to free plan`);
+        } else {
+          console.log(`⚠️ Subscription not found for purchase token: ${purchaseToken.substring(0, 20)}...`);
+        }
+      }
+      else if (notificationType === 2) {
+        // SUBSCRIPTION_RENEWED - Update expiry date
+        console.log(`🔄 Subscription renewed: ${purchaseToken.substring(0, 20)}...`);
+        
+        // Find subscription and re-validate with Google Play API to get new expiry
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, purchaseToken))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          console.log(`   Subscription renewed for user ${subscription.userId} - re-validating with Google Play API`);
+          
+          // Re-validate to get updated expiry date
+          const validation = await validateGooglePlayPurchase(
+            notification.packageName || "com.newhomepage.privychat",
+            subscription.productId,
+            purchaseToken
+          );
+          
+          if (validation.isValid && validation.expiryDate) {
+            await db
+              .update(mobileSubscriptions)
+              .set({
+                expiryDate: validation.expiryDate,
+                autoRenewing: validation.autoRenewing || false,
+                isActive: true,
+                lastVerifiedAt: new Date(),
+                updatedAt: new Date()
+              })
+              .where(eq(mobileSubscriptions.id, subscription.id));
+            
+            await syncUserSubscriptionStatus(subscription.userId);
+            console.log(`✅ Subscription renewed - new expiry: ${validation.expiryDate}`);
+          }
+        }
+      }
+      else if (notificationType === 12) {
+        // SUBSCRIPTION_REVOKED - Immediate access removal (refund/chargeback)
+        console.log(`⛔ Subscription revoked: ${purchaseToken.substring(0, 20)}...`);
+        
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, purchaseToken))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          
+          // Immediately revoke access
+          await db
+            .update(mobileSubscriptions)
+            .set({ 
+              isActive: false,
+              autoRenewing: false,
+              cancellationDate: new Date(),
+              updatedAt: new Date()
+            })
+            .where(eq(mobileSubscriptions.id, subscription.id));
+          
+          // Immediately downgrade user
+          await syncUserSubscriptionStatus(subscription.userId);
+          
+          console.log(`✅ Subscription revoked - user immediately downgraded`);
+        }
+      }
+      else {
+        console.log(`ℹ️ Notification type ${notificationType} - no action required`);
       }
 
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error processing Google webhook:", error);
+      console.error("❌ Error processing Google webhook:", error);
       res.sendStatus(500);
     }
   });
