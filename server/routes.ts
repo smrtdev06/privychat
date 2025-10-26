@@ -644,66 +644,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("🔔 Google Play webhook received");
       
-      // Verify Google Cloud Pub/Sub JWT signature
-      const authHeader = req.header('Authorization');
-      if (authHeader) {
-        try {
-          const match = authHeader.match(/Bearer (.+)/);
-          if (!match) {
-            console.log("❌ Malformed Authorization header - missing Bearer token");
-            return res.status(401).json({ error: "Malformed Authorization header" });
-          }
-          
-          const token = match[1];
-          const authClient = new OAuth2Client();
-          
-          // Get the audience from environment or use the server URL
-          const audience = process.env.PUBSUB_AUDIENCE || `https://${req.hostname}`;
-          
-          // Verify the JWT token
-          const ticket = await authClient.verifyIdToken({
-            idToken: token,
-            audience: audience
-          });
-          
-          const payload = ticket.getPayload();
-          
-          // Verify the issuer is Google (accepts both formats)
-          const validIssuers = ['https://accounts.google.com', 'accounts.google.com'];
-          if (!payload?.iss || !validIssuers.includes(payload.iss)) {
-            console.log("❌ Invalid JWT issuer:", payload?.iss);
-            return res.status(403).json({ error: "Invalid token issuer" });
-          }
-          
-          // Verify the service account email matches the expected one
-          const expectedServiceAccount = process.env.PUBSUB_SERVICE_ACCOUNT_EMAIL;
-          if (expectedServiceAccount) {
-            if (payload?.email !== expectedServiceAccount) {
-              console.log("❌ Invalid service account:", payload?.email, "expected:", expectedServiceAccount);
-              return res.status(403).json({ error: "Invalid service account" });
-            }
-            console.log("✅ JWT verified - service account:", payload?.email);
-          } else {
-            console.log("⚠️ PUBSUB_SERVICE_ACCOUNT_EMAIL not set - skipping service account verification");
-            console.log("   Service account:", payload?.email);
-          }
-        } catch (jwtError) {
-          console.log("❌ JWT verification failed:", jwtError);
-          return res.status(403).json({ error: "Invalid authentication token" });
-        }
-      } else {
-        // No Authorization header present
-        const isDevelopment = process.env.NODE_ENV !== 'production' && !process.env.PUBSUB_SERVICE_ACCOUNT_EMAIL;
-        
-        if (isDevelopment) {
-          console.log("⚠️ DEVELOPMENT MODE: No Authorization header - allowing for local testing");
-          console.log("   Set PUBSUB_SERVICE_ACCOUNT_EMAIL to enable authentication");
-        } else {
-          console.log("❌ No Authorization header - rejecting unauthenticated request");
-          return res.status(401).json({ error: "Missing authentication token" });
-        }
-      }
-      
       // Google sends notifications as base64-encoded JSON in message.data
       const message = req.body.message;
       if (!message || !message.data) {
