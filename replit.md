@@ -71,7 +71,12 @@ Preferred communication style: Simple, everyday language.
 - **Mobile In-App Purchases**: Google Play Billing, Apple App Store
   - Product ID: `premium_yearly` at $29.99/year
   - Backwards compatible subscription (no offers required)
+  - **Validation**: Google Play Developer API v3 (googleapis npm package)
+    - TEST MODE: Accepts all purchases when `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` not set
+    - PRODUCTION MODE: Real API validation with service account credentials
+    - See GOOGLE_PLAY_API_SETUP.md for complete setup instructions
 - **Mobile Purchase Plugin**: `cordova-plugin-inapppurchases` v3.1.1
   - Updated October 2024 from cordova-plugin-purchase v13
   - Works with backwards compatible plans without offers
   - Simpler promise-based API: `getAllProductInfo()`, `purchase()`, `completePurchase()`
+  - Billing key configured in: `android/app/src/main/assets/www/manifest.json`

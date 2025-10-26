@@ -2,6 +2,7 @@ import { db } from "./db";
 import { users, mobileSubscriptions } from "@shared/schema";
 import { eq, and, gte } from "drizzle-orm";
 import type { MobileSubscription } from "@shared/schema";
+import { google } from 'googleapis';
 
 /**
  * Validate Google Play purchase using Google Play Developer API
@@ -18,10 +19,7 @@ export async function validateGooglePlayPurchase(
   purchaseDate?: Date;
 }> {
   try {
-    // TEST MODE: Accept all valid-looking purchase tokens for development
-    // In production, this should validate with Google Play Developer API
-    
-    console.log("🧪 TEST MODE: Validating Google Play purchase");
+    console.log("🔐 Validating Google Play purchase with API");
     console.log("   Package:", packageName);
     console.log("   Product:", productId);
     console.log("   Token:", purchaseToken ? purchaseToken.substring(0, 20) + "..." : "missing");
@@ -32,56 +30,93 @@ export async function validateGooglePlayPurchase(
       return { isValid: false };
     }
     
-    // Check package name matches
-    if (packageName !== "com.newhomepage.privychat") {
-      console.log("❌ Package name mismatch");
-      return { isValid: false };
+    // Check if service account credentials are configured
+    const serviceAccountJson = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON;
+    
+    if (!serviceAccountJson) {
+      console.log("⚠️ GOOGLE_PLAY_SERVICE_ACCOUNT_JSON not configured - using TEST MODE");
+      console.log("   To enable production validation:");
+      console.log("   1. Create service account in Google Cloud Console");
+      console.log("   2. Download JSON key file");
+      console.log("   3. Add entire JSON as secret: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON");
+      
+      // Fallback to test mode
+      const now = new Date();
+      const expiryDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+      
+      return {
+        isValid: true,
+        expiryDate,
+        autoRenewing: true,
+        purchaseDate: now,
+      };
     }
     
-    // Check product ID is valid
-    if (productId !== "premium_yearly") {
-      console.log("❌ Invalid product ID");
-      return { isValid: false };
-    }
+    // PRODUCTION MODE: Validate with Google Play Developer API
+    console.log("✅ Service account configured - using PRODUCTION validation");
     
-    // For test mode, accept the purchase and create a 1-year subscription
-    const now = new Date();
-    const expiryDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year from now
+    // Parse service account credentials
+    const credentials = JSON.parse(serviceAccountJson);
     
-    console.log("✅ TEST MODE: Purchase accepted");
-    console.log("   Purchase Date:", now.toISOString());
-    console.log("   Expiry Date:", expiryDate.toISOString());
-    console.log("   Auto-Renewing: true (test)");
+    // Set up authentication
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/androidpublisher'],
+    });
     
-    // TODO: For production, implement real Google Play Developer API validation:
-    // 1. Set up Google Cloud project and enable Google Play Developer API
-    // 2. Create service account and download JSON key
-    // 3. Install googleapis package: npm install googleapis
-    // 4. Use the API to validate the purchase token
-    // 
-    // Example production implementation:
-    // const { google } = require('googleapis');
-    // const androidpublisher = google.androidpublisher('v3');
-    // const auth = new google.auth.GoogleAuth({
-    //   keyFile: process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY,
-    //   scopes: ['https://www.googleapis.com/auth/androidpublisher'],
-    // });
-    // const authClient = await auth.getClient();
-    // const response = await androidpublisher.purchases.subscriptions.get({
-    //   packageName,
-    //   subscriptionId: productId,
-    //   token: purchaseToken,
-    //   auth: authClient,
-    // });
+    // Create Android Publisher API client with auth
+    const androidpublisher = google.androidpublisher({
+      version: 'v3',
+      auth,
+    });
+    
+    // Validate subscription purchase
+    console.log("📞 Calling Google Play API...");
+    const response = await androidpublisher.purchases.subscriptions.get({
+      packageName,
+      subscriptionId: productId,
+      token: purchaseToken,
+    });
+    
+    const purchaseData = response.data;
+    console.log("✅ API Response received");
+    console.log("   Order ID:", purchaseData.orderId);
+    console.log("   Payment State:", purchaseData.paymentState);
+    console.log("   Auto-Renewing:", purchaseData.autoRenewing);
+    
+    // Parse dates from milliseconds
+    const expiryDate = new Date(parseInt(purchaseData.expiryTimeMillis || "0"));
+    const purchaseDate = new Date(parseInt(purchaseData.startTimeMillis || "0"));
+    
+    // Check if subscription is valid (not expired and payment received)
+    const isExpired = expiryDate < new Date();
+    const paymentReceived = purchaseData.paymentState === 1; // 1 = payment received
+    const isValid = !isExpired && paymentReceived;
+    
+    console.log("📊 Validation result:");
+    console.log("   Valid:", isValid);
+    console.log("   Expiry:", expiryDate.toISOString());
+    console.log("   Purchase Date:", purchaseDate.toISOString());
+    console.log("   Payment State:", paymentReceived ? "Received" : "Pending/Failed");
     
     return {
-      isValid: true,
+      isValid,
       expiryDate,
-      autoRenewing: true,
-      purchaseDate: now,
+      autoRenewing: purchaseData.autoRenewing || false,
+      purchaseDate,
     };
-  } catch (error) {
-    console.error("Error validating Google Play purchase:", error);
+  } catch (error: any) {
+    console.error("❌ Error validating Google Play purchase:", error.message);
+    
+    // Handle specific API errors
+    if (error.code === 401) {
+      console.error("   Authentication failed - check service account permissions");
+    } else if (error.code === 404) {
+      console.error("   Purchase not found - token may be invalid or expired");
+    } else if (error.code === 410) {
+      console.error("   Subscription expired >60 days ago");
+    }
+    
     return {
       isValid: false,
     };
