@@ -24,6 +24,7 @@ interface MobileSubscriptionProps {
 
 export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionProps) {
   const [loading, setLoading] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [products, setProducts] = useState<SubscriptionProduct[]>([]);
   const [platform, setPlatform] = useState<"ios" | "android" | null>(null);
   const [storeReady, setStoreReady] = useState(false);
@@ -265,6 +266,69 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     }
   };
 
+  const handleRestorePurchases = async () => {
+    setRestoring(true);
+    addDebug("🔄 Restoring purchases...");
+    
+    try {
+      if (typeof inAppPurchases === "undefined") {
+        throw new Error("In-app purchases not available");
+      }
+
+      const restored = await inAppPurchases.restorePurchases();
+      addDebug(`✅ Restored ${restored.length} purchase(s)`);
+      
+      if (restored.length === 0) {
+        toast({
+          title: "No Purchases Found",
+          description: "No previous purchases found for this account.",
+        });
+        return;
+      }
+
+      // Process each restored purchase
+      for (const purchase of restored) {
+        addDebug(`📦 Processing purchase: ${purchase.productId}`);
+        
+        // Validate with backend
+        if (platform === "android") {
+          await apiRequest("POST", "/api/mobile-subscription/validate-android", {
+            packageName: "com.newhomepage.privychat",
+            productId: purchase.productId,
+            purchaseToken: purchase.purchaseToken,
+          });
+        } else if (platform === "ios") {
+          await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
+            receiptData: purchase.receipt || "",
+            transactionId: purchase.purchaseId,
+            productId: purchase.productId,
+          });
+        }
+      }
+
+      // Refresh user data
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      if (onSubscriptionUpdate) {
+        onSubscriptionUpdate();
+      }
+
+      toast({
+        title: "Purchases Restored",
+        description: `Successfully restored ${restored.length} purchase(s)!`,
+      });
+    } catch (error: any) {
+      addDebug(`❌ Restore error: ${error.message}`);
+      toast({
+        title: "Restore Failed",
+        description: error.message || "Failed to restore purchases",
+        variant: "destructive",
+      });
+    } finally {
+      setRestoring(false);
+    }
+  };
+
   const handlePurchase = async (productId: string) => {
     setLoading(true);
     addDebug(`💳 Starting purchase: ${productId}`);
@@ -490,6 +554,25 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             <li>• No ads</li>
           </ul>
         </div>
+
+        {!capacitorBridge.isRemoteMode() && (
+          <Button
+            onClick={handleRestorePurchases}
+            disabled={restoring}
+            variant="outline"
+            className="w-full"
+            data-testid="button-restore-purchases"
+          >
+            {restoring ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Restoring...
+              </>
+            ) : (
+              "Restore Purchases"
+            )}
+          </Button>
+        )}
 
         <DebugInfoDisplay />
       </CardContent>
