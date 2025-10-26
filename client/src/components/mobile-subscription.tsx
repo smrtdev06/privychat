@@ -91,14 +91,26 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       addDebug(`✅ Products loaded: ${JSON.stringify(loadedProducts)}`);
       addDebug(`📊 Product count: ${loadedProducts.length}`);
       
-      // Convert to our format
-      const formattedProducts = loadedProducts.map((p: any) => ({
-        id: p.productId,
-        title: p.title || "Premium Yearly",
-        description: p.description || "Unlimited messaging for one year",
-        price: p.price || "$29.99/year",
-        platform: platformType,
-      }));
+      // Convert to our format and clean up titles
+      const formattedProducts = loadedProducts.map((p: any) => {
+        // Clean up title - remove package name if present
+        let title = p.title || "Premium Yearly";
+        if (title.includes("(com.")) {
+          // Remove everything from opening paren onwards
+          title = title.split("(")[0].trim();
+        }
+        if (!title || title.length === 0) {
+          title = "Premium Yearly";
+        }
+        
+        return {
+          id: p.productId,
+          title: title,
+          description: p.description || "Unlimited messaging for one year",
+          price: p.price || "$29.99/year",
+          platform: platformType,
+        };
+      });
 
       setProducts(formattedProducts);
       setStoreReady(true);

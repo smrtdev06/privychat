@@ -86,8 +86,17 @@ export function CapacitorBridge() {
                 
                 // Log each product in detail
                 products.forEach((p: any) => {
+                  // Clean up title - remove package name if present
+                  let title = p.title || 'Premium Yearly';
+                  if (title.includes("(com.")) {
+                    title = title.split("(")[0].trim();
+                  }
+                  if (!title || title.length === 0) {
+                    title = "Premium Yearly";
+                  }
+                  
                   addLog(`📦 Product: ${p.productId}`);
-                  addLog(`   - Title: ${p.title || 'No title'}`);
+                  addLog(`   - Title: ${title}`);
                   addLog(`   - Price: ${p.price || 'No price'}`);
                   addLog(`   - Description: ${p.description || 'No description'}`);
                   
@@ -96,7 +105,7 @@ export function CapacitorBridge() {
                     type: "PRODUCT_UPDATED",
                     payload: {
                       id: p.productId,
-                      title: p.title,
+                      title: title,
                       description: p.description,
                       canPurchase: true,
                       state: "valid",
@@ -161,10 +170,23 @@ export function CapacitorBridge() {
                   payload: { success: true },
                 });
               } catch (error: any) {
-                addLog(`❌ Purchase error: ${error.message || error}`);
+                const errorMsg = error.message || error.toString();
+                addLog(`❌ Purchase error: ${errorMsg}`);
+                
+                // Provide helpful error messages for common issues
+                if (errorMsg.includes("GOOGLE_PLAY_KEY_ERROR")) {
+                  addLog("⚠️ GOOGLE_PLAY_KEY_ERROR means:");
+                  addLog("1. App not uploaded to Play Console yet");
+                  addLog("2. App not signed with release/upload key");
+                  addLog("3. Not testing from internal test track");
+                  addLog("4. Google account not added as tester");
+                  addLog("5. Product not activated in Play Console");
+                  addLog("📖 Check BUILD_VERSION_11_INSTRUCTIONS.md");
+                }
+                
                 sendToRemote({
                   type: "STORE_ERROR",
-                  payload: { message: error.message || "Purchase failed" },
+                  payload: { message: errorMsg },
                 });
               }
               break;
