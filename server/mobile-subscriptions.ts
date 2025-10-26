@@ -18,21 +18,52 @@ export async function validateGooglePlayPurchase(
   purchaseDate?: Date;
 }> {
   try {
-    // Note: You need to set up Google Play Developer API
-    // and provide service account credentials
-    // For now, this is a placeholder implementation
+    // TEST MODE: Accept all valid-looking purchase tokens for development
+    // In production, this should validate with Google Play Developer API
     
-    // TODO: Implement Google Play Developer API validation
+    console.log("🧪 TEST MODE: Validating Google Play purchase");
+    console.log("   Package:", packageName);
+    console.log("   Product:", productId);
+    console.log("   Token:", purchaseToken ? purchaseToken.substring(0, 20) + "..." : "missing");
+    
+    // Basic validation - ensure required fields are present
+    if (!packageName || !productId || !purchaseToken) {
+      console.log("❌ Missing required fields");
+      return { isValid: false };
+    }
+    
+    // Check package name matches
+    if (packageName !== "com.newhomepage.privychat") {
+      console.log("❌ Package name mismatch");
+      return { isValid: false };
+    }
+    
+    // Check product ID is valid
+    if (productId !== "premium_yearly") {
+      console.log("❌ Invalid product ID");
+      return { isValid: false };
+    }
+    
+    // For test mode, accept the purchase and create a 1-year subscription
+    const now = new Date();
+    const expiryDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year from now
+    
+    console.log("✅ TEST MODE: Purchase accepted");
+    console.log("   Purchase Date:", now.toISOString());
+    console.log("   Expiry Date:", expiryDate.toISOString());
+    console.log("   Auto-Renewing: true (test)");
+    
+    // TODO: For production, implement real Google Play Developer API validation:
     // 1. Set up Google Cloud project and enable Google Play Developer API
     // 2. Create service account and download JSON key
     // 3. Install googleapis package: npm install googleapis
     // 4. Use the API to validate the purchase token
-    
-    // Example implementation:
+    // 
+    // Example production implementation:
     // const { google } = require('googleapis');
     // const androidpublisher = google.androidpublisher('v3');
     // const auth = new google.auth.GoogleAuth({
-    //   keyFile: 'path/to/service-account.json',
+    //   keyFile: process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY,
     //   scopes: ['https://www.googleapis.com/auth/androidpublisher'],
     // });
     // const authClient = await auth.getClient();
@@ -43,10 +74,11 @@ export async function validateGooglePlayPurchase(
     //   auth: authClient,
     // });
     
-    console.log("Google Play purchase validation not yet implemented");
-    
     return {
-      isValid: false,
+      isValid: true,
+      expiryDate,
+      autoRenewing: true,
+      purchaseDate: now,
     };
   } catch (error) {
     console.error("Error validating Google Play purchase:", error);
