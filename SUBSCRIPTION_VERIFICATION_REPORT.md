@@ -18,10 +18,11 @@
 | iOS In-App Purchase | ✅ Working | Ready for testing |
 | Promo Code (Android) | ✅ Working | Opens Google Play redemption |
 | Promo Code (iOS) | ✅ Working | Opens App Store/StoreKit |
-| Gift Codes | ✅ Working | Web-only purchase (compliance) |
+| Gift Codes (Purchase) | ✅ Working | Web-only (compliance) |
+| Gift Codes (Redeem) | ✅ Working | Web-only (streamlined mobile UX) |
 | Restore Purchases | ✅ Working | Both platforms |
 | Webhooks | ✅ Working | Real-time subscription updates |
-| App Store Compliance | ✅ Compliant | Gift purchase hidden on mobile |
+| App Store Compliance | ✅ Compliant | All payment alternatives hidden on mobile |
 
 ---
 
@@ -164,14 +165,14 @@
 **How It Works**:
 1. User purchases gift on **web only** ($29)
 2. System generates 12-character code (e.g., `ABCD1234EFGH`)
-3. Recipient enters code on **any platform** (web/Android/iOS)
+3. Recipient enters code on **web browser** (redemption UI hidden on mobile)
 4. Backend validates and upgrades to premium (1 year)
 5. Gift marked as redeemed in `subscription_gifts` table
 
 **Why Web-Only**:
 - ✅ Complies with Google Play policies (no alternative payments)
 - ✅ Complies with Apple App Store policies (no bypassing IAP)
-- ✅ Recipients can still redeem on mobile (just can't purchase)
+- ✅ Streamlines mobile user experience (in-app purchase or promo codes only)
 
 **Status**: ✅ Fully implemented and compliant
 

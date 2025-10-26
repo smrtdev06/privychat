@@ -182,7 +182,7 @@ This checklist helps you manually test the subscription and promo code features 
 
 ---
 
-### **Test 7: Gift Code Redemption (All Platforms)**
+### **Test 7: Gift Code Redemption (Web Only)**
 
 **Note**: This tests the web-based gift system, NOT promo codes.
 
@@ -191,9 +191,9 @@ This checklist helps you manually test the subscription and promo code features 
 - Or create a gift code via web interface
 
 **Steps**:
-1. Open app (web, Android, or iOS)
+1. Open app on **WEB BROWSER** (not mobile app)
 2. Go to Settings
-3. Find "Redeem Upgrade Code" section (different from promo code)
+3. Find "Redeem Upgrade Code" section
 4. Enter 12-character gift code (e.g., `ABCD1234EFGH`)
 5. Click "Redeem" button
 6. Verify toast: "Upgrade successful"
@@ -201,10 +201,11 @@ This checklist helps you manually test the subscription and promo code features 
 8. Expiry date set to 1 year from now
 
 **Expected Behavior**:
-- ✅ Works on web, Android, AND iOS
+- ✅ Works on web browser
 - ✅ Code validates successfully
 - ✅ User immediately upgraded
 - ✅ Gift marked as redeemed in database
+- ✅ "Redeem Upgrade Code" section NOT visible on mobile apps (streamlined UX)
 
 ---
 
@@ -294,20 +295,24 @@ This checklist helps you manually test the subscription and promo code features 
 1. Open app on **Android**
 2. Go to Settings
 3. Verify "Gift Premium Access" card is **HIDDEN**
-4. Verify "Redeem Upgrade Code" IS visible (this is OK)
-5. Open app on **iOS**
-6. Go to Settings
-7. Verify "Gift Premium Access" card is **HIDDEN**
-8. Verify "Redeem Upgrade Code" IS visible
-9. Open app on **Web**
-10. Go to Settings
-11. Verify "Gift Premium Access" card IS visible
-12. Can create gift codes on web only
+4. Verify "Redeem Upgrade Code" is **HIDDEN** (streamlined UX)
+5. Verify "Mobile Subscription" and "Redeem Promo Code" ARE visible
+6. Open app on **iOS**
+7. Go to Settings
+8. Verify "Gift Premium Access" card is **HIDDEN**
+9. Verify "Redeem Upgrade Code" is **HIDDEN**
+10. Verify "Mobile Subscription" and "Redeem Promo Code" ARE visible
+11. Open app on **Web**
+12. Go to Settings
+13. Verify "Gift Premium Access" card IS visible
+14. Verify "Redeem Upgrade Code" IS visible
+15. Can create and redeem gift codes on web
 
 **Expected Behavior**:
 - ✅ Gift purchase hidden on mobile (App Store compliance)
-- ✅ Gift redemption available on all platforms
-- ✅ Web can create gifts without restrictions
+- ✅ Gift redemption hidden on mobile (streamlined UX - use in-app purchase instead)
+- ✅ Web has full access to gift system
+- ✅ Mobile users must use in-app purchase or promo codes
 
 ---
 

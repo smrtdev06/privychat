@@ -468,32 +468,34 @@ export default function Settings() {
           </Card>
         )}
 
-        {/* Redeem Code */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-blue-800">Redeem Upgrade Code</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex space-x-2 mb-3">
-              <Input
-                value={upgradeCode}
-                onChange={(e) => setUpgradeCode(e.target.value)}
-                placeholder="Enter upgrade code"
-                data-testid="input-upgrade-code"
-              />
-              <Button
-                onClick={handleRedeemCode}
-                disabled={redeemMutation.isPending}
-                data-testid="button-redeem-code"
-              >
-                {redeemMutation.isPending ? "Redeeming..." : "Redeem"}
-              </Button>
-            </div>
-            <p className="text-sm text-blue-700">
-              Have a code someone purchased for you? Enter it here.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Redeem Code - Web only (mobile users should use in-app purchase or promo codes) */}
+        {!isMobilePlatform && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-blue-800">Redeem Upgrade Code</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex space-x-2 mb-3">
+                <Input
+                  value={upgradeCode}
+                  onChange={(e) => setUpgradeCode(e.target.value)}
+                  placeholder="Enter upgrade code"
+                  data-testid="input-upgrade-code"
+                />
+                <Button
+                  onClick={handleRedeemCode}
+                  disabled={redeemMutation.isPending}
+                  data-testid="button-redeem-code"
+                >
+                  {redeemMutation.isPending ? "Redeeming..." : "Redeem"}
+                </Button>
+              </div>
+              <p className="text-sm text-blue-700">
+                Have a code someone purchased for you? Enter it here.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Access Messaging */}
         <Button
