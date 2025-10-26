@@ -642,12 +642,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Webhook for Google Play Real-time Developer Notifications
   app.post("/api/mobile-subscription/webhook/google", async (req, res) => {
     try {
-      console.log("🔔 Google Play webhook received");
+      const timestamp = new Date().toISOString();
+      console.log(`\n${"=".repeat(80)}`);
+      console.log(`🔔 Google Play webhook received at ${timestamp}`);
+      console.log(`${"=".repeat(80)}`);
+      
+      // Log raw request body for debugging
+      console.log("📥 Raw request body:", JSON.stringify(req.body, null, 2));
       
       // Google sends notifications as base64-encoded JSON in message.data
       const message = req.body.message;
       if (!message || !message.data) {
         console.log("❌ Invalid webhook payload - missing message.data");
+        console.log(`${"=".repeat(80)}\n`);
         return res.sendStatus(400);
       }
 
@@ -812,8 +819,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else {
         console.log(`ℹ️ Notification type ${notificationType} - no action required`);
+        console.log("   This might be a new notification type we haven't implemented yet");
+        console.log("   Full notification data logged above for investigation");
       }
 
+      console.log(`✅ Webhook processed successfully`);
+      console.log(`${"=".repeat(80)}\n`);
       res.sendStatus(200);
     } catch (error) {
       console.error("❌ Error processing Google webhook:", error);
