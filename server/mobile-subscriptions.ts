@@ -34,22 +34,12 @@ export async function validateGooglePlayPurchase(
     const serviceAccountJson = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON;
     
     if (!serviceAccountJson) {
-      console.log("⚠️ GOOGLE_PLAY_SERVICE_ACCOUNT_JSON not configured - using TEST MODE");
-      console.log("   To enable production validation:");
-      console.log("   1. Create service account in Google Cloud Console");
-      console.log("   2. Download JSON key file");
-      console.log("   3. Add entire JSON as secret: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON");
+      console.log("❌ GOOGLE_PLAY_SERVICE_ACCOUNT_JSON not configured");
+      console.log("   Production validation REQUIRES service account credentials");
+      console.log("   Setup instructions: See GOOGLE_PLAY_API_SETUP.md");
       
-      // Fallback to test mode
-      const now = new Date();
-      const expiryDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-      
-      return {
-        isValid: true,
-        expiryDate,
-        autoRenewing: true,
-        purchaseDate: now,
-      };
+      // FAIL CLOSED - Do not allow validation without credentials
+      throw new Error("Google Play API credentials not configured. Cannot validate purchase.");
     }
     
     // PRODUCTION MODE: Validate with Google Play Developer API
@@ -160,11 +150,13 @@ export async function validateAppleAppStorePurchase(
     // });
     // const data = await response.json();
     
-    console.log("Apple App Store purchase validation not yet implemented");
+    console.log("❌ App Store validation not implemented");
+    console.log("   This endpoint cannot validate iOS purchases");
+    console.log("   Implementation required before iOS production use");
+    console.log("   See: https://developer.apple.com/documentation/appstoreserverapi");
     
-    return {
-      isValid: false,
-    };
+    // FAIL CLOSED - Do not allow validation without implementation
+    throw new Error("Apple App Store validation not implemented. Cannot validate iOS purchase.");
   } catch (error) {
     console.error("Error validating Apple purchase:", error);
     return {
