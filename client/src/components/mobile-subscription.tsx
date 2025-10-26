@@ -92,22 +92,22 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
       // Register products based on platform
       if (platformType === "android") {
-        console.log("🤖 Registering Google Play product: premium_yearly");
+        console.log("🤖 Registering Google Play product: premium-yearly");
         console.log("Platform.GOOGLE_PLAY value:", Platform.GOOGLE_PLAY);
         store.register([
           {
-            id: "premium_yearly",
+            id: "premium-yearly",  // Changed to match Google Play base plan ID with hyphen
             type: ProductType.PAID_SUBSCRIPTION,
             platform: Platform.GOOGLE_PLAY,
           },
         ]);
         console.log("✅ Product registered successfully");
       } else if (platformType === "ios") {
-        console.log("🍎 Registering App Store product: premium_yearly");
+        console.log("🍎 Registering App Store product: premium-yearly");
         console.log("Platform.APPLE_APPSTORE value:", Platform.APPLE_APPSTORE);
         store.register([
           {
-            id: "premium_yearly",
+            id: "premium-yearly",  // Changed to match product ID with hyphen
             type: ProductType.PAID_SUBSCRIPTION,
             platform: Platform.APPLE_APPSTORE,
           },
@@ -229,7 +229,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           console.warn("⚠️ NO PRODUCTS FOUND!");
           console.warn("Possible reasons:");
           console.warn("1. Product not created in Google Play Console");
-          console.warn("2. Product ID mismatch (must be exactly 'premium_yearly')");
+          console.warn("2. Product ID mismatch (must be exactly 'premium-yearly')");
           console.warn("3. App not properly signed/configured for Google Play");
           console.warn("4. Product still propagating (takes 1-2 hours after creation)");
           console.warn("5. App package name mismatch in Google Play Console");
@@ -357,7 +357,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           addDebug("⚠️ No products loaded after 5 seconds");
           addDebug("Possible reasons:");
           addDebug("  1. Product not created in Play Console");
-          addDebug("  2. Product ID mismatch (must be 'premium_yearly')");
+          addDebug("  2. Product ID mismatch (must be 'premium-yearly')");
           addDebug("  3. Product still propagating (takes 1-2 hours)");
           addDebug("  4. App package name mismatch");
         }
@@ -434,7 +434,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           ))}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">premium_yearly</code> | 
+          Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">premium-yearly</code> | 
           Platform: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{platform || 'detecting...'}</code> | 
           Products Found: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{products.length}</code>
         </p>
@@ -508,7 +508,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
                 <strong>Dev Mode:</strong> Product must be created in Google Play Console first:
               </p>
               <ul className="text-xs text-yellow-700 mt-2 space-y-1 ml-4">
-                <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium_yearly</code></li>
+                <li>• Product ID: <code className="bg-yellow-100 px-1 rounded">premium-yearly</code></li>
                 <li>• Price: <code className="bg-yellow-100 px-1 rounded">$29.99/year</code></li>
               </ul>
               <p className="text-xs text-yellow-700 mt-2">

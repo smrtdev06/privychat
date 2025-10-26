@@ -82,7 +82,7 @@ export function CapacitorBridge() {
               } else if (platform === "ios") {
                 store.register([
                   {
-                    id: "premium_yearly",
+                    id: "premium-yearly",  // Changed to match product ID with hyphen
                     type: ProductType.PAID_SUBSCRIPTION,
                     platform: Platform.APPLE_APPSTORE,
                   },
