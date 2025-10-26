@@ -29,6 +29,8 @@ export function CapacitorBridge() {
       
       // Setup message handler for remote app
       window.addEventListener("message", async (event) => {
+        addLog(`📨 Message received from: ${event.origin}`);
+        
         // Security: strict origin validation
         const allowedOrigins = [
           "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev",
@@ -46,22 +48,25 @@ export function CapacitorBridge() {
             }
           }
         } catch (e) {
-          console.error("Invalid origin:", event.origin);
+          addLog(`❌ Invalid origin: ${event.origin}`);
           return;
         }
         
         if (!isAllowed) {
-          console.warn("🚫 Blocked message from untrusted origin:", event.origin);
+          addLog(`🚫 BLOCKED message from: ${event.origin}`);
+          addLog(`Allowed origins: ${allowedOrigins.join(", ")}`);
           return;
         }
 
-        console.log("📨 Received message from remote app:", event.data);
-
         const { type, payload, id } = event.data;
+        addLog(`✅ Message accepted: ${type}`);
 
         try {
           switch (type) {
             case "INIT_STORE": {
+              addLog(`🎯 INIT_STORE handler triggered!`);
+              addLog(`Platform from payload: ${payload.platform}`);
+              
               const { store, ProductType, Platform, LogLevel } = CdvPurchase;
               store.verbosity = LogLevel.DEBUG;
               
