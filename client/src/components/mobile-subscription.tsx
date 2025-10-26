@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Smartphone, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Capacitor } from "@capacitor/core";
 import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
@@ -29,7 +30,13 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   const [platform, setPlatform] = useState<"ios" | "android" | null>(null);
   const [storeReady, setStoreReady] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const { toast } = useToast();
+  
+  // Query for user data to check subscription status
+  const { data: user } = useQuery({
+    queryKey: ["/api/user"],
+  });
 
   const addDebug = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -39,6 +46,17 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
   useEffect(() => {
     addDebug("🚀 MobileSubscription component initializing...");
+    
+    // Check if user already has active subscription
+    if (user && typeof user === 'object' && 'subscriptionType' in user) {
+      const isPremium = (user as any).subscriptionType === 'premium';
+      const notExpired = (user as any).subscriptionExpiresAt ? new Date((user as any).subscriptionExpiresAt) > new Date() : false;
+      const isActive = isPremium && notExpired;
+      setHasActiveSubscription(isActive);
+      if (isActive) {
+        addDebug(`✅ User already has active subscription until ${(user as any).subscriptionExpiresAt}`);
+      }
+    }
     
     // Detect platform - use bridge method that works in both direct and iframe mode
     capacitorBridge.getPlatform().then((currentPlatform) => {
@@ -62,7 +80,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       addDebug(`❌ Error detecting platform: ${error.message}`);
       console.error("Error detecting platform:", error);
     });
-  }, []);
+  }, [user]);
 
   const initializeStore = async (platformType: "ios" | "android") => {
     addDebug("=== DIRECT MODE: STORE INIT START ===");
@@ -387,12 +405,20 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         });
       }
     } catch (error: any) {
-      addDebug(`❌ Purchase error: ${error.message}`);
-      toast({
-        title: "Purchase Failed",
-        description: error.message || "Failed to process purchase",
-        variant: "destructive",
-      });
+      const errorMsg = error.message || error.toString();
+      addDebug(`❌ Purchase error: ${errorMsg}`);
+      
+      // Don't show toast for "already subscribed" - this is expected
+      // The Google Play dialog will handle this
+      if (!errorMsg.includes("already subscribed") && !errorMsg.includes("ITEM_ALREADY_OWNED")) {
+        toast({
+          title: "Purchase Failed",
+          description: errorMsg || "Failed to process purchase",
+          variant: "destructive",
+        });
+      } else {
+        addDebug("ℹ️ User already owns this item - Google Play will handle");
+      }
     } finally {
       setLoading(false);
     }
@@ -525,14 +551,20 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
               </div>
               <Button
                 onClick={() => handlePurchase(product.id)}
-                disabled={loading}
+                disabled={loading || hasActiveSubscription}
                 className="ml-4"
                 data-testid={`button-purchase-${product.id}`}
+                variant={hasActiveSubscription ? "secondary" : "default"}
               >
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Processing...
+                  </>
+                ) : hasActiveSubscription ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Active
                   </>
                 ) : (
                   <>

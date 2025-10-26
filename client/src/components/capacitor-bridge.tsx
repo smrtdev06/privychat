@@ -182,12 +182,19 @@ export function CapacitorBridge() {
                   addLog("4. Google account not added as tester");
                   addLog("5. Product not activated in Play Console");
                   addLog("📖 Check BUILD_VERSION_11_INSTRUCTIONS.md");
+                } else if (errorMsg.includes("already subscribed") || errorMsg.includes("ITEM_ALREADY_OWNED")) {
+                  addLog("ℹ️ User already owns this subscription");
+                  addLog("💡 Use 'Restore Purchases' to sync with backend");
                 }
                 
-                sendToRemote({
-                  type: "STORE_ERROR",
-                  payload: { message: errorMsg },
-                });
+                // Only send error to remote if it's not an "already owned" case
+                // (Google Play handles that with its own dialog)
+                if (!errorMsg.includes("already subscribed") && !errorMsg.includes("ITEM_ALREADY_OWNED")) {
+                  sendToRemote({
+                    type: "STORE_ERROR",
+                    payload: { message: errorMsg },
+                  });
+                }
               }
               break;
             }
