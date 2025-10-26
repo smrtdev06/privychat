@@ -416,49 +416,51 @@ export default function Settings() {
           </>
         )}
 
-        {/* Gift Subscription */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-green-800">Gift Premium Access</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-green-700 mb-4">
-              Purchase premium access for another user
-            </p>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="gift-email">Recipient Email</Label>
-                <Input
-                  id="gift-email"
-                  type="email"
-                  value={giftEmail}
-                  onChange={(e) => setGiftEmail(e.target.value)}
-                  placeholder="Enter recipient's email address"
-                  data-testid="input-gift-email"
-                />
+        {/* Gift Subscription - WEB ONLY (Hidden on mobile to comply with app store policies) */}
+        {!isMobilePlatform && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-green-800">Gift Premium Access</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-green-700 mb-4">
+                Purchase premium access for another user
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="gift-email">Recipient Email</Label>
+                  <Input
+                    id="gift-email"
+                    type="email"
+                    value={giftEmail}
+                    onChange={(e) => setGiftEmail(e.target.value)}
+                    placeholder="Enter recipient's email address"
+                    data-testid="input-gift-email"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="gift-message">Gift Message (Optional)</Label>
+                  <Textarea
+                    id="gift-message"
+                    value={giftMessage}
+                    onChange={(e) => setGiftMessage(e.target.value)}
+                    placeholder="Add a personal message..."
+                    data-testid="input-gift-message"
+                  />
+                </div>
+                <Button
+                  onClick={handleGiftSubscription}
+                  disabled={giftMutation.isPending}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  data-testid="button-gift-premium"
+                >
+                  <Gift className="h-4 w-4 mr-2" />
+                  {giftMutation.isPending ? "Processing..." : "Gift Premium Access - $29"}
+                </Button>
               </div>
-              <div>
-                <Label htmlFor="gift-message">Gift Message (Optional)</Label>
-                <Textarea
-                  id="gift-message"
-                  value={giftMessage}
-                  onChange={(e) => setGiftMessage(e.target.value)}
-                  placeholder="Add a personal message..."
-                  data-testid="input-gift-message"
-                />
-              </div>
-              <Button
-                onClick={handleGiftSubscription}
-                disabled={giftMutation.isPending}
-                className="w-full bg-green-600 hover:bg-green-700"
-                data-testid="button-gift-premium"
-              >
-                <Gift className="h-4 w-4 mr-2" />
-                {giftMutation.isPending ? "Processing..." : "Gift Premium Access - $29"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Redeem Code */}
         <Card className="mb-6">

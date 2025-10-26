@@ -40,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Business Logic
 - **Freemium Model**: Free users have daily message limits; premium users get unlimited messages. If one user in a conversation is premium, both send unlimited messages.
-- **Subscription Gifts**: Users can gift premium subscriptions via upgrade codes.
+- **Subscription Gifts**: Users can gift premium subscriptions via upgrade codes (web-only to comply with app store policies; code redemption works on all platforms).
 - **Mobile Subscriptions**: Native in-app purchases (Google Play Billing, Apple App Store) with backend receipt validation and webhook support for real-time subscription status updates.
   - **Lifecycle**: Cancel → Keep access → Expire → Downgrade (proper subscription lifecycle with autoRenewing flag)
 - **User Discovery**: User code system.
