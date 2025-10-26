@@ -156,9 +156,14 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
               return prev;
             }
             
-            addDebug("   Adding new product to list");
-            return [...prev, product];
+            const newList = [...prev, product];
+            addDebug(`   ✅ Added! New product count: ${newList.length}`);
+            return newList;
           });
+          
+          // Also set store ready immediately when we get a valid product
+          addDebug("   Setting store ready = true");
+          setStoreReady(true);
         } else {
           addDebug(`⚠️ Product ${product.id} cannot be purchased. State: ${product.state}`);
         }
@@ -387,6 +392,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="ml-3 text-sm text-muted-foreground">Loading store...</p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg mt-4">
+            <p className="text-xs text-blue-900 dark:text-blue-100">
+              <strong>State:</strong> storeReady={storeReady ? 'true' : 'false'}, products={products.length}
+            </p>
           </div>
           <DebugInfoDisplay />
         </CardContent>
