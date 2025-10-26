@@ -74,7 +74,7 @@ export function CapacitorBridge() {
               if (platform === "android") {
                 store.register([
                   {
-                    id: "premium-yearly",  // Changed to match base plan ID with hyphen
+                    id: "premium_yearly:premium-yearly",  // Format: productId:basePlanId
                     type: ProductType.PAID_SUBSCRIPTION,
                     platform: Platform.GOOGLE_PLAY,
                   },
