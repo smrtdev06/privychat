@@ -350,11 +350,24 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   const handlePurchase = async (productId: string) => {
     setLoading(true);
     addDebug(`💳 Starting purchase: ${productId}`);
+    
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      addDebug("⏰ Purchase timeout - resetting UI");
+      setLoading(false);
+      toast({
+        title: "Purchase Timeout",
+        description: "Purchase took too long. Use 'Restore Purchases' to sync your subscription.",
+        variant: "destructive",
+      });
+    }, 60000); // 60 second timeout
+
     try {
       if (capacitorBridge.isRemoteMode()) {
         // Use bridge for remote mode
         addDebug("🌉 Purchasing via remote bridge");
         await capacitorBridge.purchaseProduct(productId);
+        clearTimeout(timeoutId);
       } else {
         // Direct mode - use new plugin API
         if (typeof inAppPurchases === "undefined") {
@@ -363,61 +376,85 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
         addDebug(`💳 Calling plugin.purchase(${productId})`);
         
-        // Purchase the product
-        const purchaseData = await inAppPurchases.purchase(productId);
-        addDebug(`✅ Purchase successful! ID: ${purchaseData.purchaseId}`);
-        addDebug(`   Token: ${purchaseData.purchaseToken ? 'present' : 'N/A'}`);
-        
-        // Complete the purchase (consume = false for subscriptions)
-        await inAppPurchases.completePurchase(productId, false);
-        addDebug("✅ Purchase completed");
+        try {
+          // Purchase the product - this opens Google Play dialog
+          const purchaseData = await inAppPurchases.purchase(productId);
+          addDebug(`✅ Purchase completed by user! ID: ${purchaseData.purchaseId}`);
+          addDebug(`   Token: ${purchaseData.purchaseToken ? purchaseData.purchaseToken.substring(0, 20) + '...' : 'N/A'}`);
+          
+          // Complete/acknowledge the purchase immediately
+          addDebug("✓ Acknowledging purchase with store...");
+          await inAppPurchases.completePurchase(productId, false);
+          addDebug("✅ Purchase acknowledged");
 
-        // Validate with backend
-        if (platform === "android") {
-          addDebug("🔐 Validating with Android backend...");
-          await apiRequest("POST", "/api/mobile-subscription/validate-android", {
-            packageName: "com.newhomepage.privychat",
-            productId: productId,
-            purchaseToken: purchaseData.purchaseToken || purchaseData.receipt,
+          // Validate with backend
+          if (platform === "android") {
+            addDebug("🔐 Validating with backend...");
+            await apiRequest("POST", "/api/mobile-subscription/validate-android", {
+              packageName: "com.newhomepage.privychat",
+              productId: productId,
+              purchaseToken: purchaseData.purchaseToken || purchaseData.receipt,
+            });
+            addDebug("✅ Validation successful");
+          } else if (platform === "ios") {
+            addDebug("🔐 Validating with backend...");
+            await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
+              receiptData: purchaseData.receipt,
+              transactionId: purchaseData.purchaseId,
+              productId: productId,
+            });
+            addDebug("✅ Validation successful");
+          }
+
+          // Refresh user data
+          addDebug("🔄 Refreshing user data...");
+          await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          
+          if (onSubscriptionUpdate) {
+            onSubscriptionUpdate();
+          }
+
+          addDebug("🎉 Subscription activated!");
+          toast({
+            title: "Subscription Activated",
+            description: "Your premium subscription is now active!",
           });
-          addDebug("✅ Android validation successful");
-        } else if (platform === "ios") {
-          addDebug("🔐 Validating with iOS backend...");
-          await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
-            receiptData: purchaseData.receipt,
-            transactionId: purchaseData.purchaseId,
-            productId: productId,
-          });
-          addDebug("✅ iOS validation successful");
+          
+          clearTimeout(timeoutId);
+        } catch (purchaseError: any) {
+          // Handle purchase cancelled or already owned
+          const errMsg = purchaseError.message || purchaseError.toString();
+          if (errMsg.includes("cancelled") || errMsg.includes("USER_CANCELED")) {
+            addDebug("ℹ️ User cancelled purchase");
+            clearTimeout(timeoutId);
+            setLoading(false);
+            return;
+          }
+          if (errMsg.includes("ITEM_ALREADY_OWNED") || errMsg.includes("already subscribed")) {
+            addDebug("ℹ️ User already owns this - Google Play handles this");
+            addDebug("💡 Use 'Restore Purchases' to sync with backend");
+            clearTimeout(timeoutId);
+            setLoading(false);
+            return;
+          }
+          throw purchaseError;
         }
-
-        // Refresh user data
-        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-        
-        if (onSubscriptionUpdate) {
-          onSubscriptionUpdate();
-        }
-
-        addDebug("🎉 Subscription activated!");
-        toast({
-          title: "Subscription Activated",
-          description: "Your premium subscription is now active!",
-        });
       }
     } catch (error: any) {
+      clearTimeout(timeoutId);
       const errorMsg = error.message || error.toString();
       addDebug(`❌ Purchase error: ${errorMsg}`);
       
-      // Don't show toast for "already subscribed" - this is expected
-      // The Google Play dialog will handle this
-      if (!errorMsg.includes("already subscribed") && !errorMsg.includes("ITEM_ALREADY_OWNED")) {
+      // Don't show toast for expected cases
+      if (!errorMsg.includes("already subscribed") && 
+          !errorMsg.includes("ITEM_ALREADY_OWNED") && 
+          !errorMsg.includes("cancelled") &&
+          !errorMsg.includes("USER_CANCELED")) {
         toast({
           title: "Purchase Failed",
           description: errorMsg || "Failed to process purchase",
           variant: "destructive",
         });
-      } else {
-        addDebug("ℹ️ User already owns this item - Google Play will handle");
       }
     } finally {
       setLoading(false);
