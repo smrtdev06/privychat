@@ -70,4 +70,8 @@ Preferred communication style: Simple, everyday language.
 - **Email Service**: SendGrid
 - **Mobile In-App Purchases**: Google Play Billing, Apple App Store
   - Product ID: `premium_yearly` at $29.99/year
-- **Mobile Purchase Plugin**: `cordova-plugin-purchase`
+  - Backwards compatible subscription (no offers required)
+- **Mobile Purchase Plugin**: `cordova-plugin-inapppurchases` v3.1.1
+  - Updated October 2024 from cordova-plugin-purchase v13
+  - Works with backwards compatible plans without offers
+  - Simpler promise-based API: `getAllProductInfo()`, `purchase()`, `completePurchase()`

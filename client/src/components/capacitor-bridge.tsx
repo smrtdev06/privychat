@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 
-declare const CdvPurchase: any;
+declare const inAppPurchases: any;
 
 const REMOTE_APP_URL = "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev/";
 
@@ -24,8 +24,8 @@ export function CapacitorBridge() {
     addLog(`Native: ${Capacitor.isNativePlatform()}`);
 
     // Initialize plugins
-    if (typeof CdvPurchase !== "undefined") {
-      addLog("✅ CdvPurchase plugin available!");
+    if (typeof inAppPurchases !== "undefined") {
+      addLog("✅ inAppPurchases plugin available!");
       
       // Setup message handler for remote app
       window.addEventListener("message", async (event) => {
@@ -67,129 +67,116 @@ export function CapacitorBridge() {
               addLog(`🎯 INIT_STORE handler triggered!`);
               addLog(`Platform from payload: ${payload.platform}`);
               
-              const { store, ProductType, Platform, LogLevel } = CdvPurchase;
-              store.verbosity = LogLevel.DEBUG;
-              
               const platform = payload.platform;
+              let productId = "";
+              
               if (platform === "android") {
-                store.register([
-                  {
-                    id: "premium_yearly",  // Just product ID for backwards compatible base plan
-                    type: ProductType.PAID_SUBSCRIPTION,
-                    platform: Platform.GOOGLE_PLAY,
-                  },
-                ]);
+                productId = "premium_yearly";
+                addLog(`🤖 Android: Loading product ${productId}`);
               } else if (platform === "ios") {
-                store.register([
-                  {
-                    id: "premium-yearly",  // Changed to match product ID with hyphen
-                    type: ProductType.PAID_SUBSCRIPTION,
-                    platform: Platform.APPLE_APPSTORE,
-                  },
-                ]);
+                productId = "premium-yearly";
+                addLog(`🍎 iOS: Loading product ${productId}`);
               }
 
-              // Setup event handlers
-              store.when().productUpdated((product: any) => {
-                addLog(`📦 Product updated: ${product.id}`);
-                addLog(`   - State: ${product.state}, Can purchase: ${product.canPurchase}`);
-                sendToRemote({
-                  type: "PRODUCT_UPDATED",
-                  payload: {
-                    id: product.id,
-                    title: product.title,
-                    description: product.description,
-                    canPurchase: product.canPurchase,
-                    state: product.state,
-                    price: product.pricing?.price || "$29.99/year",
-                    platform: platform,
-                  },
+              try {
+                // Load products using new plugin API
+                addLog("🏪 Calling getAllProductInfo()...");
+                const products = await inAppPurchases.getAllProductInfo([productId]);
+                addLog(`✅ Products loaded! Count: ${products.length}`);
+                
+                // Log each product in detail
+                products.forEach((p: any) => {
+                  addLog(`📦 Product: ${p.productId}`);
+                  addLog(`   - Title: ${p.title || 'No title'}`);
+                  addLog(`   - Price: ${p.price || 'No price'}`);
+                  addLog(`   - Description: ${p.description || 'No description'}`);
+                  
+                  // Send product update to remote
+                  sendToRemote({
+                    type: "PRODUCT_UPDATED",
+                    payload: {
+                      id: p.productId,
+                      title: p.title,
+                      description: p.description,
+                      canPurchase: true,
+                      state: "valid",
+                      price: p.price || "$29.99/year",
+                      platform: platform,
+                    },
+                  });
                 });
-              });
-
-              store.when().approved(async (transaction: any) => {
-                console.log("✅ Transaction approved:", transaction);
+                
+                if (products.length === 0) {
+                  addLog("⚠️ No products loaded!");
+                  addLog("Possible reasons:");
+                  addLog("1. Product not created in Play Console/App Store Connect");
+                  addLog("2. Product ID mismatch");
+                  addLog("3. Still propagating (wait 15-30 min)");
+                  addLog("4. App not from test track");
+                }
+                
                 sendToRemote({
-                  type: "TRANSACTION_APPROVED",
-                  payload: transaction,
+                  type: "STORE_READY",
+                  id,
+                  payload: { ready: true, productsCount: products.length },
                 });
-              });
-
-              store.when().error((error: any) => {
-                addLog(`❌ Store error: ${error.message || error.code || 'Unknown error'}`);
+              } catch (error: any) {
+                addLog(`❌ Error loading products: ${error.message}`);
                 sendToRemote({
                   type: "STORE_ERROR",
                   payload: { message: error.message },
                 });
-              });
-
-              addLog("🏪 Calling store.initialize()...");
-              await store.initialize();
-              addLog("✅ Store initialized!");
-              addLog(`📊 Product count: ${store.products.length}`);
-              
-              // Log each product in detail
-              store.products.forEach((p: any) => {
-                addLog(`📦 Product: ${p.id}`);
-                addLog(`   - Title: ${p.title || 'No title'}`);
-                addLog(`   - State: ${p.state}`);
-                addLog(`   - Can Purchase: ${p.canPurchase}`);
-                addLog(`   - Price: ${p.pricing?.price || 'No price'}`);
-              });
-              
-              // Wait a bit and check again
-              setTimeout(() => {
-                addLog(`📊 Products after 3s: ${store.products.length}`);
-                
-                if (store.products.length === 0) {
-                  addLog("⚠️ NO PRODUCTS FOUND!");
-                  addLog("Possible causes:");
-                  addLog("1. License testing Gmail not added");
-                  addLog("2. Product not active in Play Console");
-                  addLog("3. Still propagating (wait 15-30 min)");
-                  addLog("4. App not from Internal Testing link");
-                } else {
-                  store.products.forEach((p: any) => {
-                    addLog(`✅ ${p.id}: ${p.state} (${p.canPurchase ? 'can purchase' : 'cannot purchase'})`);
-                  });
-                }
-              }, 3000);
-              
-              sendToRemote({
-                type: "STORE_READY",
-                id,
-                payload: { ready: true },
-              });
+              }
               break;
             }
 
             case "PURCHASE_PRODUCT": {
-              const { store } = CdvPurchase;
-              const product = store.get(payload.productId);
+              addLog(`💳 Initiating purchase: ${payload.productId}`);
               
-              if (!product) {
-                throw new Error("Product not found");
+              try {
+                // Purchase using new plugin API
+                const purchaseData = await inAppPurchases.purchase(payload.productId);
+                addLog(`✅ Purchase successful!`);
+                addLog(`   Purchase ID: ${purchaseData.purchaseId}`);
+                
+                // Complete the purchase (consume = false for subscriptions)
+                await inAppPurchases.completePurchase(payload.productId, false);
+                addLog(`✅ Purchase completed!`);
+                
+                sendToRemote({
+                  type: "TRANSACTION_APPROVED",
+                  payload: {
+                    products: [{ id: payload.productId }],
+                    nativePurchase: {
+                      transactionId: purchaseData.purchaseId,
+                      purchaseToken: purchaseData.purchaseToken || purchaseData.receipt,
+                      appStoreReceipt: purchaseData.receipt,
+                    },
+                  },
+                });
+                
+                sendToRemote({
+                  type: "PURCHASE_INITIATED",
+                  id,
+                  payload: { success: true },
+                });
+              } catch (error: any) {
+                addLog(`❌ Purchase error: ${error.message || error}`);
+                sendToRemote({
+                  type: "STORE_ERROR",
+                  payload: { message: error.message || "Purchase failed" },
+                });
               }
-
-              const offer = product.getOffer();
-              await offer.order();
-              
-              sendToRemote({
-                type: "PURCHASE_INITIATED",
-                id,
-                payload: { success: true },
-              });
               break;
             }
 
             case "GET_PRODUCTS": {
-              const { store } = CdvPurchase;
-              const products = store.products;
-              
+              addLog("📋 GET_PRODUCTS requested");
+              // Products are already sent via PRODUCT_UPDATED events
               sendToRemote({
                 type: "PRODUCTS_LIST",
                 id,
-                payload: { products },
+                payload: { products: [] },
               });
               break;
             }
@@ -207,6 +194,7 @@ export function CapacitorBridge() {
           }
         } catch (error: any) {
           console.error("Bridge error:", error);
+          addLog(`❌ Bridge error: ${error.message}`);
           sendToRemote({
             type: "ERROR",
             id,
@@ -215,7 +203,8 @@ export function CapacitorBridge() {
         }
       });
     } else {
-      console.warn("⚠️ CdvPurchase not available");
+      addLog("⚠️ inAppPurchases plugin not available");
+      console.warn("⚠️ inAppPurchases not available");
     }
 
     setIsReady(true);
@@ -290,7 +279,7 @@ export function CapacitorBridge() {
             borderBottom: "1px solid #00ff00",
             paddingBottom: "8px",
           }}>
-            <strong style={{ color: "#ffff00" }}>📱 NATIVE DEBUG LOG (Google Play)</strong>
+            <strong style={{ color: "#ffff00" }}>📱 NATIVE DEBUG LOG</strong>
             <button
               onClick={() => setShowDebug(false)}
               style={{
