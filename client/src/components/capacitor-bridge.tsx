@@ -8,15 +8,24 @@ const REMOTE_APP_URL = "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3r
 export function CapacitorBridge() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isReady, setIsReady] = useState(false);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [showDebug, setShowDebug] = useState(true);
+
+  const addLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const logMessage = `[${timestamp}] ${message}`;
+    setDebugLogs(prev => [...prev, logMessage]);
+    console.log(message);
+  };
 
   useEffect(() => {
-    console.log("🌉 Capacitor Bridge initializing...");
-    console.log("Platform:", Capacitor.getPlatform());
-    console.log("Native:", Capacitor.isNativePlatform());
+    addLog("🌉 Capacitor Bridge initializing...");
+    addLog(`Platform: ${Capacitor.getPlatform()}`);
+    addLog(`Native: ${Capacitor.isNativePlatform()}`);
 
     // Initialize plugins
     if (typeof CdvPurchase !== "undefined") {
-      console.log("✅ CdvPurchase plugin available!");
+      addLog("✅ CdvPurchase plugin available!");
       
       // Setup message handler for remote app
       window.addEventListener("message", async (event) => {
@@ -77,7 +86,8 @@ export function CapacitorBridge() {
 
               // Setup event handlers
               store.when().productUpdated((product: any) => {
-                console.log("📦 Product updated:", product);
+                addLog(`📦 Product updated: ${product.id}`);
+                addLog(`   - State: ${product.state}, Can purchase: ${product.canPurchase}`);
                 sendToRemote({
                   type: "PRODUCT_UPDATED",
                   payload: {
@@ -101,42 +111,42 @@ export function CapacitorBridge() {
               });
 
               store.when().error((error: any) => {
-                console.error("❌ Store error:", error);
+                addLog(`❌ Store error: ${error.message || error.code || 'Unknown error'}`);
                 sendToRemote({
                   type: "STORE_ERROR",
                   payload: { message: error.message },
                 });
               });
 
-              console.log("🏪 Calling store.initialize()...");
+              addLog("🏪 Calling store.initialize()...");
               await store.initialize();
-              console.log("✅ Store initialized!");
-              console.log("📊 All products registered:", store.products);
-              console.log("📊 Product count:", store.products.length);
+              addLog("✅ Store initialized!");
+              addLog(`📊 Product count: ${store.products.length}`);
               
               // Log each product in detail
               store.products.forEach((p: any) => {
-                console.log(`  📦 Product: ${p.id}`);
-                console.log(`     - Title: ${p.title}`);
-                console.log(`     - State: ${p.state}`);
-                console.log(`     - Can Purchase: ${p.canPurchase}`);
-                console.log(`     - Pricing: ${JSON.stringify(p.pricing)}`);
+                addLog(`📦 Product: ${p.id}`);
+                addLog(`   - Title: ${p.title || 'No title'}`);
+                addLog(`   - State: ${p.state}`);
+                addLog(`   - Can Purchase: ${p.canPurchase}`);
+                addLog(`   - Price: ${p.pricing?.price || 'No price'}`);
               });
               
               // Wait a bit and check again
               setTimeout(() => {
-                console.log("📊 Products after 3s delay:", store.products.length);
-                store.products.forEach((p: any) => {
-                  console.log(`  📦 ${p.id}: ${p.state} (canPurchase: ${p.canPurchase})`);
-                });
+                addLog(`📊 Products after 3s: ${store.products.length}`);
                 
                 if (store.products.length === 0) {
-                  console.error("⚠️ NO PRODUCTS FOUND!");
-                  console.error("Troubleshooting:");
-                  console.error("1. Is license testing Gmail added to Play Console?");
-                  console.error("2. Is app downloaded from Internal Testing link?");
-                  console.error("3. Did you wait 15-30 min after first upload?");
-                  console.error("4. Check: adb logcat | grep -i billing");
+                  addLog("⚠️ NO PRODUCTS FOUND!");
+                  addLog("Possible causes:");
+                  addLog("1. License testing Gmail not added");
+                  addLog("2. Product not active in Play Console");
+                  addLog("3. Still propagating (wait 15-30 min)");
+                  addLog("4. App not from Internal Testing link");
+                } else {
+                  store.products.forEach((p: any) => {
+                    addLog(`✅ ${p.id}: ${p.state} (${p.canPurchase ? 'can purchase' : 'cannot purchase'})`);
+                  });
                 }
               }, 3000);
               
@@ -233,20 +243,95 @@ export function CapacitorBridge() {
   }
 
   return (
-    <iframe
-      ref={iframeRef}
-      src={REMOTE_APP_URL}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        border: "none",
-        margin: 0,
-        padding: 0,
-      }}
-      allow="camera; microphone; geolocation"
-    />
+    <>
+      <iframe
+        ref={iframeRef}
+        src={REMOTE_APP_URL}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          border: "none",
+          margin: 0,
+          padding: 0,
+        }}
+        allow="camera; microphone; geolocation"
+      />
+      
+      {/* Debug Log Overlay */}
+      {showDebug && debugLogs.length > 0 && (
+        <div style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          maxHeight: "40vh",
+          backgroundColor: "rgba(0, 0, 0, 0.95)",
+          color: "#00ff00",
+          fontFamily: "monospace",
+          fontSize: "11px",
+          overflowY: "auto",
+          padding: "12px",
+          borderTop: "2px solid #00ff00",
+          zIndex: 99999,
+        }}>
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "8px",
+            borderBottom: "1px solid #00ff00",
+            paddingBottom: "8px",
+          }}>
+            <strong style={{ color: "#ffff00" }}>📱 NATIVE DEBUG LOG (Google Play)</strong>
+            <button
+              onClick={() => setShowDebug(false)}
+              style={{
+                background: "#ff0000",
+                color: "white",
+                border: "none",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "10px",
+                cursor: "pointer",
+              }}
+            >
+              Hide
+            </button>
+          </div>
+          {debugLogs.map((log, idx) => (
+            <div key={idx} style={{ marginBottom: "4px", lineHeight: "1.4" }}>
+              {log}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Toggle button when hidden */}
+      {!showDebug && (
+        <button
+          onClick={() => setShowDebug(true)}
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            right: "16px",
+            background: "#00ff00",
+            color: "black",
+            border: "2px solid #000",
+            padding: "12px 16px",
+            borderRadius: "8px",
+            fontSize: "12px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            zIndex: 99999,
+            boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+          }}
+        >
+          📱 Show Debug
+        </button>
+      )}
+    </>
   );
 }
