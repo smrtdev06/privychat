@@ -42,6 +42,8 @@ Preferred communication style: Simple, everyday language.
 - **Freemium Model**: Free users have daily message limits; premium users get unlimited messages. If one user in a conversation is premium, both send unlimited messages.
 - **Subscription Gifts**: Users can gift premium subscriptions via upgrade codes.
 - **Mobile Subscriptions**: Native in-app purchases (Google Play Billing, Apple App Store) with backend receipt validation and webhook support.
+  - **Webhook Security**: Google Cloud Pub/Sub JWT verification prevents spoofed webhook calls (configurable via PUBSUB_AUDIENCE env var)
+  - **Lifecycle**: Cancel → Keep access → Expire → Downgrade (proper subscription lifecycle with autoRenewing flag)
 - **User Discovery**: User code system.
 - **Message Types**: Support for text, image, video, and voice messages (schema and rendering complete; object storage needed for full media upload functionality).
 
