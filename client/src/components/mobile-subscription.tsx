@@ -592,8 +592,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   }
 
   return (
-    <Card>
-      <CardContent className="space-y-4 pt-6">
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>Subscription</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         {products.length === 0 ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center py-4">
@@ -615,20 +618,26 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           </div>
         ) : (
           products.map((product) => (
-            <div
-              key={product.id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-              data-testid={`product-${product.id}`}
-            >
-              <div className="flex-1">
-                <h3 className="font-semibold">{product.title}</h3>
-                <p className="text-sm text-muted-foreground">{product.description}</p>
-                <p className="text-lg font-bold mt-2">{product.price}</p>
+            <div key={product.id} className="space-y-4" data-testid={`product-${product.id}`}>
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-semibold text-lg">{product.title}</h3>
+                <p className="text-2xl font-bold mt-1">{product.price}</p>
               </div>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Premium Features</h4>
+                <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
+                  <li>• Unlimited messages</li>
+                  <li>• Send images, videos, and voice messages</li>
+                  <li>• Priority support</li>
+                  <li>• No ads</li>
+                </ul>
+              </div>
+
               <Button
                 onClick={() => handlePurchase(product.id)}
                 disabled={loading || hasActiveSubscription}
-                className="ml-4"
+                className="w-full"
                 data-testid={`button-purchase-${product.id}`}
                 variant={hasActiveSubscription ? "secondary" : "default"}
               >
@@ -653,17 +662,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           ))
         )}
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg mt-4">
-          <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Premium Features</h4>
-          <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-            <li>• Unlimited messages</li>
-            <li>• Send images, videos, and voice messages</li>
-            <li>• Priority support</li>
-            <li>• No ads</li>
-          </ul>
-        </div>
-
-        {!capacitorBridge.isRemoteMode() && (
+        {!capacitorBridge.isRemoteMode() && products.length > 0 && (
           <Button
             onClick={handleRestorePurchases}
             disabled={restoring}
