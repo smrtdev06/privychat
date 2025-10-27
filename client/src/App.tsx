@@ -33,8 +33,8 @@ function Router() {
       <Route path="/reset-password" component={ResetPasswordPage} />
       <ProtectedRoute path="/messaging" component={Messaging} />
       <ProtectedRoute path="/settings" component={Settings} />
-      <ProtectedRoute path="/help" component={Help} />
-      <ProtectedRoute path="/about" component={About} />
+      <Route path="/help" component={Help} />
+      <Route path="/about" component={About} />
       <ProtectedRoute path="/conversation/:id" component={Conversation} />
       <ProtectedRoute path="/admin" component={AdminPage} />
       <Route component={NotFound} />

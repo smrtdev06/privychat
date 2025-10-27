@@ -2,6 +2,16 @@
 
 PrivyCalc is a secure messaging application disguised as a calculator. Built as a single-page application (SPA) with a React frontend and Express.js backend, it offers private communication through a unique calculator interface. Key features include user authentication, a freemium subscription model, secure file uploads with access control, and robust security measures. The project aims to provide a stealthy and secure communication platform with business potential in privacy-focused messaging.
 
+# Recent Changes (October 27, 2025)
+
+- Added Help & Support and About navigation to calculator side menu with functional buttons
+- Created public Help & Support page (/help) with FAQs, quick help cards, and contact information
+- Created public About page (/about) with app description, key features, and version info
+- Implemented smart back navigation (history.back() with fallback to '/') for context preservation
+- Added dropdown menus to messaging and conversation pages with Settings, Help & Support, and About options
+- Made /help and /about public routes accessible without authentication
+- Fixed database schema: made `phone` and `fullName` columns nullable for user registration
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

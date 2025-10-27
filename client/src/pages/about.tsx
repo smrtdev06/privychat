@@ -6,6 +6,14 @@ import { useLocation } from "wouter";
 export default function About() {
   const [, setLocation] = useLocation();
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      setLocation('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-3xl mx-auto p-6">
@@ -13,7 +21,7 @@ export default function About() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setLocation("/settings")}
+            onClick={handleBack}
             data-testid="button-back"
           >
             <ArrowLeft className="h-5 w-5" />

@@ -311,10 +311,26 @@ export default function Calculator() {
               >
                 Settings
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setLocation("/help");
+                }}
+                data-testid="button-help"
+              >
                 Help & Support
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setLocation("/about");
+                }}
+                data-testid="button-about"
+              >
                 About
               </Button>
             </div>
