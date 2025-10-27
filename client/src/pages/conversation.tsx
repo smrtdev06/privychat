@@ -174,7 +174,7 @@ export default function Conversation() {
   return (
     <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground p-4 flex items-center">
+      <div className="bg-primary text-primary-foreground p-4 flex items-center safe-area-top">
         <Button
           variant="ghost"
           size="icon"

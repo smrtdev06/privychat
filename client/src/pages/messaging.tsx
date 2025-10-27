@@ -71,7 +71,7 @@ export default function Messaging() {
   return (
     <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
+      <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between safe-area-top">
         <div className="flex items-center space-x-3">
           <h2 className="text-xl font-semibold">Secure Messages</h2>
         </div>
