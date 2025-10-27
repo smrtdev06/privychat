@@ -325,7 +325,7 @@ export default function Settings() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-8 safe-area-top">
           <Button
             variant="ghost"
             size="icon"
