@@ -198,6 +198,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(500).json({ error: "Internal server error" });
         }
         
+        console.log("✅ Session created successfully for user:", user.id);
+        console.log("Session ID:", req.sessionID);
+        console.log("Session data:", req.session);
+        console.log("User authenticated:", req.isAuthenticated());
+        
         recordSuccessfulAttempt(user.id);
         res.json({ success: true });
       });

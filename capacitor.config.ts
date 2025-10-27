@@ -16,6 +16,12 @@ const config: CapacitorConfig = {
   // Bundle loads locally - no remote server URL
   // API calls will be made to the backend dynamically
   
+  // iOS-specific configuration for cookie support
+  // Required to enable third-party cookies from backend API
+  ios: {
+    limitsNavigationsToAppBoundDomains: true
+  },
+  
   plugins: {
     App: {
       // Handle deep links for promo code redemption
@@ -24,6 +30,13 @@ const config: CapacitorConfig = {
       appUrlOpen: {
         webDeepLinkingEnabled: true
       }
+    },
+    // Enable cookie support for iOS
+    CapacitorCookies: {
+      enabled: true
+    },
+    CapacitorHttp: {
+      enabled: true
     }
   }
 };
