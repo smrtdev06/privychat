@@ -44,20 +44,20 @@ function Router() {
 
 function App() {
   // Check if running in native Capacitor environment
-  // If so, use the bridge to load remote app with plugin support
   const isNative = Capacitor.isNativePlatform();
   
   if (isNative) {
-    console.log("🚀 Running in native Capacitor - using bridge mode");
-    return <CapacitorBridge />;
+    console.log("🚀 Running in native Capacitor - local bundle mode");
+  } else {
+    console.log("🌐 Running in web browser - standard mode");
   }
   
-  console.log("🌐 Running in web browser - standard mode");
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
+          {isNative && <CapacitorBridge />}
           <Router />
         </TooltipProvider>
       </AuthProvider>
