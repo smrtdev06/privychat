@@ -1,13 +1,18 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Settings, ArrowRight } from "lucide-react";
+import { ArrowLeft, Plus, Settings, ArrowRight, HelpCircle, Info } from "lucide-react";
 import ConversationList from "@/components/conversation-list";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { NavigationMenu } from "@/components/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Messaging() {
   const [, setLocation] = useLocation();
@@ -80,7 +85,32 @@ export default function Messaging() {
           >
             <Plus className="h-5 w-5" />
           </Button>
-          <NavigationMenu />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-primary-foreground hover:bg-primary-foreground/20"
+                data-testid="button-settings-messaging"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLocation("/settings")} data-testid="menu-settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocation("/help")} data-testid="menu-help">
+                <HelpCircle className="h-4 w-4 mr-2" />
+                Help & Support
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocation("/about")} data-testid="menu-about">
+                <Info className="h-4 w-4 mr-2" />
+                About
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

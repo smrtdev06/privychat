@@ -16,7 +16,6 @@ import { MobileSubscription } from "@/components/mobile-subscription";
 import { PromoCodeRedeem } from "@/components/promo-code-redeem";
 import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
 import { useEffect } from "react";
-import { NavigationMenu } from "@/components/navigation-menu";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -326,20 +325,17 @@ export default function Settings() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setLocation("/")}
-              className="mr-4"
-              data-testid="button-back-settings"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h2 className="text-2xl font-bold">Settings</h2>
-          </div>
-          <NavigationMenu />
+        <div className="flex items-center mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLocation("/")}
+            className="mr-4"
+            data-testid="button-back-settings"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h2 className="text-2xl font-bold">Settings</h2>
         </div>
 
         {/* Email Verification Banner */}

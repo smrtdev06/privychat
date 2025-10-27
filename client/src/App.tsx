@@ -13,6 +13,7 @@ import AdminPage from "@/pages/admin";
 import VerifyEmail from "@/pages/verify-email";
 import ResetPasswordPage from "@/pages/reset-password";
 import Help from "@/pages/help";
+import About from "@/pages/about";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { useDeepLinks } from "@/hooks/use-deep-links";
@@ -33,6 +34,7 @@ function Router() {
       <ProtectedRoute path="/messaging" component={Messaging} />
       <ProtectedRoute path="/settings" component={Settings} />
       <ProtectedRoute path="/help" component={Help} />
+      <ProtectedRoute path="/about" component={About} />
       <ProtectedRoute path="/conversation/:id" component={Conversation} />
       <ProtectedRoute path="/admin" component={AdminPage} />
       <Route component={NotFound} />

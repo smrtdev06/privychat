@@ -3,7 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Camera, Image, Send, MoreVertical } from "lucide-react";
+import { ArrowLeft, Camera, Image, Send, MoreVertical, Settings, HelpCircle, Info } from "lucide-react";
 import MessageBubble from "@/components/message-bubble";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest } from "@/lib/queryClient";
@@ -11,7 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
-import { NavigationMenu } from "@/components/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Conversation() {
   const { id } = useParams<{ id: string }>();
@@ -189,7 +194,32 @@ export default function Conversation() {
           </p>
         </div>
         
-        <NavigationMenu />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-primary-foreground hover:bg-primary-foreground/20"
+              data-testid="button-more"
+            >
+              <MoreVertical className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setLocation("/settings")} data-testid="menu-settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLocation("/help")} data-testid="menu-help">
+              <HelpCircle className="h-4 w-4 mr-2" />
+              Help & Support
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLocation("/about")} data-testid="menu-about">
+              <Info className="h-4 w-4 mr-2" />
+              About
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Messages */}
