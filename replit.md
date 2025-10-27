@@ -25,6 +25,8 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
     - Right side: safe-area-top, safe-area-bottom, safe-area-right
     - Top side: safe-area-top, safe-area-left, safe-area-right
     - Bottom side: safe-area-bottom, safe-area-left, safe-area-right
+    - **Close button (X)**: Uses inline env(safe-area-inset-top) and env(safe-area-inset-right) margins to stay clickable on notched devices
+  - **Toast notifications**: Safe-area-top class prevents toasts from overlapping with status bar/notch
   - Viewport meta tag includes `viewport-fit=cover` to enable safe area insets
   - Graceful fallback to 0 padding on non-notch devices using `env()` with defaults
   - Works seamlessly on iOS in all orientations (portrait/landscape) and Android/web browsers
