@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle } from "lucide-react";
+import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
@@ -454,6 +454,17 @@ export default function Settings() {
             </CardContent>
           </Card>
         )}
+
+        {/* Help & Support */}
+        <Button
+          onClick={() => setLocation("/help")}
+          variant="outline"
+          className="w-full mb-4"
+          data-testid="button-help"
+        >
+          <HelpCircle className="h-4 w-4 mr-2" />
+          Help & Support
+        </Button>
 
         {/* Logout */}
         <Button
