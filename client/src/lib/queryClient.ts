@@ -1,4 +1,28 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { Capacitor } from "@capacitor/core";
+
+// Get the API base URL for Capacitor apps
+// In local bundle mode, API calls need the full server URL
+function getApiBaseUrl(): string {
+  if (Capacitor.isNativePlatform()) {
+    // Running in Capacitor - use environment variable for server URL
+    const serverUrl = import.meta.env.VITE_SERVER_URL || "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev";
+    return serverUrl;
+  }
+  // Running in web browser - use relative paths
+  return "";
+}
+
+// Helper to construct full URL
+function getFullUrl(path: string): string {
+  const baseUrl = getApiBaseUrl();
+  if (baseUrl && !path.startsWith("http")) {
+    // Ensure path starts with /
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    return `${baseUrl}${normalizedPath}`;
+  }
+  return path;
+}
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -21,7 +45,8 @@ export async function apiRequest(
   // For non-GET requests, try to get CSRF token
   if (method !== "GET") {
     try {
-      const csrfRes = await fetch("/api/csrf-token", {
+      const csrfUrl = getFullUrl("/api/csrf-token");
+      const csrfRes = await fetch(csrfUrl, {
         credentials: "include",
       });
       if (csrfRes.ok) {
@@ -34,7 +59,8 @@ export async function apiRequest(
     }
   }
 
-  const res = await fetch(url, {
+  const fullUrl = getFullUrl(url);
+  const res = await fetch(fullUrl, {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
@@ -59,7 +85,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const path = queryKey.join("/") as string;
+    const fullUrl = getFullUrl(path);
+    
+    const res = await fetch(fullUrl, {
       credentials: "include",
     });
 
