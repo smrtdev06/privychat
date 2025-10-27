@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
+import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
 
 declare const inAppPurchases: any;
 
@@ -10,24 +11,51 @@ export function CapacitorBridge() {
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    if (pluginsInitialized) {
+    async function initializePlugins() {
+      if (pluginsInitialized) {
+        setIsInitializing(false);
+        return;
+      }
+
+      console.log("🌉 Capacitor Bridge initializing (LOCAL MODE)...");
+      console.log(`Platform: ${Capacitor.getPlatform()}`);
+      console.log(`Native: ${Capacitor.isNativePlatform()}`);
+
+      // Initialize in-app purchases plugin
+      if (typeof inAppPurchases !== "undefined") {
+        console.log("✅ inAppPurchases plugin available!");
+        
+        try {
+          // Detect platform for store initialization
+          const platform = await capacitorBridge.getPlatform();
+          
+          if (platform === "ios" || platform === "android") {
+            console.log(`🏪 Initializing ${platform} in-app purchase store...`);
+            
+            // Initialize the store with the platform
+            // This will set up purchase listeners and load products
+            await capacitorBridge.initStore(platform);
+            
+            console.log("✅ Store initialization complete!");
+            pluginsInitialized = true;
+          } else {
+            console.log("ℹ️ Not on mobile platform, skipping store init");
+            pluginsInitialized = true;
+          }
+        } catch (error) {
+          console.error("❌ Failed to initialize in-app purchases:", error);
+          // Don't set pluginsInitialized - allow retry on next component mount
+          // but continue loading the app
+        }
+      } else {
+        console.warn("⚠️ inAppPurchases plugin not available");
+        pluginsInitialized = true;
+      }
+
       setIsInitializing(false);
-      return;
     }
 
-    console.log("🌉 Capacitor Bridge initializing (LOCAL MODE)...");
-    console.log(`Platform: ${Capacitor.getPlatform()}`);
-    console.log(`Native: ${Capacitor.isNativePlatform()}`);
-
-    // Initialize in-app purchases plugin
-    if (typeof inAppPurchases !== "undefined") {
-      console.log("✅ inAppPurchases plugin available!");
-      pluginsInitialized = true;
-    } else {
-      console.warn("⚠️ inAppPurchases plugin not available");
-    }
-
-    setIsInitializing(false);
+    initializePlugins();
   }, []);
 
   // Show loading screen only during initial plugin setup

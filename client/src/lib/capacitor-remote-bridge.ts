@@ -17,6 +17,7 @@ class CapacitorRemoteBridge {
   private eventHandlers = new Map<string, MessageCallback[]>();
   private isInIframe = window.self !== window.top;
   private isNativePlatform = Capacitor.isNativePlatform();
+  private purchaseListenerSetup = false;
 
   constructor() {
     if (this.isInIframe) {
@@ -109,8 +110,34 @@ class CapacitorRemoteBridge {
     
     console.log(`🏪 Initializing in-app purchases for ${platform}...`);
     
-    // Plugin is already initialized by CapacitorBridge component
-    // Just trigger product loading
+    // Set up purchase update listener (important for handling purchases)
+    if (inAppPurchases.onPurchaseUpdate && !this.purchaseListenerSetup) {
+      console.log("🎧 Setting up purchase update listener...");
+      inAppPurchases.onPurchaseUpdate(async (purchase: any) => {
+        console.log(`🔔 Purchase update received:`, purchase);
+        
+        // Acknowledge the purchase first
+        try {
+          await inAppPurchases.completePurchase(purchase.productId, false);
+          
+          // Trigger transaction approved event
+          this.triggerEvent("TRANSACTION_APPROVED", {
+            products: [{ id: purchase.productId }],
+            nativePurchase: {
+              transactionId: purchase.purchaseId,
+              purchaseToken: purchase.purchaseToken || purchase.receipt,
+              appStoreReceipt: purchase.receipt,
+            },
+          });
+        } catch (error) {
+          console.error("❌ Failed to handle purchase update:", error);
+        }
+      });
+      this.purchaseListenerSetup = true;
+      console.log("✅ Purchase update listener registered");
+    }
+    
+    // Load product information
     const productId = platform === "android" ? "premium_yearly" : "premium-yearly";
     
     try {
@@ -142,6 +169,7 @@ class CapacitorRemoteBridge {
     } catch (error: any) {
       console.error("❌ Error loading products:", error);
       this.triggerEvent("STORE_ERROR", { message: error.message });
+      throw error; // Re-throw so caller knows initialization failed
     }
   }
 
