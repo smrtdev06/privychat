@@ -16,6 +16,14 @@ const config: CapacitorConfig = {
   // Bundle loads locally - no remote server URL
   // API calls will be made to the backend dynamically
   
+  // Configure server hostname for iOS cookie support
+  // This makes the backend domain a "first-party" domain for WKAppBoundDomains
+  server: {
+    hostname: '622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev',
+    iosScheme: 'https',
+    cleartext: false // Enforce HTTPS for security
+  },
+  
   // iOS-specific configuration for cookie support
   // Required to enable third-party cookies from backend API
   ios: {

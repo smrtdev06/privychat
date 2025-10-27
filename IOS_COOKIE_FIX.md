@@ -20,9 +20,17 @@ I've configured your app to enable iOS cookie support:
 
 ### 1. Updated `capacitor.config.ts`
 ```typescript
+// Configure server hostname to make backend a first-party domain
+server: {
+  hostname: '622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev',
+  iosScheme: 'https',
+  cleartext: false
+},
+
 ios: {
   limitsNavigationsToAppBoundDomains: true
 },
+
 plugins: {
   CapacitorCookies: {
     enabled: true
@@ -32,6 +40,8 @@ plugins: {
   }
 }
 ```
+
+**Important:** The `server.hostname` must match the domain in `WKAppBoundDomains`. This tells iOS to treat the backend as a first-party domain, allowing session cookies to work.
 
 ### 2. Updated `ios/App/App/Info.plist`
 Added `WKAppBoundDomains` with your backend domain:
@@ -45,7 +55,10 @@ Added `WKAppBoundDomains` with your backend domain:
 **Important:** Do NOT include `http://` or `https://` in the domain - just the domain name.
 
 ### 3. Added Debug Logging
-Added server-side logging to verify session creation and help with debugging.
+Added minimal server-side logging to verify session creation without exposing sensitive data:
+- Logs PIN length (not the actual PIN)
+- Logs authentication success status
+- Does NOT log session IDs, session objects, or credentials
 
 ## Next Steps - **ACTION REQUIRED**
 
@@ -105,11 +118,13 @@ Instead of relying on cookies, implement token-based auth:
 
 After rebuilding, check the debug logs. You should see:
 ```
-✅ Session created successfully for user: <user-id>
-Session ID: <session-id>
-User authenticated: true
+Received numeric password request - length: 6
+✅ Session created successfully - user authenticated: true
+POST /api/verify-numeric-password 200
 GET /api/user 200 ✅ (instead of 401)
 ```
+
+**Note:** Sensitive data (PINs, session IDs, session objects) are NOT logged for security.
 
 ## Common Issues
 

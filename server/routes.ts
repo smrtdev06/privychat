@@ -162,12 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/verify-numeric-password", async (req, res) => {
     try {
-      console.log("Received numeric password request:", {
-        body: req.body,
-        numericPassword: req.body?.numericPassword,
-        type: typeof req.body?.numericPassword,
-        length: req.body?.numericPassword?.length
-      });
+      console.log("Received numeric password request - length:", req.body?.numericPassword?.length);
       
       const validatedData = numericPasswordSchema.parse(req.body);
       const { numericPassword } = validatedData;
@@ -198,10 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(500).json({ error: "Internal server error" });
         }
         
-        console.log("✅ Session created successfully for user:", user.id);
-        console.log("Session ID:", req.sessionID);
-        console.log("Session data:", req.session);
-        console.log("User authenticated:", req.isAuthenticated());
+        console.log("✅ Session created successfully - user authenticated:", req.isAuthenticated());
         
         recordSuccessfulAttempt(user.id);
         res.json({ success: true });
