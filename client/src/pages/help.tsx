@@ -129,9 +129,8 @@ export default function Help() {
                       <p className="font-semibold">Premium Plan ($29.99/year):</p>
                       <ul className="list-disc list-inside ml-2 text-muted-foreground">
                         <li>Unlimited messages</li>
-                        <li>Send images, videos, and voice messages</li>
+                        <li>Send images and videos</li>
                         <li>Priority support</li>
-                        <li>No ads</li>
                       </ul>
                     </div>
                     <p className="text-muted-foreground italic">

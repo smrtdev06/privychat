@@ -40,7 +40,7 @@ export default function About() {
               It provides a private communication platform where your messages are protected and your privacy is paramount.
             </p>
             <p className="text-muted-foreground">
-              With PrivyCalc, you can send text messages, images, videos, and voice messages to your contacts 
+              With PrivyCalc, you can send text messages, images, and videos to your contacts 
               while maintaining the appearance of a simple calculator app.
             </p>
           </CardContent>
@@ -83,7 +83,7 @@ export default function About() {
               <div>
                 <h3 className="font-medium mb-1">Rich Media Support</h3>
                 <p className="text-sm text-muted-foreground">
-                  Send text, images, videos, and voice messages with secure cloud storage.
+                  Send text, images, and videos with secure cloud storage.
                 </p>
               </div>
             </div>
