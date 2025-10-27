@@ -7,6 +7,7 @@ import { useSwipeHandler } from "@/lib/swipe-handler";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { NavigationMenu } from "@/components/navigation-menu";
 
 export default function Messaging() {
   const [, setLocation] = useLocation();
@@ -79,15 +80,7 @@ export default function Messaging() {
           >
             <Plus className="h-5 w-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-foreground hover:bg-primary-foreground/20"
-            onClick={() => setLocation("/settings")}
-            data-testid="button-settings-messaging"
-          >
-            <Settings className="h-5 w-5" />
-          </Button>
+          <NavigationMenu />
         </div>
       </div>
 

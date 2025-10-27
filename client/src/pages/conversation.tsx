@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
+import { NavigationMenu } from "@/components/navigation-menu";
 
 export default function Conversation() {
   const { id } = useParams<{ id: string }>();
@@ -188,13 +189,7 @@ export default function Conversation() {
           </p>
         </div>
         
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <MoreVertical className="h-5 w-5" />
-        </Button>
+        <NavigationMenu />
       </div>
 
       {/* Messages */}

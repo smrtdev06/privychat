@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle, HelpCircle } from "lucide-react";
+import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
@@ -16,6 +16,7 @@ import { MobileSubscription } from "@/components/mobile-subscription";
 import { PromoCodeRedeem } from "@/components/promo-code-redeem";
 import { capacitorBridge } from "@/lib/capacitor-remote-bridge";
 import { useEffect } from "react";
+import { NavigationMenu } from "@/components/navigation-menu";
 
 export default function Settings() {
   const { user, logoutMutation } = useAuth();
@@ -325,17 +326,20 @@ export default function Settings() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setLocation("/")}
-            className="mr-4"
-            data-testid="button-back-settings"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h2 className="text-2xl font-bold">Settings</h2>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLocation("/")}
+              className="mr-4"
+              data-testid="button-back-settings"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h2 className="text-2xl font-bold">Settings</h2>
+          </div>
+          <NavigationMenu />
         </div>
 
         {/* Email Verification Banner */}
@@ -454,17 +458,6 @@ export default function Settings() {
             </CardContent>
           </Card>
         )}
-
-        {/* Help & Support */}
-        <Button
-          onClick={() => setLocation("/help")}
-          variant="outline"
-          className="w-full mb-4"
-          data-testid="button-help"
-        >
-          <HelpCircle className="h-4 w-4 mr-2" />
-          Help & Support
-        </Button>
 
         {/* Logout */}
         <Button
