@@ -279,8 +279,11 @@ export function CapacitorBridge() {
           border: "none",
           margin: 0,
           padding: 0,
+          zIndex: 1,
+          backgroundColor: "white",
         }}
         allow="camera; microphone; geolocation"
+        title="Remote App"
       />
       
       {/* Debug Log Overlay */}
