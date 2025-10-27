@@ -402,7 +402,6 @@ export default function Settings() {
           </CardContent>
         </Card>
 
-        {/* Mobile Subscription */}
         {!isPremium && (
           <>
             <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />
@@ -496,16 +495,6 @@ export default function Settings() {
             </CardContent>
           </Card>
         )}
-
-        {/* Access Messaging */}
-        <Button
-          onClick={() => setLocation("/messaging")}
-          className="w-full mb-6"
-          data-testid="button-access-messaging"
-        >
-          <MessageCircle className="h-4 w-4 mr-2" />
-          Access Secure Messaging
-        </Button>
 
         {/* Logout */}
         <Button

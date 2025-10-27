@@ -220,36 +220,45 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       });
 
       capacitorBridge.on("TRANSACTION_APPROVED", async (transaction: any) => {
+        addDebug("✅ Transaction approved via bridge!");
+        addDebug(`   Product ID: ${transaction.products[0]?.id || 'N/A'}`);
         console.log("✅ Transaction approved via bridge:", transaction);
         
         try {
           // Validate purchase with backend
           if (platformType === "android") {
+            addDebug("📤 Validating Android purchase with backend...");
             await apiRequest("POST", "/api/mobile-subscription/validate-android", {
               packageName: "com.newhomepage.privychat",
               productId: transaction.products[0].id,
               purchaseToken: transaction.nativePurchase.purchaseToken,
             });
+            addDebug("✅ Android purchase validated successfully!");
           } else if (platformType === "ios") {
+            addDebug("📤 Validating iOS purchase with backend...");
             await apiRequest("POST", "/api/mobile-subscription/validate-ios", {
               receiptData: transaction.nativePurchase.appStoreReceipt,
               transactionId: transaction.nativePurchase.transactionId,
               productId: transaction.products[0].id,
             });
+            addDebug("✅ iOS purchase validated successfully!");
           }
 
           // Refresh user data
+          addDebug("🔄 Refreshing user data...");
           queryClient.invalidateQueries({ queryKey: ["/api/user"] });
           
           if (onSubscriptionUpdate) {
             onSubscriptionUpdate();
           }
 
+          addDebug("🎉 Subscription activated successfully!");
           toast({
             title: "Subscription Activated",
             description: "Your premium subscription is now active!",
           });
         } catch (error: any) {
+          addDebug(`❌ Validation error: ${error.message}`);
           console.error("Error validating purchase:", error);
           toast({
             title: "Validation Error",
