@@ -561,13 +561,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   if (!platform) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Smartphone className="h-5 w-5" />
-            Mobile Subscription
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="ml-3 text-sm text-muted-foreground">Detecting platform...</p>
@@ -581,16 +575,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   if (!storeReady) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Smartphone className="h-5 w-5" />
-            Mobile Subscription
-          </CardTitle>
-          <CardDescription>
-            Initializing {platform === "ios" ? "App Store" : "Google Play"}...
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="ml-3 text-sm text-muted-foreground">Loading store...</p>
@@ -608,16 +593,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Smartphone className="h-5 w-5" />
-          Mobile Subscription
-        </CardTitle>
-        <CardDescription>
-          Subscribe on {platform === "ios" ? "iOS" : "Android"} for unlimited messaging
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-6">
         {products.length === 0 ? (
           <div className="space-y-3">
             <div className="flex items-center justify-center py-4">

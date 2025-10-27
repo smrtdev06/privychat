@@ -361,47 +361,6 @@ export default function Settings() {
           </CardContent>
         </Card>
 
-        {/* Subscription Status */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Subscription Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-medium">Current Plan</span>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  isPremium
-                    ? "bg-green-200 text-green-800"
-                    : "bg-yellow-200 text-yellow-800"
-                }`}
-                data-testid="subscription-status"
-              >
-                {isPremium ? "Premium" : "Free Plan"}
-              </span>
-            </div>
-            
-            {!isPremium && (
-              <>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Messages remaining today: <strong>{1 - (user?.dailyMessageCount || 0)}</strong>
-                </p>
-                {!isMobilePlatform && (
-                  <Button
-                    onClick={() => upgradeMutation.mutate()}
-                    disabled={upgradeMutation.isPending}
-                    className="w-full"
-                    data-testid="button-upgrade"
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    {upgradeMutation.isPending ? "Upgrading..." : "Upgrade to Premium - $29/year"}
-                  </Button>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
         {!isPremium && (
           <>
             <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />
