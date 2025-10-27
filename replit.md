@@ -4,6 +4,14 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 27, 2025)
 
+- **MAJOR: Switched to LOCAL BUNDLE deployment mode** for both iOS and Android (removed iframe mode)
+  - iOS: Local bundle solves iframe blocking issues (cookies, localStorage, blank screens)
+  - Android: Local bundle provides better reliability and native plugin integration
+  - API calls now use VITE_SERVER_URL environment variable to connect to backend server
+  - All native features work seamlessly (in-app purchases, camera, etc.)
+- Updated capacitor-bridge to initialize plugins directly (no iframe/postMessage needed)
+- Updated queryClient to use full server URLs when running in Capacitor
+- Updated documentation to reflect local bundle deployment strategy
 - Added Help & Support and About navigation to calculator side menu with functional buttons
 - Created public Help & Support page (/help) with FAQs, quick help cards, and contact information
 - Created public About page (/about) with app description, key features, and version info
@@ -59,16 +67,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android (package: `com.newhomepage.privychat`, name: PrivyCalc).
-- **Deployment Mode**: **HYBRID IFRAME BRIDGE** - Local app loads Capacitor plugins, displays remote Replit server in iframe with postMessage bridge.
-  - Alternative: **LOCAL BUNDLE** mode available (recommended for production).
-- **Plugin Bridge**: Secure postMessage communication between local Capacitor context and remote app.
-  - Strict origin validation (only allowed domains)
-  - Secure targetOrigin for postMessage
-  - Both direct mode (local) and bridge mode (iframe) supported
-  - **IMPORTANT**: Always use `capacitorBridge.getPlatform()` instead of `Capacitor.getPlatform()` to correctly detect platform in iframe mode
-- **WebSocket**: Automatic detection of Capacitor environment and connection to production WebSocket server.
-- **Loading Screen**: Custom calculator-themed loading indicator prevents blank white screen during initial app load.
-- **Security**: Origin allowlist, specific targetOrigin, bidirectional validation (see CAPACITOR_REMOTE_MODE_ANALYSIS.md for details).
+- **Deployment Mode**: **LOCAL BUNDLE** - App runs fully locally with bundled assets for both iOS and Android.
+  - Assets bundled: All frontend code (HTML, CSS, JavaScript)
+  - API calls: Connect to backend server via VITE_SERVER_URL environment variable
+  - Benefits: Works perfectly on iOS (no iframe blocking), reliable native plugin integration
+  - Trade-off: Updates require rebuilding the app (consider OTA update solutions like Capgo for faster deployment)
+- **API Configuration**: 
+  - Web browser: Uses relative paths (e.g., `/api/user`)
+  - Capacitor: Uses full server URL from `VITE_SERVER_URL` (e.g., `https://yourapp.replit.dev/api/user`)
+  - Auto-detection via `Capacitor.isNativePlatform()` in queryClient
+- **Platform Detection**: Use `capacitorBridge.getPlatform()` for consistent platform detection across all contexts
+- **WebSocket**: Automatic detection of Capacitor environment and connection to production WebSocket server via VITE_SERVER_URL
+- **Loading Screen**: Custom calculator-themed loading indicator during plugin initialization
+- **Native Features**: Direct access to Capacitor plugins (in-app purchases, camera, etc.) without postMessage bridge
 
 ## Development and Deployment
 - **Tooling**: Vite for fast development, TypeScript for type safety, Drizzle Kit for database migrations.
