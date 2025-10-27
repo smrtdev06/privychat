@@ -628,9 +628,8 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
                 <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Premium Features</h4>
                 <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
                   <li>• Unlimited messages</li>
-                  <li>• Send images, videos, and voice messages</li>
+                  <li>• Send images and videos</li>
                   <li>• Priority support</li>
-                  <li>• No ads</li>
                 </ul>
               </div>
 
