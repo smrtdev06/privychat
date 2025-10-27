@@ -9,6 +9,13 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
   - Android: Local bundle provides better reliability and native plugin integration
   - API calls now use VITE_SERVER_URL environment variable to connect to backend server
   - All native features work seamlessly (in-app purchases, camera, etc.)
+- **iOS Cookie Fix**: Configured WKAppBoundDomains to enable session cookies on iOS
+  - Added backend domain to `ios/App/App/Info.plist` WKAppBoundDomains
+  - Enabled CapacitorCookies and CapacitorHttp plugins in capacitor.config.ts
+  - Set `limitsNavigationsToAppBoundDomains: true` for iOS
+  - **REQUIRES iOS APP REBUILD** to take effect (run `npx cap sync ios` and rebuild in Xcode)
+  - Fixes PIN login redirect issue where iOS blocked session cookies
+  - See IOS_COOKIE_FIX.md for detailed instructions and troubleshooting
 - **iOS Safe Area Support**: Added complete safe area inset handling for notched devices (iPhone X and later) - PRODUCTION READY
   - CSS utilities: `.safe-area-top`, `.safe-area-bottom`, `.safe-area-left`, `.safe-area-right`, `.safe-area-all`
   - Applied to ALL page headers: calculator, messaging, conversation, settings, help, about (safe-area-top)
