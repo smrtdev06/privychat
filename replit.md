@@ -9,6 +9,11 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
   - Android: Local bundle provides better reliability and native plugin integration
   - API calls now use VITE_SERVER_URL environment variable to connect to backend server
   - All native features work seamlessly (in-app purchases, camera, etc.)
+- **iOS Safe Area Support**: Added complete safe area inset handling for notched devices (iPhone X and later)
+  - CSS utilities: `.safe-area-top`, `.safe-area-bottom`, `.safe-area-left`, `.safe-area-right`, `.safe-area-all`
+  - Applied to all headers (calculator, messaging, conversation) and bottom areas (message input, calculator keypad)
+  - Viewport meta tag includes `viewport-fit=cover` to enable safe area insets
+  - Graceful fallback to 0 padding on non-notch devices using `env()` with defaults
 - Updated capacitor-bridge to initialize plugins directly (no iframe/postMessage needed)
 - Updated queryClient to use full server URLs when running in Capacitor
 - Updated documentation to reflect local bundle deployment strategy
