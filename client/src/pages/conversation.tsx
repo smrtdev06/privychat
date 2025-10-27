@@ -236,7 +236,7 @@ export default function Conversation() {
       </div>
 
       {/* Message Input */}
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-4 safe-area-bottom">
         <div className="flex items-end space-x-3">
           <ObjectUploader
             maxNumberOfFiles={1}

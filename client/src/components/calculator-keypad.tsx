@@ -14,7 +14,7 @@ export default function CalculatorKeypad({
   onEqualsClick,
 }: CalculatorKeypadProps) {
   return (
-    <div className="p-6 pt-2">
+    <div className="p-6 pt-2 safe-area-bottom">
       <div className="grid grid-cols-4 gap-4">
         {/* Row 1 */}
         <Button
