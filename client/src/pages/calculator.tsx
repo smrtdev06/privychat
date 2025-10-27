@@ -287,7 +287,7 @@ export default function Calculator() {
   return (
     <div className="h-screen bg-black text-white flex flex-col">
       {/* Header with Menu */}
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-between items-center p-4 safe-area-top">
         <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="text-white hover:bg-zinc-800" data-testid="button-menu">
