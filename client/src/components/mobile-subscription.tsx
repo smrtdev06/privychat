@@ -524,39 +524,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     }
   };
 
-  // Debug Info Component - shown in all states
-  const DebugInfoDisplay = () => (
-    debugInfo.length > 0 ? (
-      <div className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-4 rounded-lg mt-4">
-        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center justify-between">
-          Debug Log
-          <button
-            onClick={() => setDebugInfo([])}
-            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
-          >
-            Clear
-          </button>
-        </h4>
-        <div className="space-y-1 max-h-64 overflow-y-auto">
-          {debugInfo.map((msg, idx) => (
-            <div 
-              key={idx} 
-              className="text-xs font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 px-2 py-1 rounded"
-            >
-              {msg}
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">
-            premium_yearly
-          </code> | 
-          Platform: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{platform || 'detecting...'}</code> | 
-          Products Found: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{products.length}</code>
-        </p>
-      </div>
-    ) : null
-  );
+  // Debug Info Component removed for production
 
   if (!platform) {
     return (
@@ -566,7 +534,6 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="ml-3 text-sm text-muted-foreground">Detecting platform...</p>
           </div>
-          <DebugInfoDisplay />
         </CardContent>
       </Card>
     );
@@ -580,12 +547,6 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="ml-3 text-sm text-muted-foreground">Loading store...</p>
           </div>
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg mt-4">
-            <p className="text-xs text-blue-900 dark:text-blue-100">
-              <strong>State:</strong> storeReady={storeReady ? 'true' : 'false'}, products={products.length}
-            </p>
-          </div>
-          <DebugInfoDisplay />
         </CardContent>
       </Card>
     );
@@ -679,8 +640,6 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
             )}
           </Button>
         )}
-
-        <DebugInfoDisplay />
       </CardContent>
     </Card>
   );
