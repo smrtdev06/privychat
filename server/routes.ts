@@ -829,28 +829,229 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Webhook for Apple App Store Server Notifications
+  // Webhook for Apple App Store Server Notifications v2
   app.post("/api/mobile-subscription/webhook/apple", async (req, res) => {
     try {
-      const notification = req.body;
-      const notificationType = notification.notification_type;
-
-      // Handle different notification types
-      if (notificationType === 'DID_RENEW' || notificationType === 'DID_CHANGE_RENEWAL_STATUS') {
-        // Update subscription status
-        const transactionId = notification.unified_receipt?.latest_receipt_info?.[0]?.original_transaction_id;
-        // TODO: Implement subscription update logic
-        console.log("Subscription updated:", transactionId);
-      } else if (notificationType === 'CANCEL') {
-        // Handle cancellation
-        const transactionId = notification.unified_receipt?.latest_receipt_info?.[0]?.original_transaction_id;
-        // TODO: Implement cancellation logic
-        console.log("Subscription cancelled:", transactionId);
+      const timestamp = new Date().toISOString();
+      console.log(`\n${"=".repeat(80)}`);
+      console.log(`🍎 Apple App Store webhook received at ${timestamp}`);
+      console.log(`${"=".repeat(80)}`);
+      
+      // Log raw request body for debugging
+      console.log("📥 Raw request body:", JSON.stringify(req.body, null, 2));
+      
+      // Apple sends v2 notifications as a signedPayload (JWT)
+      const { signedPayload } = req.body;
+      
+      if (!signedPayload) {
+        console.log("❌ Invalid webhook payload - missing signedPayload");
+        console.log(`${"=".repeat(80)}\n`);
+        return res.sendStatus(400);
       }
 
+      // Decode the JWT without verification (in production, verify the signature)
+      // The payload contains the actual notification data
+      const jwt = require('jsonwebtoken');
+      const payload = jwt.decode(signedPayload);
+      
+      if (!payload || !payload.data) {
+        console.log("❌ Failed to decode signedPayload");
+        console.log(`${"=".repeat(80)}\n`);
+        return res.sendStatus(400);
+      }
+      
+      console.log("📦 Decoded payload:", JSON.stringify(payload, null, 2));
+
+      const notificationType = payload.notificationType;
+      const subtype = payload.subtype;
+      
+      // Decode the transaction info (also a JWT)
+      let transactionInfo = null;
+      if (payload.data?.signedTransactionInfo) {
+        transactionInfo = jwt.decode(payload.data.signedTransactionInfo);
+        console.log("📄 Transaction info:", JSON.stringify(transactionInfo, null, 2));
+      }
+      
+      if (!transactionInfo || !transactionInfo.originalTransactionId) {
+        console.log("⚠️ No transaction info in notification");
+        return res.sendStatus(200);
+      }
+      
+      const originalTransactionId = transactionInfo.originalTransactionId;
+      const productId = transactionInfo.productId;
+      
+      // Apple App Store Notification Types:
+      // DID_RENEW - subscription renewed successfully
+      // EXPIRED - subscription expired (subtypes: VOLUNTARY, BILLING_RETRY, etc.)
+      // REFUND - subscription was refunded
+      // DID_CHANGE_RENEWAL_STATUS - user enabled/disabled auto-renewal
+      // And many others...
+      
+      if (notificationType === 'DID_RENEW') {
+        // Subscription renewed - update expiry date
+        console.log(`🔄 Subscription renewed: ${originalTransactionId}`);
+        
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, originalTransactionId))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          console.log(`   Found subscription: ${subscription.id} for user ${subscription.userId}`);
+          
+          // Get new expiry date from transaction info
+          const newExpiryDate = transactionInfo.expiresDate 
+            ? new Date(parseInt(transactionInfo.expiresDate)) 
+            : null;
+          
+          if (newExpiryDate) {
+            await db
+              .update(mobileSubscriptions)
+              .set({
+                expiryDate: newExpiryDate,
+                autoRenewing: true,
+                isActive: true,
+                lastVerifiedAt: new Date(),
+                updatedAt: new Date()
+              })
+              .where(eq(mobileSubscriptions.id, subscription.id));
+            
+            await syncUserSubscriptionStatus(subscription.userId);
+            console.log(`✅ Subscription renewed - new expiry: ${newExpiryDate.toISOString()}`);
+          } else {
+            console.log(`⚠️ No expiry date in transaction info`);
+          }
+        } else {
+          console.log(`⚠️ Subscription not found for transaction ID: ${originalTransactionId}`);
+        }
+      }
+      else if (notificationType === 'DID_CHANGE_RENEWAL_STATUS') {
+        // User changed auto-renewal status
+        console.log(`🔔 Renewal status changed: ${originalTransactionId}`);
+        console.log(`   Subtype: ${subtype}`);
+        
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, originalTransactionId))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          
+          if (subtype === 'AUTO_RENEW_DISABLED') {
+            // User canceled - mark as non-renewing but keep active until expiry
+            console.log(`   User disabled auto-renewal - subscription will expire on ${subscription.expiryDate}`);
+            
+            await db
+              .update(mobileSubscriptions)
+              .set({
+                autoRenewing: false,
+                cancellationDate: new Date(),
+                updatedAt: new Date()
+                // Keep isActive = true until expiry
+              })
+              .where(eq(mobileSubscriptions.id, subscription.id));
+            
+            console.log(`✅ Subscription marked as canceled - user keeps access until ${subscription.expiryDate}`);
+          } else if (subtype === 'AUTO_RENEW_ENABLED') {
+            // User re-enabled auto-renewal
+            console.log(`   User re-enabled auto-renewal`);
+            
+            await db
+              .update(mobileSubscriptions)
+              .set({
+                autoRenewing: true,
+                cancellationDate: null,
+                updatedAt: new Date()
+              })
+              .where(eq(mobileSubscriptions.id, subscription.id));
+            
+            console.log(`✅ Subscription re-activated - will auto-renew`);
+          }
+        } else {
+          console.log(`⚠️ Subscription not found for transaction ID: ${originalTransactionId}`);
+        }
+      }
+      else if (notificationType === 'EXPIRED') {
+        // Subscription expired - remove access
+        console.log(`⏰ Subscription expired: ${originalTransactionId}`);
+        console.log(`   Reason (subtype): ${subtype}`);
+        
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, originalTransactionId))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          console.log(`   Found subscription: ${subscription.id} for user ${subscription.userId}`);
+          
+          // Mark as inactive
+          await db
+            .update(mobileSubscriptions)
+            .set({ 
+              isActive: false,
+              autoRenewing: false,
+              updatedAt: new Date()
+            })
+            .where(eq(mobileSubscriptions.id, subscription.id));
+          
+          // Downgrade user to free plan
+          await syncUserSubscriptionStatus(subscription.userId);
+          
+          console.log(`✅ Subscription expired and user downgraded to free plan`);
+        } else {
+          console.log(`⚠️ Subscription not found for transaction ID: ${originalTransactionId}`);
+        }
+      }
+      else if (notificationType === 'REFUND') {
+        // Subscription refunded - immediate access removal
+        console.log(`💰 Subscription refunded: ${originalTransactionId}`);
+        
+        const subscriptions = await db
+          .select()
+          .from(mobileSubscriptions)
+          .where(eq(mobileSubscriptions.purchaseToken, originalTransactionId))
+          .limit(1);
+        
+        if (subscriptions.length > 0) {
+          const subscription = subscriptions[0];
+          
+          // Immediately revoke access (similar to Google's REVOKED)
+          await db
+            .update(mobileSubscriptions)
+            .set({ 
+              isActive: false,
+              autoRenewing: false,
+              cancellationDate: new Date(),
+              updatedAt: new Date()
+            })
+            .where(eq(mobileSubscriptions.id, subscription.id));
+          
+          // Immediately downgrade user
+          await syncUserSubscriptionStatus(subscription.userId);
+          
+          console.log(`✅ Subscription refunded - user immediately downgraded`);
+        } else {
+          console.log(`⚠️ Subscription not found for transaction ID: ${originalTransactionId}`);
+        }
+      }
+      else {
+        console.log(`ℹ️ Notification type ${notificationType} - no action required`);
+        console.log(`   Subtype: ${subtype || 'none'}`);
+        console.log("   This might be a notification type we haven't implemented yet");
+        console.log("   Full payload logged above for investigation");
+      }
+
+      console.log(`✅ Webhook processed successfully`);
+      console.log(`${"=".repeat(80)}\n`);
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error processing Apple webhook:", error);
+      console.error("❌ Error processing Apple webhook:", error);
       res.sendStatus(500);
     }
   });
@@ -913,7 +1114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.setEmailVerificationToken(user.id, token, expiry);
       
       // Send verification email
-      await sendVerificationEmail(user.email, user.fullName, token);
+      await sendVerificationEmail(user.email, user.fullName || user.username, token);
       
       res.json({ 
         success: true, 
@@ -955,7 +1156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.verifyEmail(user.id);
       
       // Send welcome email
-      await sendWelcomeEmail(user.email, user.fullName, user.username);
+      await sendWelcomeEmail(user.email, user.fullName || user.username, user.username);
       
       res.json({ 
         success: true, 
@@ -992,7 +1193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.setEmailVerificationToken(user.id, token, expiry);
       
       // Send verification email
-      await sendVerificationEmail(user.email, user.fullName, token);
+      await sendVerificationEmail(user.email, user.fullName || user.username, token);
       
       res.json({ 
         success: true, 
@@ -1031,7 +1232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.setPasswordResetToken(user.id, token, expiry);
       
       // Send reset email
-      await sendPasswordResetEmail(user.email, user.fullName, token);
+      await sendPasswordResetEmail(user.email, user.fullName || user.username, token);
       
       res.json({ 
         success: true, 

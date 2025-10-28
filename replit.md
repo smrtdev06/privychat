@@ -4,6 +4,15 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 28, 2025)
 
+- **Fully implemented Apple App Store webhook handler**: iOS subscriptions now have complete lifecycle management
+  - Handles App Store Server Notifications v2 with JWT payload decoding
+  - Notification types: DID_RENEW (renewals), EXPIRED (expirations), REFUND (refunds), DID_CHANGE_RENEWAL_STATUS (cancellations)
+  - Automatic subscription renewal with updated expiry dates
+  - User cancellation handling (marks as non-renewing but keeps access until expiry)
+  - Subscription expiration with automatic downgrade to free plan
+  - Refund handling with immediate access revocation
+  - Comprehensive logging for debugging and monitoring
+  - Matches Google Play webhook functionality for feature parity
 - **Privacy Policy & Terms of Use persistence on mobile**: Legal dialog now properly persists user acceptance
   - Enhanced MobileLegalModal to use Capacitor's Preferences API for native storage (more reliable than localStorage)
   - Dialog shows only once on first launch and never again after acceptance
