@@ -26,7 +26,7 @@ export function useWebSocket(
     
     if (isCapacitor) {
       // In Capacitor bridge mode, use the production server URL
-      const serverUrl = import.meta.env.VITE_SERVER_URL || "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev";
+      const serverUrl = import.meta.env.VITE_SERVER_URL || "https://privycalc.com";
       
       // Respect the original protocol: http→ws, https→wss
       let wsProtocol = 'wss';

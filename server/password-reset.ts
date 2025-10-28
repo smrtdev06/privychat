@@ -21,7 +21,7 @@ export async function sendPasswordResetEmail(
 ): Promise<void> {
   const baseUrl = process.env.REPLIT_DOMAINS 
     ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-    : process.env.VITE_SERVER_URL || 'http://localhost:5000';
+    : process.env.VITE_SERVER_URL || 'https://privycalc.com';
   
   const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
   

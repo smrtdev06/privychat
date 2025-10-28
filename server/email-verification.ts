@@ -21,7 +21,7 @@ export async function sendVerificationEmail(
 ): Promise<void> {
   const baseUrl = process.env.REPLIT_DOMAINS 
     ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-    : process.env.VITE_SERVER_URL || 'http://localhost:5000';
+    : process.env.VITE_SERVER_URL || 'https://privycalc.com';
   
   const verificationLink = `${baseUrl}/verify-email?token=${verificationToken}`;
   

@@ -6,7 +6,7 @@ import { Capacitor } from "@capacitor/core";
 function getApiBaseUrl(): string {
   if (Capacitor.isNativePlatform()) {
     // Running in Capacitor - use environment variable for server URL
-    const serverUrl = import.meta.env.VITE_SERVER_URL || "https://622e822f-d1a1-4fd9-828a-42c12b885a85-00-1hd0vg3rilq4.worf.replit.dev";
+    const serverUrl = import.meta.env.VITE_SERVER_URL || "https://privycalc.com";
     return serverUrl;
   }
   // Running in web browser - use relative paths
