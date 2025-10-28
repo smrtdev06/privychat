@@ -2,7 +2,7 @@
 
 PrivyCalc is a secure messaging application disguised as a calculator. Built as a single-page application (SPA) with a React frontend and Express.js backend, it offers private communication through a unique calculator interface. Key features include user authentication, a freemium subscription model, secure file uploads with access control, and robust security measures. The project aims to provide a stealthy and secure communication platform with business potential in privacy-focused messaging.
 
-# Recent Changes (October 27, 2025)
+# Recent Changes (October 28, 2025)
 
 - **MAJOR: Switched to LOCAL BUNDLE deployment mode** for both iOS and Android (removed iframe mode)
   - iOS: Local bundle solves iframe blocking issues (cookies, localStorage, blank screens)
@@ -30,9 +30,15 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
   - Viewport meta tag includes `viewport-fit=cover` to enable safe area insets
   - Graceful fallback to 0 padding on non-notch devices using `env()` with defaults
   - Works seamlessly on iOS in all orientations (portrait/landscape) and Android/web browsers
+- **Fixed media display on mobile**: Image and video messages now display correctly in Capacitor
+  - Exported getFullUrl utility from queryClient for use in components
+  - Updated MessageBubble to convert relative media paths to full URLs on mobile
+  - Maintains compatibility with web browsers (relative paths still work)
+  - Fixes broken image/video display showing "Shared image" placeholder
 - Updated capacitor-bridge to initialize plugins directly (no iframe/postMessage needed)
 - Updated queryClient to use full server URLs when running in Capacitor
 - Updated documentation to reflect local bundle deployment strategy
+- Removed Replit development banner from production builds
 - Added Help & Support and About navigation to calculator side menu with functional buttons
 - Created public Help & Support page (/help) with FAQs, quick help cards, and contact information
 - Created public About page (/about) with app description, key features, and version info
