@@ -114,7 +114,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
       }
 
       // Use correct product ID per platform
-      const productId = platformType === "android" ? "premium_yearly" : "premium-yearly";
+      const productId = "premium_yearly"; // Same for both iOS and Android
       
       addDebug(`🚀 Loading products for ${platformType}...`);
       addDebug(`Product ID: ${productId}`);
@@ -549,7 +549,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
           Product ID: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">
-            {platform === "android" ? "premium_yearly" : platform === "ios" ? "premium-yearly" : "detecting..."}
+            premium_yearly
           </code> | 
           Platform: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{platform || 'detecting...'}</code> | 
           Products Found: <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">{products.length}</code>

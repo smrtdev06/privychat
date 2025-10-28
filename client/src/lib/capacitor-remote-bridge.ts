@@ -138,7 +138,7 @@ class CapacitorRemoteBridge {
     }
     
     // Load product information
-    const productId = platform === "android" ? "premium_yearly" : "premium-yearly";
+    const productId = "premium_yearly"; // Same product ID for both iOS and Android
     
     try {
       const products = await inAppPurchases.getAllProductInfo([productId]);
