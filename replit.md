@@ -4,6 +4,12 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 28, 2025)
 
+- **Deep link configuration for promo code redemption**: Added native URL scheme support for both platforms
+  - iOS: CFBundleURLTypes configured in Info.plist with `privycalc://` scheme
+  - Android: Intent filter configured in AndroidManifest.xml for deep link handling
+  - Enables seamless promo code redemption via `privycalc://redeem?code=PROMO123` links
+  - Works in emails, SMS, social media, and marketing campaigns
+  - **REQUIRES APP REBUILD** for both iOS and Android (run `npx cap sync` and rebuild)
 - **Fully implemented Apple App Store webhook handler**: iOS subscriptions now have complete lifecycle management
   - Handles App Store Server Notifications v2 with JWT payload decoding
   - Notification types: DID_RENEW (renewals), EXPIRED (expirations), REFUND (refunds), DID_CHANGE_RENEWAL_STATUS (cancellations)

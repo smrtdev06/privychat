@@ -49,5 +49,16 @@
         <array>
                 <string>privycalc.com</string>
         </array>
+        <key>CFBundleURLTypes</key>
+        <array>
+                <dict>
+                        <key>CFBundleURLSchemes</key>
+                        <array>
+                                <string>privycalc</string>
+                        </array>
+                        <key>CFBundleURLName</key>
+                        <string>com.newhomepage.privychat</string>
+                </dict>
+        </array>
 </dict>
 </plist>
