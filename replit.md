@@ -4,6 +4,12 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 28, 2025)
 
+- **Updated production API URL to https://privycalc.com**
+  - Changed default server URL in queryClient, WebSocket, and email templates
+  - Updated iOS configuration files (capacitor.config.ts, Info.plist) for cookie support
+  - **REQUIRES iOS APP REBUILD** to take effect (run `npx cap sync ios` and rebuild in Xcode)
+  - All API calls, WebSocket connections, and email links now use privycalc.com domain
+
 - **MAJOR: Switched to LOCAL BUNDLE deployment mode** for both iOS and Android (removed iframe mode)
   - iOS: Local bundle solves iframe blocking issues (cookies, localStorage, blank screens)
   - Android: Local bundle provides better reliability and native plugin integration
