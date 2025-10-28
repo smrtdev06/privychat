@@ -14,7 +14,8 @@ function getApiBaseUrl(): string {
 }
 
 // Helper to construct full URL
-function getFullUrl(path: string): string {
+// Exported for use in components that need full URLs (e.g., images, videos)
+export function getFullUrl(path: string): string {
   const baseUrl = getApiBaseUrl();
   if (baseUrl && !path.startsWith("http")) {
     // Ensure path starts with /

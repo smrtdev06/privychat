@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { getFullUrl } from "@/lib/queryClient";
 
 interface MessageBubbleProps {
   message: {
@@ -29,7 +30,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
       >
         {message.messageType === "image" && message.mediaUrl && (
           <img
-            src={message.mediaUrl}
+            src={getFullUrl(message.mediaUrl)}
             alt="Shared image"
             className="w-full h-auto rounded-lg mb-2"
             data-testid={`message-image-${message.id}`}
@@ -38,7 +39,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
 
         {message.messageType === "video" && message.mediaUrl && (
           <video
-            src={message.mediaUrl}
+            src={getFullUrl(message.mediaUrl)}
             controls
             className="w-full h-auto rounded-lg mb-2"
             data-testid={`message-video-${message.id}`}
@@ -47,7 +48,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
 
         {message.messageType === "voice" && message.mediaUrl && (
           <audio
-            src={message.mediaUrl}
+            src={getFullUrl(message.mediaUrl)}
             controls
             className="w-full mb-2"
             data-testid={`message-voice-${message.id}`}
