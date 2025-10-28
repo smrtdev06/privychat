@@ -4,6 +4,11 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 28, 2025)
 
+- **App Store Publishing Materials**: Comprehensive marketing and publishing assets ready for app store submission
+  - APP_STORE_MATERIALS.md: Complete descriptions, keywords, ASO, pricing, review guidelines
+  - SCREENSHOT_GUIDE.md: Detailed visual asset specifications and design requirements
+  - MARKETING_TEMPLATES.md: Email campaigns, social media content, ads, press releases
+  - All materials ready for iOS App Store and Google Play Store submission
 - **Deep link configuration for promo code redemption**: Added native URL scheme support for both platforms
   - iOS: CFBundleURLTypes configured in Info.plist with `privycalc://` scheme
   - Android: Intent filter configured in AndroidManifest.xml for deep link handling
