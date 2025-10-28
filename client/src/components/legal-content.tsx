@@ -3,8 +3,28 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Scale, Shield } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
+import { Preferences } from "@capacitor/preferences";
 
 const LEGAL_ACCEPTANCE_KEY = "legal_terms_accepted";
+
+// Helper functions for cross-platform storage
+async function getStoredValue(key: string): Promise<string | null> {
+  if (Capacitor.isNativePlatform()) {
+    const { value } = await Preferences.get({ key });
+    return value;
+  } else {
+    return localStorage.getItem(key);
+  }
+}
+
+async function setStoredValue(key: string, value: string): Promise<void> {
+  if (Capacitor.isNativePlatform()) {
+    await Preferences.set({ key, value });
+  } else {
+    localStorage.setItem(key, value);
+  }
+}
 
 // Privacy Policy Content
 const PRIVACY_POLICY = `PrivyCalc Privacy Policy
@@ -338,23 +358,42 @@ export function PCLegalLinks() {
 export function MobileLegalModal() {
   const [open, setOpen] = useState(false);
   const [accepted, setAccepted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const hasAccepted = localStorage.getItem(LEGAL_ACCEPTANCE_KEY);
-    if (!hasAccepted) {
-      setOpen(true);
-    } else {
-      setAccepted(true);
-    }
+    // Check if user has already accepted legal terms
+    const checkAcceptance = async () => {
+      try {
+        const hasAccepted = await getStoredValue(LEGAL_ACCEPTANCE_KEY);
+        if (!hasAccepted) {
+          setOpen(true);
+        } else {
+          setAccepted(true);
+        }
+      } catch (error) {
+        console.error("Error checking legal acceptance:", error);
+        // Default to showing dialog on error
+        setOpen(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAcceptance();
   }, []);
 
-  const handleAccept = () => {
-    localStorage.setItem(LEGAL_ACCEPTANCE_KEY, "true");
-    setAccepted(true);
-    setOpen(false);
+  const handleAccept = async () => {
+    try {
+      await setStoredValue(LEGAL_ACCEPTANCE_KEY, "true");
+      setAccepted(true);
+      setOpen(false);
+    } catch (error) {
+      console.error("Error saving legal acceptance:", error);
+    }
   };
 
-  if (accepted) {
+  // Don't render anything while checking or if already accepted
+  if (loading || accepted) {
     return null;
   }
 

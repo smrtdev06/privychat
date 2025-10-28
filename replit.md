@@ -4,6 +4,12 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
 
 # Recent Changes (October 28, 2025)
 
+- **Privacy Policy & Terms of Use persistence on mobile**: Legal dialog now properly persists user acceptance
+  - Enhanced MobileLegalModal to use Capacitor's Preferences API for native storage (more reliable than localStorage)
+  - Dialog shows only once on first launch and never again after acceptance
+  - Cross-platform storage: Uses Capacitor Preferences on iOS/Android, localStorage on web
+  - Added @capacitor/preferences package for native storage support
+  - Fixes issue where dialog would show on every app launch even after accepting
 - **Updated production API URL to https://privycalc.com**
   - Changed default server URL in queryClient, WebSocket, and email templates
   - Updated iOS configuration files (capacitor.config.ts, Info.plist) for cookie support
