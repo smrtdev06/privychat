@@ -30,6 +30,11 @@ PrivyCalc is a secure messaging application disguised as a calculator. Built as 
   - Viewport meta tag includes `viewport-fit=cover` to enable safe area insets
   - Graceful fallback to 0 padding on non-notch devices using `env()` with defaults
   - Works seamlessly on iOS in all orientations (portrait/landscape) and Android/web browsers
+- **Fixed iOS in-app purchase product ID mismatch**: Changed product ID from `premium-yearly` to `premium_yearly`
+  - Updated capacitor-remote-bridge.ts and mobile-subscription.tsx to use unified product ID
+  - Both iOS and Android now use `premium_yearly` (underscore, not hyphen)
+  - Fixes "NO PRODUCTS FOUND" error on iOS TestFlight/App Store
+  - **REQUIRES iOS APP REBUILD** to take effect (run `npx cap sync ios` and rebuild in Xcode)
 - **Fixed media display on mobile**: Image and video messages now display correctly in Capacitor
   - Exported getFullUrl utility from queryClient for use in components
   - Updated MessageBubble to convert relative media paths to full URLs on mobile
