@@ -262,10 +262,33 @@ export async function getActiveMobileSubscription(
  * It should NOT downgrade users who have web-based premium (from upgrade codes/gifts)
  */
 export async function syncUserSubscriptionStatus(userId: string): Promise<void> {
+  // First, check current user status
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  
+  if (!user) {
+    console.warn(`⚠️ syncUserSubscriptionStatus: User ${userId} not found`);
+    return;
+  }
+
+  // EARLY RETURN: If user has a valid future-dated subscription (from any source),
+  // do NOT overwrite it! This preserves web-based premium grants.
+  if (user.subscriptionType === "premium" && 
+      user.subscriptionExpiresAt && 
+      user.subscriptionExpiresAt > new Date()) {
+    console.log(`✅ User ${userId} has valid premium until ${user.subscriptionExpiresAt.toISOString()} - skipping sync`);
+    return;
+  }
+
+  // Check for active mobile subscription
   const activeSub = await getActiveMobileSubscription(userId);
   
   if (activeSub && activeSub.expiryDate > new Date()) {
     // User has active mobile subscription - update to premium
+    console.log(`📱 Upgrading user ${userId} to premium via mobile subscription until ${activeSub.expiryDate.toISOString()}`);
     await db
       .update(users)
       .set({
@@ -273,31 +296,19 @@ export async function syncUserSubscriptionStatus(userId: string): Promise<void> 
         subscriptionExpiresAt: activeSub.expiryDate,
       })
       .where(eq(users.id, userId));
-  } else {
-    // No active mobile subscription
-    // Only downgrade if user's current subscription has expired
-    // Do NOT touch users with valid web-based premium subscriptions!
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-    
-    if (user[0] && 
-        user[0].subscriptionType === "premium" && 
-        user[0].subscriptionExpiresAt && 
-        user[0].subscriptionExpiresAt < new Date()) {
-      // User's subscription has actually expired - downgrade to free
-      console.log(`📉 Downgrading user ${userId} to free (subscription expired: ${user[0].subscriptionExpiresAt})`);
-      await db
-        .update(users)
-        .set({
-          subscriptionType: "free",
-        })
-        .where(eq(users.id, userId));
-    }
-    // If user has valid web-based premium, do nothing!
+  } else if (user.subscriptionType === "premium" && 
+             user.subscriptionExpiresAt && 
+             user.subscriptionExpiresAt < new Date()) {
+    // User's subscription has expired - downgrade to free
+    console.log(`📉 Downgrading user ${userId} to free (subscription expired: ${user.subscriptionExpiresAt.toISOString()})`);
+    await db
+      .update(users)
+      .set({
+        subscriptionType: "free",
+      })
+      .where(eq(users.id, userId));
   }
+  // If user is free and has no mobile subscription, do nothing
 }
 
 /**
