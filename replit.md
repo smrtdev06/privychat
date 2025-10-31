@@ -2,12 +2,21 @@
 
 PrivyCalc is a secure messaging application disguised as a calculator. Built as a single-page application (SPA) with a React frontend and Express.js backend, it offers private communication through a unique calculator interface. Key features include user authentication, a freemium subscription model, secure file uploads with access control, and robust security measures. The project aims to provide a stealthy and secure communication platform with business potential in privacy-focused messaging.
 
-# Recent Changes (October 28, 2025)
+# Recent Changes (October 31, 2025)
 
+- **CRITICAL: Fixed Android remote loading issue** - Android app now properly uses local bundle mode
+  - Removed `server.hostname` from capacitor.config.ts that was causing Android to load app remotely from privycalc.com
+  - Fixed issue where API requests returned HTML (text/html) instead of JSON due to WebView intercepting requests
+  - All navigation uses relative paths (no absolute URLs) to prevent remote redirects on 401 errors
+  - iOS cookie support maintained via WKAppBoundDomains in Info.plist (no server.hostname needed)
+  - **REQUIRES ANDROID APP REBUILD** after running `npx cap sync android`
+  - Fixes: Login returns HTML, menu clicks navigate to remote content, 401 redirects to remote pages
 - **App Store Publishing Materials**: Comprehensive marketing and publishing assets ready for app store submission
   - APP_STORE_MATERIALS.md: Complete descriptions, keywords, ASO, pricing, review guidelines
   - SCREENSHOT_GUIDE.md: Detailed visual asset specifications and design requirements
   - MARKETING_TEMPLATES.md: Email campaigns, social media content, ads, press releases
+  - APP_STORE_REQUIRED_SETTINGS_GUIDE.md: Complete guide for Age Rating, Primary Category, and App Privacy settings
+  - APP_STORE_CONTENT_RIGHTS_GUIDE.md: Guide for Content Rights setting during submission
   - All materials ready for iOS App Store and Google Play Store submission
 - **Deep link configuration for promo code redemption**: Added native URL scheme support for both platforms
   - iOS: CFBundleURLTypes configured in Info.plist with `privycalc://` scheme
