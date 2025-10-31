@@ -27,7 +27,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   const [loading, setLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [products, setProducts] = useState<SubscriptionProduct[]>([]);
-  const [platform, setPlatform] = useState<"ios" | "android" | null>(null);
+  const [platform, setPlatform] = useState<"ios" | "android" | "web" | null>(null);
   const [storeReady, setStoreReady] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
@@ -44,19 +44,9 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
     console.log(message);
   };
 
+  // Platform detection - runs once on mount
   useEffect(() => {
     addDebug("🚀 MobileSubscription component initializing...");
-    
-    // Check if user already has active subscription
-    if (user && typeof user === 'object' && 'subscriptionType' in user) {
-      const isPremium = (user as any).subscriptionType === 'premium';
-      const notExpired = (user as any).subscriptionExpiresAt ? new Date((user as any).subscriptionExpiresAt) > new Date() : false;
-      const isActive = isPremium && notExpired;
-      setHasActiveSubscription(isActive);
-      if (isActive) {
-        addDebug(`✅ User already has active subscription until ${(user as any).subscriptionExpiresAt}`);
-      }
-    }
     
     // Detect platform - use bridge method that works in both direct and iframe mode
     capacitorBridge.getPlatform().then((currentPlatform) => {
@@ -75,11 +65,28 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         }
       } else {
         addDebug(`⚠️ Not a mobile platform: ${currentPlatform}`);
+        setPlatform("web");
       }
     }).catch((error) => {
       addDebug(`❌ Error detecting platform: ${error.message}`);
       console.error("Error detecting platform:", error);
+      setPlatform("web");
     });
+  }, []);
+
+  // Check subscription status when user data changes
+  useEffect(() => {
+    if (user && typeof user === 'object' && 'subscriptionType' in user) {
+      const isPremium = (user as any).subscriptionType === 'premium';
+      const notExpired = (user as any).subscriptionExpiresAt ? new Date((user as any).subscriptionExpiresAt) > new Date() : false;
+      const isActive = isPremium && notExpired;
+      setHasActiveSubscription(isActive);
+      if (isActive) {
+        addDebug(`✅ User already has active subscription until ${(user as any).subscriptionExpiresAt}`);
+      }
+    } else {
+      setHasActiveSubscription(false);
+    }
   }, [user]);
 
   const initializeStore = async (platformType: "ios" | "android") => {
@@ -537,6 +544,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         </CardContent>
       </Card>
     );
+  }
+
+  // Don't show mobile subscription on web browsers
+  if (platform === "web") {
+    return null;
   }
 
   if (!storeReady) {
