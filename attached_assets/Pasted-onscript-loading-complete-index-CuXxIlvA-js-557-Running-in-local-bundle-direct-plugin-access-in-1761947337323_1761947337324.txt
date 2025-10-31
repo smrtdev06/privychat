@@ -1,0 +1,206 @@
+onscript loading complete
+index-CuXxIlvA.js:557 📱 Running in local bundle - direct plugin access
+index-CuXxIlvA.js:587 🚀 Running in native Capacitor - local bundle mode
+index-CuXxIlvA.js:582 🌉 Capacitor Bridge initializing (LOCAL MODE)...
+index-CuXxIlvA.js:582 Platform: android
+index-CuXxIlvA.js:582 Native: true
+index-CuXxIlvA.js:582 ✅ inAppPurchases plugin available!
+index-CuXxIlvA.js:582 🏪 Initializing android in-app purchase store...
+index-CuXxIlvA.js:557 🏪 Initializing in-app purchases for android...
+VM3:348 native Preferences.get (#47379068)
+VM3:348 native App.addListener (#47379069)
+VM3:328 result Preferences.get (#47379068)
+favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+VM3:348 native Preferences.set (#47379070)
+VM3:328 result Preferences.set (#47379070)
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fuser:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+index-CuXxIlvA.js:557 ✅ Loaded 1 products
+index-CuXxIlvA.js:582 ✅ Store initialization complete!
+index-CuXxIlvA.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-CuXxIlvA.js:292
+index-CuXxIlvA.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CuXxIlvA.js:292
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+VM3:348 native CapacitorHttp.request (#47379071)
+VM3:328 result CapacitorHttp.request (#47379071)
+VM3:554 CapacitorHttp fetch 1761947258804 https://privycalc.com/api/login: 1636.682861328125 ms
+VM3:348 native Preferences.get (#47379072)
+VM3:328 result Preferences.get (#47379072)
+index-CuXxIlvA.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-CuXxIlvA.js:292
+index-CuXxIlvA.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CuXxIlvA.js:292
+index-CuXxIlvA.js:557 🔍 Settings page - user premium status: Object
+index-CuXxIlvA.js:557 🔍 Settings page - user premium status: Object
+index-CuXxIlvA.js:557 ⏳ Platform not detected yet, showing loading...
+index-CuXxIlvA.js:557 🚀 MobileSubscription component mounted
+index-CuXxIlvA.js:557 🚀 MobileSubscription component initializing...
+index-CuXxIlvA.js:557 ✅ User already has active subscription until 2026-10-23T17:46:46.526Z
+index-CuXxIlvA.js:557 🔍 Platform detected: android
+index-CuXxIlvA.js:557 🔍 Platform detected: android
+index-CuXxIlvA.js:557 ✅ Setting platform to: android
+index-CuXxIlvA.js:557 🏠 Using direct mode (local)
+index-CuXxIlvA.js:557 🏠 Using direct mode (local)
+index-CuXxIlvA.js:557 === DIRECT MODE: STORE INIT START ===
+index-CuXxIlvA.js:557 Platform: android
+index-CuXxIlvA.js:557 Plugin available: true
+index-CuXxIlvA.js:557 🎧 Setting up purchase update listeners...
+index-CuXxIlvA.js:557 ⚠️ onPurchaseUpdate not available on plugin
+index-CuXxIlvA.js:557 🚀 Loading products for android...
+index-CuXxIlvA.js:557 Product ID: premium_yearly
+2index-CuXxIlvA.js:557 📱 Platform is android, rendering subscription UI
+index-CuXxIlvA.js:557 ✅ Products loaded: [{"productId":"premium_yearly","title":"Premium Use (com.newhomepage.privychat (unreviewed))","description":"","price":"$29.99","priceRaw":"29.99","priceAsDecimal":29.99,"currency":"USD","country":"-","introductoryPriceSupported":false,"introductoryOriginalPrice":"$29.99","introductoryOriginalPriceAsDecimal":29.99}]
+index-CuXxIlvA.js:557 📊 Product count: 1
+index-CuXxIlvA.js:557 ✅ Products loaded successfully!
+index-CuXxIlvA.js:557   - premium_yearly: Premium Use ($29.99)
+index-CuXxIlvA.js:557 === MOBILE SUBSCRIPTION DEBUG END ===
+index-CuXxIlvA.js:557 📱 Platform is android, rendering subscription UI
+VM3:348 native Preferences.get (#47379073)
+VM3:328 result Preferences.get (#47379073)
+index-CuXxIlvA.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-CuXxIlvA.js:292
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+VD @ index-CuXxIlvA.js:40
+Mi @ index-CuXxIlvA.js:40
+bb @ index-CuXxIlvA.js:40
+ji @ index-CuXxIlvA.js:38
+(anonymous) @ index-CuXxIlvA.js:40
+index-CuXxIlvA.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CuXxIlvA.js:292
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+VD @ index-CuXxIlvA.js:40
+Mi @ index-CuXxIlvA.js:40
+bb @ index-CuXxIlvA.js:40
+ji @ index-CuXxIlvA.js:38
+(anonymous) @ index-CuXxIlvA.js:40
+VM3:348 native CapacitorHttp.request (#47379074)
+VM3:328 result CapacitorHttp.request (#47379074)
+VM3:554 CapacitorHttp fetch 1761947305864 https://privycalc.com/api/verify-numeric-password: 828.3701171875 ms
+VM3:348 native CapacitorHttp.request (#47379075)
+VM3:348 native CapacitorHttp.request (#47379076)
+VM3:348 native CapacitorHttp.request (#47379077)
+VM3:328 result CapacitorHttp.request (#47379075)
+VM3:554 CapacitorHttp fetch 1761947306950 https://privycalc.com/api/verify-numeric-password: 826.55712890625 ms
+VM3:348 native CapacitorHttp.request (#47379078)
+VM3:328 result CapacitorHttp.request (#47379076)
+VM3:554 CapacitorHttp fetch 1761947307384 https://privycalc.com/api/verify-numeric-password: 825.05517578125 ms
+VM3:348 native CapacitorHttp.request (#47379079)
+VM3:504  GET https://localhost/_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token 401 (Unauthorized)
+window.fetch @ VM3:504
+Re @ index-CuXxIlvA.js:48
+(anonymous) @ index-CuXxIlvA.js:557
+(anonymous) @ index-CuXxIlvA.js:557
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+(anonymous) @ index-CuXxIlvA.js:40
+N @ index-CuXxIlvA.js:25
+O @ index-CuXxIlvA.js:25
+VM3:348 native CapacitorHttp.request (#47379080)
+VM3:328 result CapacitorHttp.request (#47379077)
+VM3:554 CapacitorHttp fetch 1761947307585 https://privycalc.com/api/verify-numeric-password: 901.89013671875 ms
+VM3:504  GET https://localhost/_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token 401 (Unauthorized)
+window.fetch @ VM3:504
+Re @ index-CuXxIlvA.js:48
+(anonymous) @ index-CuXxIlvA.js:557
+(anonymous) @ index-CuXxIlvA.js:557
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+VD @ index-CuXxIlvA.js:40
+Mi @ index-CuXxIlvA.js:40
+bb @ index-CuXxIlvA.js:40
+ji @ index-CuXxIlvA.js:38
+(anonymous) @ index-CuXxIlvA.js:40
+VM3:348 native CapacitorHttp.request (#47379081)
+VM3:328 result CapacitorHttp.request (#47379078)
+VM3:554 CapacitorHttp fetch 1761947307914 https://privycalc.com/api/verify-numeric-password: 850.56103515625 ms
+VM3:504  GET https://localhost/_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token 401 (Unauthorized)
+window.fetch @ VM3:504
+Re @ index-CuXxIlvA.js:48
+(anonymous) @ index-CuXxIlvA.js:557
+(anonymous) @ index-CuXxIlvA.js:557
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+(anonymous) @ index-CuXxIlvA.js:40
+N @ index-CuXxIlvA.js:25
+O @ index-CuXxIlvA.js:25
+VM3:348 native CapacitorHttp.request (#47379082)
+VM3:328 result CapacitorHttp.request (#47379079)
+VM3:554 CapacitorHttp fetch 1761947308360 https://privycalc.com/api/verify-numeric-password: 740.222900390625 ms
+VM3:348 native CapacitorHttp.request (#47379083)
+VM3:328 result CapacitorHttp.request (#47379080)
+VM3:554 CapacitorHttp fetch 1761947308460 https://privycalc.com/api/verify-numeric-password: 848.27099609375 ms
+VM3:328 result CapacitorHttp.request (#47379081)
+VM3:554 CapacitorHttp fetch 1761947308611 https://privycalc.com/api/verify-numeric-password: 896.046142578125 ms
+VM3:328 result CapacitorHttp.request (#47379082)
+VM3:554 CapacitorHttp fetch 1761947308885 https://privycalc.com/api/verify-numeric-password: 763.89013671875 ms
+VM3:348 native CapacitorHttp.request (#47379084)
+VM3:328 result CapacitorHttp.request (#47379083)
+VM3:554 CapacitorHttp fetch 1761947309259 https://privycalc.com/api/verify-numeric-password: 888.760986328125 ms
+VM3:328 result CapacitorHttp.request (#47379084)
+VM3:554 CapacitorHttp fetch 1761947309871 https://privycalc.com/api/verify-numeric-password: 910.126220703125 ms
+VM3:348 native CapacitorHttp.request (#47379085)
+VM3:328 result CapacitorHttp.request (#47379085)
+VM3:554 CapacitorHttp fetch 1761947313533 https://privycalc.com/api/verify-numeric-password: 924.096923828125 ms
+VM3:348 native Preferences.get (#47379086)
+VM3:328 result Preferences.get (#47379086)
+index-CuXxIlvA.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-CuXxIlvA.js:292
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+VD @ index-CuXxIlvA.js:40
+Mi @ index-CuXxIlvA.js:40
+bb @ index-CuXxIlvA.js:40
+ji @ index-CuXxIlvA.js:38
+(anonymous) @ index-CuXxIlvA.js:40
+index-CuXxIlvA.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-CuXxIlvA.js:292
+Bh @ index-CuXxIlvA.js:40
+oa @ index-CuXxIlvA.js:40
+VD @ index-CuXxIlvA.js:40
+Mi @ index-CuXxIlvA.js:40
+bb @ index-CuXxIlvA.js:40
+ji @ index-CuXxIlvA.js:38
+(anonymous) @ index-CuXxIlvA.js:40
+index-CuXxIlvA.js:557 🔍 Settings page - user premium status: {subscriptionType: 'free', subscriptionExpiresAt: null, isPremium: false, isMobilePlatform: false}
+index-CuXxIlvA.js:557 🔍 Settings page - user premium status: {subscriptionType: 'free', subscriptionExpiresAt: null, isPremium: false, isMobilePlatform: true}
+index-CuXxIlvA.js:557 ⏳ Platform not detected yet, showing loading...
+index-CuXxIlvA.js:557 🚀 MobileSubscription component mounted
+index-CuXxIlvA.js:557 🚀 MobileSubscription component initializing...
+index-CuXxIlvA.js:557 🔍 Platform detected: android
+index-CuXxIlvA.js:557 🔍 Platform detected: android
+index-CuXxIlvA.js:557 ✅ Setting platform to: android
+index-CuXxIlvA.js:557 🏠 Using direct mode (local)
+index-CuXxIlvA.js:557 🏠 Using direct mode (local)
+index-CuXxIlvA.js:557 === DIRECT MODE: STORE INIT START ===
+index-CuXxIlvA.js:557 Platform: android
+index-CuXxIlvA.js:557 Plugin available: true
+index-CuXxIlvA.js:557 🎧 Setting up purchase update listeners...
+index-CuXxIlvA.js:557 ⚠️ onPurchaseUpdate not available on plugin
+index-CuXxIlvA.js:557 🚀 Loading products for android...
+index-CuXxIlvA.js:557 Product ID: premium_yearly
+index-CuXxIlvA.js:557 📱 Platform is android, rendering subscription UI
+index-CuXxIlvA.js:557 📱 Platform is android, rendering subscription UI
+index-CuXxIlvA.js:557 ✅ Products loaded: [{"productId":"premium_yearly","title":"Premium Use (com.newhomepage.privychat (unreviewed))","description":"","price":"$29.99","priceRaw":"29.99","priceAsDecimal":29.99,"currency":"USD","country":"-","introductoryPriceSupported":false,"introductoryOriginalPrice":"$29.99","introductoryOriginalPriceAsDecimal":29.99}]
+index-CuXxIlvA.js:557 📊 Product count: 1
+index-CuXxIlvA.js:557 ✅ Products loaded successfully!
+index-CuXxIlvA.js:557   - premium_yearly: Premium Use ($29.99)
+index-CuXxIlvA.js:557 === MOBILE SUBSCRIPTION DEBUG END ===
+index-CuXxIlvA.js:557 📱 Platform is android, rendering subscription UI
