@@ -258,12 +258,14 @@ export async function getActiveMobileSubscription(
 
 /**
  * Update user's subscription status based on mobile subscription
+ * IMPORTANT: This should only update if there's an active mobile subscription
+ * It should NOT downgrade users who have web-based premium (from upgrade codes/gifts)
  */
 export async function syncUserSubscriptionStatus(userId: string): Promise<void> {
   const activeSub = await getActiveMobileSubscription(userId);
   
   if (activeSub && activeSub.expiryDate > new Date()) {
-    // Update user to premium with expiry date
+    // User has active mobile subscription - update to premium
     await db
       .update(users)
       .set({
@@ -272,15 +274,21 @@ export async function syncUserSubscriptionStatus(userId: string): Promise<void> 
       })
       .where(eq(users.id, userId));
   } else {
-    // Check if user has expired mobile subscription
+    // No active mobile subscription
+    // Only downgrade if user's current subscription has expired
+    // Do NOT touch users with valid web-based premium subscriptions!
     const user = await db
       .select()
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
     
-    if (user[0] && user[0].subscriptionExpiresAt && user[0].subscriptionExpiresAt < new Date()) {
-      // Downgrade to free
+    if (user[0] && 
+        user[0].subscriptionType === "premium" && 
+        user[0].subscriptionExpiresAt && 
+        user[0].subscriptionExpiresAt < new Date()) {
+      // User's subscription has actually expired - downgrade to free
+      console.log(`📉 Downgrading user ${userId} to free (subscription expired: ${user[0].subscriptionExpiresAt})`);
       await db
         .update(users)
         .set({
@@ -288,6 +296,7 @@ export async function syncUserSubscriptionStatus(userId: string): Promise<void> 
         })
         .where(eq(users.id, userId));
     }
+    // If user has valid web-based premium, do nothing!
   }
 }
 
