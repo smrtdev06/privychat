@@ -385,23 +385,24 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Mobile Subscription - Always show on mobile for subscription management */}
+        {isMobilePlatform && (
+          <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />
+        )}
+
+        {/* Promo Code Redemption - Only show for non-premium users */}
         {!isPremium && (
-          <>
-            <MobileSubscription onSubscriptionUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user"] })} />
-            
-            {/* Promo Code Redemption */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Redeem Promo Code</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Have a promo code? Redeem it here to unlock premium features.
-                </p>
-                <PromoCodeRedeem />
-              </CardContent>
-            </Card>
-          </>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Redeem Promo Code</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Have a promo code? Redeem it here to unlock premium features.
+              </p>
+              <PromoCodeRedeem />
+            </CardContent>
+          </Card>
         )}
 
         {/* Gift Subscription - WEB ONLY (Hidden on mobile to comply with app store policies) */}

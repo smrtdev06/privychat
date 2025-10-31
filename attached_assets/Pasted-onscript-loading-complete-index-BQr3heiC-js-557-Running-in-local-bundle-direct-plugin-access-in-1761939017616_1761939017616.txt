@@ -1,0 +1,124 @@
+onscript loading complete
+index-BQr3heiC.js:557 📱 Running in local bundle - direct plugin access
+index-BQr3heiC.js:587 🚀 Running in native Capacitor - local bundle mode
+index-BQr3heiC.js:582 🌉 Capacitor Bridge initializing (LOCAL MODE)...
+index-BQr3heiC.js:582 Platform: android
+index-BQr3heiC.js:582 Native: true
+index-BQr3heiC.js:582 ✅ inAppPurchases plugin available!
+index-BQr3heiC.js:582 🏪 Initializing android in-app purchase store...
+index-BQr3heiC.js:557 🏪 Initializing in-app purchases for android...
+VM3:348 native Preferences.get (#117136963)
+VM3:348 native App.addListener (#117136964)
+VM3:328 result Preferences.get (#117136963)
+index-BQr3heiC.js:557 ✅ Loaded 1 products
+index-BQr3heiC.js:582 ✅ Store initialization complete!
+favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+VM3:348 native Preferences.set (#117136965)
+VM3:328 result Preferences.set (#117136965)
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fuser:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+index-BQr3heiC.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-BQr3heiC.js:292
+index-BQr3heiC.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-BQr3heiC.js:292
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+VM3:348 native CapacitorHttp.request (#117136966)
+VM3:328 result CapacitorHttp.request (#117136966)
+VM3:554 CapacitorHttp fetch 1761938928789 https://privycalc.com/api/login: 1611.011962890625 ms
+VM3:348 native Preferences.get (#117136967)
+VM3:328 result Preferences.get (#117136967)
+index-BQr3heiC.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-BQr3heiC.js:292
+index-BQr3heiC.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-BQr3heiC.js:292
+index-BQr3heiC.js:557 🔍 Settings page - user premium status: Object
+index-BQr3heiC.js:557 🔍 Settings page - user premium status: Object
+VM3:348 native Preferences.get (#117136968)
+VM3:328 result Preferences.get (#117136968)
+VM3:348 native CapacitorHttp.request (#117136969)
+VM3:328 result CapacitorHttp.request (#117136969)
+VM3:554 CapacitorHttp fetch 1761938938999 https://privycalc.com/api/verify-numeric-password: 832.26416015625 ms
+VM3:348 native CapacitorHttp.request (#117136970)
+VM3:348 native CapacitorHttp.request (#117136971)
+VM3:348 native CapacitorHttp.request (#117136972)
+VM3:348 native CapacitorHttp.request (#117136973)
+VM3:348 native CapacitorHttp.request (#117136974)
+VM3:328 result CapacitorHttp.request (#117136971)
+VM3:554 CapacitorHttp fetch 1761938940399 https://privycalc.com/api/verify-numeric-password: 966.068115234375 ms
+VM3:328 result CapacitorHttp.request (#117136970)
+VM3:554 CapacitorHttp fetch 1761938940051 https://privycalc.com/api/verify-numeric-password: 1354.167236328125 ms
+VM3:348 native CapacitorHttp.request (#117136975)
+VM3:328 result CapacitorHttp.request (#117136972)
+VM3:554 CapacitorHttp fetch 1761938940834 https://privycalc.com/api/verify-numeric-password: 924.4189453125 ms
+VM3:328 result CapacitorHttp.request (#117136973)
+VM3:554 CapacitorHttp fetch 1761938941112 https://privycalc.com/api/verify-numeric-password: 739.282958984375 ms
+VM3:328 result CapacitorHttp.request (#117136974)
+VM3:554 CapacitorHttp fetch 1761938941222 https://privycalc.com/api/verify-numeric-password: 737.866943359375 ms
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+VM3:348 native CapacitorHttp.request (#117136976)
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+VM3:348 native CapacitorHttp.request (#117136977)
+_capacitor_http_interceptor_?u=https%3A%2F%2Fprivycalc.com%2Fapi%2Fcsrf-token:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+VM3:348 native CapacitorHttp.request (#117136978)
+VM3:328 result CapacitorHttp.request (#117136975)
+VM3:554 CapacitorHttp fetch 1761938941532 https://privycalc.com/api/verify-numeric-password: 879.337158203125 ms
+VM3:348 native CapacitorHttp.request (#117136979)
+VM3:348 native CapacitorHttp.request (#117136980)
+VM3:328 result CapacitorHttp.request (#117136976)
+VM3:554 CapacitorHttp fetch 1761938942079 https://privycalc.com/api/verify-numeric-password: 788.9580078125 ms
+VM3:328 result CapacitorHttp.request (#117136977)
+VM3:554 CapacitorHttp fetch 1761938942104 https://privycalc.com/api/verify-numeric-password: 789.93798828125 ms
+VM3:328 result CapacitorHttp.request (#117136978)
+VM3:554 CapacitorHttp fetch 1761938942105 https://privycalc.com/api/verify-numeric-password: 793.79296875 ms
+VM3:328 result CapacitorHttp.request (#117136979)
+VM3:554 CapacitorHttp fetch 1761938942556 https://privycalc.com/api/verify-numeric-password: 908.65087890625 ms
+VM3:328 result CapacitorHttp.request (#117136980)
+VM3:554 CapacitorHttp fetch 1761938942663 https://privycalc.com/api/verify-numeric-password: 947.23779296875 ms
+VM3:348 native CapacitorHttp.request (#117136981)
+VM3:328 result CapacitorHttp.request (#117136981)
+VM3:554 CapacitorHttp fetch 1761938973424 https://privycalc.com/api/verify-numeric-password: 911.860107421875 ms
+index-BQr3heiC.js:557 [Capacitor] WebSocket URL: wss://privycalc.com/ws?userId=89a6fb40-bce3-4e45-853a-83c9356d316e&conversationId=17a80246-dc46-4079-b928-ba88c8144802
+index-BQr3heiC.js:557 WebSocket connecting to: wss://privycalc.com/ws?userId=89a6fb40-bce3-4e45-853a-83c9356d316e&conversationId=17a80246-dc46-4079-b928-ba88c8144802
+index-BQr3heiC.js:557 WebSocket connected
+index-BQr3heiC.js:557 WebSocket disconnected
+VM3:348 native Preferences.get (#117136982)
+VM3:328 result Preferences.get (#117136982)
+index-BQr3heiC.js:292 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ index-BQr3heiC.js:292
+index-BQr3heiC.js:292 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-BQr3heiC.js:292
+index-BQr3heiC.js:557 🔍 Settings page - user premium status: Object
+index-BQr3heiC.js:557 ⏳ Platform not detected yet, showing loading...
+index-BQr3heiC.js:557 🚀 MobileSubscription component mounted
+index-BQr3heiC.js:557 🚀 MobileSubscription component initializing...
+index-BQr3heiC.js:557 🔍 Platform detected: android
+index-BQr3heiC.js:557 🔍 Platform detected: android
+index-BQr3heiC.js:557 ✅ Setting platform to: android
+index-BQr3heiC.js:557 🏠 Using direct mode (local)
+index-BQr3heiC.js:557 🏠 Using direct mode (local)
+index-BQr3heiC.js:557 === DIRECT MODE: STORE INIT START ===
+index-BQr3heiC.js:557 Platform: android
+index-BQr3heiC.js:557 Plugin available: true
+index-BQr3heiC.js:557 🎧 Setting up purchase update listeners...
+index-BQr3heiC.js:557 ⚠️ onPurchaseUpdate not available on plugin
+index-BQr3heiC.js:557 🚀 Loading products for android...
+index-BQr3heiC.js:557 Product ID: premium_yearly
+index-BQr3heiC.js:557 🔍 Settings page - user premium status: Object
+2index-BQr3heiC.js:557 📱 Platform is android, rendering subscription UI
+index-BQr3heiC.js:557 ✅ Products loaded: [{"productId":"premium_yearly","title":"Premium Use (com.newhomepage.privychat (unreviewed))","description":"","price":"$29.99","priceRaw":"29.99","priceAsDecimal":29.99,"currency":"USD","country":"-","introductoryPriceSupported":false,"introductoryOriginalPrice":"$29.99","introductoryOriginalPriceAsDecimal":29.99}]
+index-BQr3heiC.js:557 📊 Product count: 1
+index-BQr3heiC.js:557 ✅ Products loaded successfully!
+index-BQr3heiC.js:557   - premium_yearly: Premium Use ($29.99)
+index-BQr3heiC.js:557 === MOBILE SUBSCRIPTION DEBUG END ===
+index-BQr3heiC.js:557 📱 Platform is android, rendering subscription UI
