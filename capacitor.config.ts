@@ -13,19 +13,12 @@ const config: CapacitorConfig = {
   appName: 'Calculator+',
   webDir: './dist/public',
   
-  // Bundle loads locally - no remote server URL
-  // API calls will be made to the backend dynamically
-  
-  // Configure server hostname for iOS cookie support
-  // This makes the backend domain a "first-party" domain for WKAppBoundDomains
-  server: {
-    hostname: 'privycalc.com',
-    iosScheme: 'https',
-    cleartext: false // Enforce HTTPS for security
-  },
+  // LOCAL BUNDLE MODE - NO REMOTE SERVER URL
+  // App loads from local files, API calls go to backend via VITE_SERVER_URL
+  // This prevents Android from loading the app remotely from privycalc.com
   
   // iOS-specific configuration for cookie support
-  // Required to enable third-party cookies from backend API
+  // WKAppBoundDomains in Info.plist + these settings enable session cookies
   ios: {
     limitsNavigationsToAppBoundDomains: true
   },
