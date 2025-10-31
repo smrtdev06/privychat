@@ -157,6 +157,14 @@ export default function Settings() {
     user?.subscriptionExpiresAt && 
     new Date(user.subscriptionExpiresAt) > new Date();
 
+  // Debug: Log premium status
+  console.log("🔍 Settings page - user premium status:", {
+    subscriptionType: user?.subscriptionType,
+    subscriptionExpiresAt: user?.subscriptionExpiresAt,
+    isPremium,
+    isMobilePlatform,
+  });
+
   // Show password setup if not completed
   if (user && !user.isSetupComplete) {
     return (
@@ -340,6 +348,22 @@ export default function Settings() {
 
         {/* Email Verification Banner */}
         {user && <EmailVerificationBanner user={user} />}
+
+        {/* Debug Info - REMOVE THIS AFTER DEBUGGING */}
+        <Card className="mb-6 bg-yellow-50 border-yellow-200">
+          <CardHeader>
+            <CardTitle className="text-sm text-yellow-900">🐛 Debug Info</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs font-mono space-y-1 text-yellow-800">
+              <div>Platform: {isMobilePlatform ? "Mobile" : "Web"}</div>
+              <div>Premium: {isPremium ? "Yes" : "No"}</div>
+              <div>SubType: {user?.subscriptionType || "null"}</div>
+              <div>SubExpiry: {user?.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toLocaleDateString() : "null"}</div>
+              <div>Show Subscription UI: {!isPremium ? "Yes" : "No (premium user)"}</div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* User Code */}
         <Card className="mb-6">

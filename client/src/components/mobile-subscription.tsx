@@ -46,30 +46,36 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
   // Platform detection - runs once on mount
   useEffect(() => {
+    console.log("🚀 MobileSubscription component mounted");
     addDebug("🚀 MobileSubscription component initializing...");
     
     // Detect platform - use bridge method that works in both direct and iframe mode
     capacitorBridge.getPlatform().then((currentPlatform) => {
+      console.log(`🔍 Platform detected: ${currentPlatform}`);
       addDebug(`🔍 Platform detected: ${currentPlatform}`);
       
       if (currentPlatform === "ios" || currentPlatform === "android") {
+        console.log(`✅ Setting platform to: ${currentPlatform}`);
         setPlatform(currentPlatform);
         
         // Check if we're in remote bridge mode
         if (capacitorBridge.isRemoteMode()) {
+          console.log("🌉 Using remote bridge mode (iframe)");
           addDebug("🌉 Using remote bridge mode (iframe)");
           initializeStoreRemote(currentPlatform);
         } else {
+          console.log("🏠 Using direct mode (local)");
           addDebug("🏠 Using direct mode (local)");
           initializeStore(currentPlatform);
         }
       } else {
+        console.log(`⚠️ Not a mobile platform: ${currentPlatform} - component will return null`);
         addDebug(`⚠️ Not a mobile platform: ${currentPlatform}`);
         setPlatform("web");
       }
     }).catch((error) => {
+      console.error(`❌ Error detecting platform: ${error.message}`, error);
       addDebug(`❌ Error detecting platform: ${error.message}`);
-      console.error("Error detecting platform:", error);
       setPlatform("web");
     });
   }, []);
@@ -534,6 +540,7 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
   // Debug Info Component removed for production
 
   if (!platform) {
+    console.log("⏳ Platform not detected yet, showing loading...");
     return (
       <Card>
         <CardContent className="pt-6">
@@ -548,8 +555,11 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
 
   // Don't show mobile subscription on web browsers
   if (platform === "web") {
+    console.log("🌐 Platform is web, hiding MobileSubscription component");
     return null;
   }
+
+  console.log(`📱 Platform is ${platform}, rendering subscription UI`);
 
   if (!storeReady) {
     return (
