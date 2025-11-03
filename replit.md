@@ -33,6 +33,7 @@ Preferred communication style: Simple, everyday language.
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
 - **Security**: HTTP-only cookies, CSRF protection, comprehensive input validation (Zod), email-based password reset, email verification.
 - **Access Control**: Rate limiting (freemium model), object-level permissions for files.
+- **Account Deletion**: Full account deletion feature (DELETE /api/account) that permanently removes all user data including messages, conversations, subscriptions, and gifts. Accessible via Settings page with confirmation dialog. Required by App Store guidelines.
 
 ## Business Logic
 - **Freemium Model**: Free users have daily message limits; premium users get unlimited messages. If one user in a conversation is premium, both send unlimited messages.
