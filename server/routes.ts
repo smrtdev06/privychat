@@ -138,6 +138,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account deletion endpoint (required by App Store guidelines)
+  app.delete("/api/account", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const userId = req.user!.id;
+      console.log(`🗑️ Account deletion requested for user ${userId}`);
+      
+      // Delete all user-related data
+      await storage.deleteUserAccount(userId);
+      
+      // Logout the user
+      req.logout((err) => {
+        if (err) {
+          console.error("Error logging out after account deletion:", err);
+        }
+        
+        // Destroy session
+        req.session.destroy((err) => {
+          if (err) {
+            console.error("Error destroying session after account deletion:", err);
+          }
+          
+          console.log(`✅ Account ${userId} successfully deleted`);
+          res.json({ success: true, message: "Account successfully deleted" });
+        });
+      });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.post("/api/setup-numeric-password", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 

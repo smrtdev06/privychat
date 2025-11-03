@@ -20,6 +20,7 @@ export interface IStorage {
   verifyEmail(userId: string): Promise<void>;
   setPasswordResetToken(userId: string, token: string, expiry: Date): Promise<void>;
   resetPassword(userId: string, newPassword: string): Promise<void>;
+  deleteUserAccount(userId: string): Promise<void>;
   
   getConversation(user1Id: string, user2Id: string): Promise<Conversation | undefined>;
   getConversationById(id: string): Promise<Conversation | undefined>;
@@ -148,6 +149,40 @@ export class DatabaseStorage implements IStorage {
         passwordResetExpiry: null,
       })
       .where(eq(users.id, userId));
+  }
+
+  async deleteUserAccount(userId: string): Promise<void> {
+    // Delete all user-related data in correct order (respecting foreign key constraints)
+    
+    // 1. Delete messages sent by the user
+    await db.delete(messages).where(eq(messages.senderId, userId));
+    
+    // 2. Delete conversations where user is a participant
+    await db.delete(conversations).where(
+      or(
+        eq(conversations.user1Id, userId),
+        eq(conversations.user2Id, userId)
+      )
+    );
+    
+    // 3. Delete subscription gifts purchased by user
+    await db.delete(subscriptionGifts).where(eq(subscriptionGifts.buyerId, userId));
+    
+    // 4. Delete subscription gifts redeemed by user
+    await db.delete(subscriptionGifts).where(eq(subscriptionGifts.redeemedBy, userId));
+    
+    // 5. Delete mobile subscriptions
+    const { mobileSubscriptions } = await import("@shared/schema");
+    await db.delete(mobileSubscriptions).where(eq(mobileSubscriptions.userId, userId));
+    
+    // 6. Delete promo code redemptions
+    const { promoCodeRedemptions } = await import("@shared/schema");
+    await db.delete(promoCodeRedemptions).where(eq(promoCodeRedemptions.userId, userId));
+    
+    // 7. Finally, delete the user
+    await db.delete(users).where(eq(users.id, userId));
+    
+    console.log(`✅ All data deleted for user ${userId}`);
   }
 
   async getConversation(user1Id: string, user2Id: string): Promise<Conversation | undefined> {

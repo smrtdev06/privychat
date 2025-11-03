@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowLeft, Copy, Gift, CreditCard, RotateCcw, MessageCircle, Calculator, CheckCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
@@ -89,6 +90,29 @@ export default function Settings() {
       });
       setUpgradeCode("");
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    },
+  });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("DELETE", "/api/account", {});
+    },
+    onSuccess: () => {
+      toast({
+        title: "Account Deleted",
+        description: "Your account has been permanently deleted",
+      });
+      // Navigate to home page after deletion
+      setTimeout(() => {
+        setLocation("/");
+      }, 1000);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete account",
+        variant: "destructive",
+      });
     },
   });
 
@@ -489,6 +513,50 @@ export default function Settings() {
         >
           Logout
         </Button>
+
+        {/* Account Deletion - Required by App Store */}
+        <Card className="mt-6 border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-900 text-base">Delete Account</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-red-700 mb-4">
+              Permanently delete your account and all associated data. This action cannot be undone.
+            </p>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-red-300 text-red-700 hover:bg-red-100" 
+                  data-testid="button-delete-account"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete My Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your account,
+                    all your messages, conversations, and remove all associated data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteAccountMutation.mutate()}
+                    className="bg-red-600 hover:bg-red-700"
+                    disabled={deleteAccountMutation.isPending}
+                    data-testid="button-confirm-delete"
+                  >
+                    {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
