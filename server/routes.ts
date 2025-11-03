@@ -598,6 +598,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Restore purchases - Required by App Store and Play Store guidelines
+  app.post("/api/mobile-subscription/restore", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const schema = z.object({
+        platform: z.enum(["ios", "android"]),
+        purchaseToken: z.string().optional(),
+        receiptData: z.string().optional(),
+        originalTransactionId: z.string().optional(),
+      });
+
+      const { platform, purchaseToken, receiptData, originalTransactionId } = schema.parse(req.body);
+
+      console.log("🔄 Restore purchases request:", {
+        userId: req.user!.id,
+        platform,
+        hasPurchaseToken: !!purchaseToken,
+        hasReceiptData: !!receiptData,
+        hasOriginalTransactionId: !!originalTransactionId,
+      });
+
+      let validationResult;
+      let subscriptionData;
+
+      if (platform === "android") {
+        // Validate Android purchase
+        if (!purchaseToken) {
+          return res.status(400).json({ error: "Purchase token required for Android" });
+        }
+
+        validationResult = await validateGooglePlayPurchase(
+          "com.newhomepage.privycalc",
+          "premium_yearly",
+          purchaseToken
+        );
+
+        if (validationResult.isValid && validationResult.expiryDate) {
+          subscriptionData = {
+            productId: "premium_yearly",
+            purchaseToken,
+            purchaseDate: validationResult.purchaseDate || new Date(),
+            expiryDate: validationResult.expiryDate,
+            autoRenewing: validationResult.autoRenewing || false,
+          };
+        }
+      } else if (platform === "ios") {
+        // Validate iOS purchase
+        if (!receiptData || !originalTransactionId) {
+          return res.status(400).json({ 
+            error: "Receipt data and transaction ID required for iOS" 
+          });
+        }
+
+        validationResult = await validateAppleAppStorePurchase(
+          receiptData,
+          originalTransactionId
+        );
+
+        if (validationResult.isValid && validationResult.expiryDate) {
+          subscriptionData = {
+            productId: "premium_yearly",
+            originalTransactionId,
+            latestReceiptInfo: validationResult.latestReceiptInfo,
+            purchaseDate: validationResult.purchaseDate || new Date(),
+            expiryDate: validationResult.expiryDate,
+            autoRenewing: validationResult.autoRenewing || false,
+          };
+        }
+      }
+
+      if (!validationResult?.isValid) {
+        console.log("❌ Restore failed - purchase validation failed");
+        return res.status(400).json({ 
+          error: "No valid purchases found to restore",
+          restored: false,
+        });
+      }
+
+      // Store the validated subscription
+      const subscription = await upsertMobileSubscription(
+        req.user!.id,
+        platform,
+        subscriptionData!
+      );
+
+      // Sync user subscription status
+      await syncUserSubscriptionStatus(req.user!.id);
+
+      console.log("✅ Purchase restored successfully");
+      res.json({
+        success: true,
+        restored: true,
+        subscription: {
+          platform,
+          expiryDate: subscription.expiryDate,
+          autoRenewing: subscription.autoRenewing,
+        },
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("❌ Error restoring purchases:", error);
+      res.status(500).json({ 
+        error: "Failed to restore purchases",
+        restored: false,
+      });
+    }
+  });
+
   // Promo code redemption endpoints
   app.post("/api/promo-code/log-redemption", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
