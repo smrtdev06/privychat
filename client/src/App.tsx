@@ -14,6 +14,8 @@ import VerifyEmail from "@/pages/verify-email";
 import ResetPasswordPage from "@/pages/reset-password";
 import Help from "@/pages/help";
 import About from "@/pages/about";
+import Terms from "@/pages/terms";
+import PrivacyPolicy from "@/pages/privacy-policy";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { useDeepLinks } from "@/hooks/use-deep-links";
@@ -31,6 +33,8 @@ function Router() {
       <Route path="/calculator" component={Calculator} />
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/reset-password" component={ResetPasswordPage} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
       <ProtectedRoute path="/messaging" component={Messaging} />
       <ProtectedRoute path="/settings" component={Settings} />
       <Route path="/help" component={Help} />

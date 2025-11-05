@@ -15,6 +15,7 @@ Preferred communication style: Simple, everyday language.
 - **Routing**: Wouter for lightweight client-side routing.
 - **Form Handling**: React Hook Form with Zod for type-safe validation.
 - **Mobile Support**: Custom swipe handlers and mobile-first responsive design, including iOS safe area support for notched devices.
+- **Public Pages**: Terms & Conditions (/terms) and Privacy Policy (/privacy-policy) pages with professional styling and public access.
 
 ## Backend
 - **Framework**: Express.js with TypeScript on Node.js.
