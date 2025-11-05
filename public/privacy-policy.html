@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PrivyCalc</title>
+    <meta name="description" content="Privacy Policy for PrivyCalc secure messaging application by NewHomePage LLC">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 2rem 2rem;
+            }
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            height: 3rem;
+            width: 3rem;
+            border-radius: 0.5rem;
+            background-color: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .icon svg {
+            height: 1.5rem;
+            width: 1.5rem;
+            color: #3b82f6;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.25rem;
+        }
+
+        .last-updated {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .lead {
+            font-size: 1.125rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .state-notices {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .state-notices {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .state-notice {
+            background-color: #dbeafe;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .state-notice h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .state-notice p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            color: #111827;
+        }
+
+        p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .opt-out {
+            background-color: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+        }
+
+        .opt-out p {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .opt-out strong {
+            color: #065f46;
+        }
+
+        .use-list {
+            margin-bottom: 1rem;
+        }
+
+        .use-item {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .use-number {
+            flex-shrink: 0;
+            height: 1.5rem;
+            width: 1.5rem;
+            border-radius: 50%;
+            background-color: rgba(239, 68, 68, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .use-item h4 {
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+        }
+
+        .use-item p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        ul {
+            color: #6b7280;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        ul li span {
+            color: #ef4444;
+        }
+
+        .contact {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .contact-box {
+            background-color: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .contact-box p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box .company {
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1>Privacy Policy</h1>
+                    <p class="last-updated">Last updated: January 2025</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <p class="lead">
+                    NewhomePage delivers analytics and other data-related services to small and medium-sized businesses, marketing 
+                    companies, enterprises, and other organizations. The data is typically used by our customers for research, 
+                    validation and verification services, marketing communications, targeted advertising, and similar uses.
+                </p>
+
+                <div class="state-notices">
+                    <div class="state-notice">
+                        <h4>California Residents</h4>
+                        <p>See our California Privacy Notice</p>
+                    </div>
+                    <div class="state-notice">
+                        <h4>Colorado Residents</h4>
+                        <p>See our Colorado Privacy Notice</p>
+                    </div>
+                    <div class="state-notice">
+                        <h4>Connecticut Residents</h4>
+                        <p>See our Connecticut Privacy Notice</p>
+                    </div>
+                    <div class="state-notice">
+                        <h4>Virginia Residents</h4>
+                        <p>See our Virginia Privacy Notice</p>
+                    </div>
+                </div>
+
+                <section>
+                    <h2>Scope of this Privacy Policy</h2>
+                    <p>
+                        NewhomePage has created this privacy policy to demonstrate its commitment to privacy. This privacy policy 
+                        applies to all visitors (individuals or businesses) to NewhomePage.com and all NewhomePage subsidiaries and 
+                        describes how we use and share the personal information that we gather on our website.
+                    </p>
+                    <p>
+                        NewhomePage does not knowingly collect personal information about children. If we discover we have collected 
+                        personal information from an individual under 18, we will delete that information from our systems.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Opt-Out</h2>
+                    <div class="opt-out">
+                        <p>
+                            NewhomePage appreciates and understands the importance of privacy. Any individual visitor (consumer or business) 
+                            to NewhomePage can choose to Opt-Out, so information about them is not shared with NewhomePage customers. 
+                            To "Opt-Out", please send an email to <strong>sales@NewhomePage.com</strong> with your email address, full name, 
+                            street address, date of birth and phone number.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Collection of Information on Our Website</h2>
+                    
+                    <h3>Information We Collect Directly</h3>
+                    <p>
+                        NewhomePage collects personal information when visitors provide such information on our website, such as during 
+                        registration, to request services, or through contact forms. We also may collect payment and authentication 
+                        information depending on the services that you request from us.
+                    </p>
+
+                    <h3>Information We Collect Automatically</h3>
+                    <p>
+                        NewhomePage automatically receives and stores certain types of information whenever a visitor interacts with the 
+                        NewhomePage website. For example, we automatically receive and record certain "traffic data" on our server logs, 
+                        including a visitor's IP address, the page requested, and interactions with the NewhomePage website.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>How We Use the Information We Collect</h2>
+                    <p>We use your information to provide our services and as described below:</p>
+                    
+                    <div class="use-list">
+                        <div class="use-item">
+                            <div class="use-number">1</div>
+                            <div>
+                                <h4>Customer Service</h4>
+                                <p>To contact subscribers regarding their account status and changes to subscriber agreements.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="use-item">
+                            <div class="use-number">2</div>
+                            <div>
+                                <h4>Marketing</h4>
+                                <p>To contact customers about special promotions, product release notices, and other information we think may be of interest.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="use-item">
+                            <div class="use-number">3</div>
+                            <div>
+                                <h4>Optimization and Personalization</h4>
+                                <p>To tailor the content and information that we may send or display, and to personalize your experiences.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="use-item">
+                            <div class="use-number">4</div>
+                            <div>
+                                <h4>Improve and Analyze Services</h4>
+                                <p>To assess how customers use our services, to improve our services, and to develop new products.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>How We Share the Information We Collect</h2>
+                    <p>We may share your information in the following circumstances:</p>
+                    
+                    <ul>
+                        <li><span>•</span> With customers who hire us to perform analytics on their behalf</li>
+                        <li><span>•</span> In connection with business transfers or mergers</li>
+                        <li><span>•</span> In response to legal process or to comply with the law</li>
+                        <li><span>•</span> To protect us and others from illegal activities or fraud</li>
+                        <li><span>•</span> Aggregate or de-identified information for marketing, advertising, or research</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Security</h2>
+                    <p>
+                        NewhomePage uses systems and procedures to safeguard its data. However, as no protection measure is 100% secure, 
+                        we cannot guarantee against unauthorized or illegal access, disclosure, modification, or loss of data.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Cookies and Other Tracking Technologies</h2>
+                    <p>We may collect information through our website using cookies and other technologies:</p>
+                    
+                    <h3>Cookies</h3>
+                    <p>
+                        Small unique strings of letters and numbers stored on your computer to recognize repeat visitors and track usage behavior.
+                    </p>
+                    
+                    <h3>Third-Party Analytics</h3>
+                    <p>
+                        We use automated devices like Google Analytics to evaluate usage of our website and services.
+                    </p>
+                    
+                    <h3>Do-Not-Track</h3>
+                    <p>
+                        Currently, our website does not honor browser Do-Not-Track signals.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>To Unsubscribe from Our Communications</h2>
+                    <p>
+                        You may unsubscribe from our marketing communications by clicking on the "unsubscribe" link located on the 
+                        bottom of our emails, or by sending us email at <strong>sales@NewhomePage.com</strong> with Subject: Unsubscribe.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Updates to the Privacy Policy</h2>
+                    <p>
+                        NewhomePage may make changes to this privacy statement from time to time. Notice will be provided on this page 
+                        to any material changes made to the policy.
+                    </p>
+                </section>
+
+                <section class="contact">
+                    <h2>Contact Information</h2>
+                    <p>
+                        If you have any questions or comments about this Privacy Statement, please contact us at:
+                    </p>
+                    <div class="contact-box">
+                        <p class="company">NewHomePage LLC</p>
+                        <p>10053 Whittwood Dr #1201</p>
+                        <p>Whittier, CA 90603</p>
+                        <p>Phone: 877-399-1476</p>
+                        <p>FAX: 626-608-2082</p>
+                        <p>Email: sales@NewHomePage.com</p>
+                        <p>Website: www.NewHomePage.com</p>
+                    </div>
+                </section>
+
+                <div class="copyright">
+                    <p>Copyright © 2023-2025 NewHomePage LLC. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

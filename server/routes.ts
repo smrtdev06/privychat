@@ -118,6 +118,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuth(app);
 
+  // Serve static legal pages (Terms & Privacy Policy)
+  app.get("/terms", (req, res) => {
+    res.sendFile("terms.html", { root: "./public" });
+  });
+
+  app.get("/privacy-policy", (req, res) => {
+    res.sendFile("privacy-policy.html", { root: "./public" });
+  });
+
   // User routes
   app.get("/api/user-by-code/:userCode", async (req, res) => {
     try {
