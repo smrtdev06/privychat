@@ -179,11 +179,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = numericPasswordSchema.parse(req.body);
       const { numericPassword } = validatedData;
 
-      await storage.updateUser(req.user!.id, { 
-        numericPassword,
+      // Hash the numeric password before storing
+      const { hashPassword } = await import('./auth');
+      const hashedNumericPassword = await hashPassword(numericPassword);
+
+      const updatedUser = await storage.updateUser(req.user!.id, { 
+        numericPassword: hashedNumericPassword,
         isSetupComplete: true 
       });
 
+      if (!updatedUser) {
+        return res.status(500).json({ error: "Failed to update user" });
+      }
+
+      // CRITICAL: Update session with new PIN so verification works immediately
+      req.user!.numericPassword = hashedNumericPassword;
+      req.user!.isSetupComplete = true;
+
+      console.log("✅ Hashed numeric PIN set for user:", req.user!.username);
       res.json({ success: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -195,22 +208,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/verify-numeric-password", async (req, res) => {
+    // SECURITY: Require user to be logged in first to prevent account takeover
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Please log in first" });
+    }
+
     try {
-      console.log("Received numeric password request - length:", req.body?.numericPassword?.length);
+      console.log("Received numeric password request for user:", req.user!.username);
       
       const validatedData = numericPasswordSchema.parse(req.body);
       const { numericPassword } = validatedData;
-      
-      // Find user by numeric password (for calculator disguise access)
-      const users = await db.select().from(usersTable).where(eq(usersTable.numericPassword, numericPassword));
-      const user = users[0];
-      
-      if (!user) {
-        return res.status(401).json({ error: "Invalid password" });
-      }
 
       // Check brute-force protection for this user
-      const bruteForceCheck = checkBruteForceProtection(user.id);
+      const bruteForceCheck = checkBruteForceProtection(req.user!.id);
       if (!bruteForceCheck.allowed) {
         const delaySeconds = Math.ceil((bruteForceCheck.delayMs || 0) / 1000);
         return res.status(429).json({ 
@@ -219,19 +229,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Authenticate the user (create session)
-      req.login(user, (err) => {
-        if (err) {
-          console.error("Error creating session:", err);
-          recordFailedAttempt(user.id);
-          return res.status(500).json({ error: "Internal server error" });
-        }
-        
-        console.log("✅ Session created successfully - user authenticated:", req.isAuthenticated());
-        
-        recordSuccessfulAttempt(user.id);
+      // Verify the PIN matches the CURRENT user's numeric password
+      const currentUser = req.user!;
+      
+      if (!currentUser.numericPassword) {
+        recordFailedAttempt(currentUser.id);
+        return res.status(401).json({ error: "Please set up your calculator PIN first" });
+      }
+
+      // Check if numeric password is hashed (contains dot separator)
+      const isHashed = currentUser.numericPassword.includes('.');
+      let isValid = false;
+
+      if (isHashed) {
+        // Compare hashed password
+        const { comparePasswords } = await import('./auth');
+        isValid = await comparePasswords(numericPassword, currentUser.numericPassword);
+      } else {
+        // Legacy plain-text comparison (will be migrated)
+        isValid = numericPassword === currentUser.numericPassword;
+      }
+
+      if (isValid) {
+        console.log("✅ Numeric PIN verified for user:", currentUser.username);
+        recordSuccessfulAttempt(currentUser.id);
         res.json({ success: true });
-      });
+      } else {
+        console.log("❌ Invalid PIN attempt for user:", currentUser.username);
+        recordFailedAttempt(currentUser.id);
+        res.status(401).json({ error: "Invalid PIN" });
+      }
       
     } catch (error) {
       if (error instanceof z.ZodError) {

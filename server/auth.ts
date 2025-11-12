@@ -32,7 +32,7 @@ export async function hashPassword(password: string) {
   return `${buf.toString("hex")}.${salt}`;
 }
 
-async function comparePasswords(supplied: string, stored: string) {
+export async function comparePasswords(supplied: string, stored: string) {
   const [hashed, salt] = stored.split(".");
   const hashedBuf = Buffer.from(hashed, "hex");
   const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
@@ -133,7 +133,7 @@ export function setupAuth(app: Express) {
     try {
       const { token, expiry } = generateVerificationToken();
       await storage.setEmailVerificationToken(user.id, token, expiry);
-      await sendVerificationEmail(user.email, user.fullName, token);
+      await sendVerificationEmail(user.email, user.fullName || user.username, token);
     } catch (error) {
       console.error(
         "Error sending verification email during registration:",
