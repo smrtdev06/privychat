@@ -53,14 +53,6 @@ const upgradeCodeSchema = z.object({
   upgradeCode: z.string().min(1, "Upgrade code is required")
 });
 
-const phoneSchema = z.object({
-  phone: z.string().min(1, "Phone number is required")
-});
-
-const smsCodeSchema = z.object({
-  code: z.string().min(1, "Verification code is required")
-});
-
 // Brute-force protection functions
 function checkBruteForceProtection(userId: string): { allowed: boolean; delayMs?: number } {
   const key = `brute-force:${userId}`;
@@ -1209,45 +1201,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // SMS verification (mock endpoint)
-  app.post("/api/sms/send-verification", async (req, res) => {
-    try {
-      const validatedData = phoneSchema.parse(req.body);
-      const { phone } = validatedData;
-      // Mock SMS sending - in real app would integrate with Twilio/similar
-      console.log(`Mock SMS verification code sent to ${phone}: 123456`);
-      res.json({ success: true });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors[0].message });
-      }
-      console.error("Error sending SMS verification:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-
-  app.post("/api/sms/verify", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-
-    try {
-      const validatedData = smsCodeSchema.parse(req.body);
-      const { code } = validatedData;
-      // Mock verification - in real app would verify against sent code
-      if (code === "123456") {
-        await storage.updateUser(req.user!.id, { isPhoneVerified: true });
-        res.json({ success: true });
-      } else {
-        res.status(400).json({ error: "Invalid verification code" });
-      }
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors[0].message });
-      }
-      console.error("Error verifying SMS code:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-
   // Send email verification
   app.post("/api/email/send-verification", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
@@ -1461,11 +1414,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             username: user.username,
             email: user.email,
             userCode: user.userCode,
-            phone: user.phone,
             fullName: user.fullName,
             subscriptionType: user.subscriptionType,
             subscriptionExpiresAt: user.subscriptionExpiresAt,
-            isPhoneVerified: user.isPhoneVerified,
             isSetupComplete: user.isSetupComplete,
             dailyMessageCount: user.dailyMessageCount,
             lastMessageDate: user.lastMessageDate,

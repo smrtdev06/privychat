@@ -81,7 +81,6 @@ export class DatabaseStorage implements IStorage {
       .values({
         ...insertUser,
         userCode,
-        isPhoneVerified: false,
         isSetupComplete: false,
         subscriptionType: "free",
         dailyMessageCount: 0,

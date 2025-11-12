@@ -27,11 +27,9 @@ interface AdminUser {
   username: string;
   email: string;
   userCode: string;
-  phone: string | null;
   fullName: string;
   subscriptionType: string;
   subscriptionExpiresAt: Date | null;
-  isPhoneVerified: boolean;
   isSetupComplete: boolean;
   dailyMessageCount: number;
   lastMessageDate: Date | null;
@@ -94,7 +92,6 @@ export default function AdminPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Full Name</TableHead>
                 <TableHead>User Code</TableHead>
-                <TableHead>Phone</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Messages/Day</TableHead>
                 <TableHead>Conversations</TableHead>
@@ -114,7 +111,6 @@ export default function AdminPage() {
                       {user.userCode}
                     </code>
                   </TableCell>
-                  <TableCell>{user.phone || "—"}</TableCell>
                   <TableCell>
                     <div className="space-y-1">
                       <Badge
@@ -135,11 +131,6 @@ export default function AdminPage() {
                             ).toLocaleDateString()}
                           </div>
                         )}
-                      {user.isPhoneVerified && (
-                        <Badge variant="outline" className="text-xs">
-                          Phone ✓
-                        </Badge>
-                      )}
                     </div>
                   </TableCell>
                   <TableCell>
