@@ -31,6 +31,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Authentication and Security
 - **Authentication**: Session-based with secure password hashing (scrypt).
+- **Registration**: Email-only verification flow (phone verification completely removed as of November 2025).
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
 - **Security**: HTTP-only cookies, CSRF protection, comprehensive input validation (Zod), email-based password reset, email verification.
 - **Access Control**: Rate limiting (freemium model), object-level permissions for files.
