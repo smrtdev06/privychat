@@ -19,9 +19,14 @@ export async function sendVerificationEmail(
   fullName: string,
   verificationToken: string
 ): Promise<void> {
-  const baseUrl = process.env.REPLIT_DOMAINS 
-    ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-    : process.env.VITE_SERVER_URL || 'https://privycalc.com';
+  // Determine base URL for verification link
+  // Priority: SERVER_URL (backend env) > REPLIT_DOMAINS (dev) > default production URL
+  const baseUrl = process.env.SERVER_URL 
+    || (process.env.REPLIT_DOMAINS 
+      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+      : 'https://privycalc.com');
+  
+  console.log(`📧 Sending verification email to ${email} with base URL: ${baseUrl}`);
   
   const verificationLink = `${baseUrl}/verify-email?token=${verificationToken}`;
   
