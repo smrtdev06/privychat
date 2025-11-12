@@ -605,15 +605,29 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
               <div className="p-4 border rounded-lg">
                 <h3 className="font-semibold text-lg">{product.title}</h3>
                 <p className="text-2xl font-bold mt-1">{product.price}</p>
+                <p className="text-sm text-muted-foreground mt-1">Billed annually</p>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Premium Features</h4>
-                <ul className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                  <li>• Unlimited messages</li>
-                  <li>• Send images and videos</li>
-                  <li>• Priority support</li>
-                </ul>
+              {/* Free vs Premium Comparison */}
+              <div className="space-y-3">
+                <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 p-3 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-2">Free Plan</h4>
+                  <ul className="space-y-1 text-xs text-gray-700 dark:text-gray-300">
+                    <li>• Limited daily messages</li>
+                    <li>• Text messages only</li>
+                    <li>• Basic features</li>
+                  </ul>
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg">
+                  <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm mb-2">Premium Features</h4>
+                  <ul className="space-y-1 text-xs text-blue-800 dark:text-blue-200">
+                    <li>• Unlimited messages</li>
+                    <li>• Send images and videos</li>
+                    <li>• Priority support</li>
+                    <li>• Ad-free experience</li>
+                  </ul>
+                </div>
               </div>
 
               <Button

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageSquare, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface SMSVerificationProps {
   onVerified: () => void;
@@ -13,6 +15,7 @@ interface SMSVerificationProps {
 export default function SMSVerification({ onVerified, phone }: SMSVerificationProps) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [showSkipConfirmation, setShowSkipConfirmation] = useState(false);
   const { toast } = useToast();
 
   const handleCodeChange = (index: number, value: string) => {
@@ -50,24 +53,19 @@ export default function SMSVerification({ onVerified, phone }: SMSVerificationPr
     setIsVerifying(true);
     
     try {
-      // Mock verification - always accept 123456
-      if (verificationCode === "123456") {
-        toast({
-          title: "Phone verified!",
-          description: "Your account has been verified successfully.",
-        });
-        onVerified();
-      } else {
-        toast({
-          title: "Invalid code",
-          description: "Please check the code and try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+      await apiRequest("POST", "/api/sms/verify", {
+        code: verificationCode,
+      });
+      
       toast({
-        title: "Verification failed",
-        description: "Please try again.",
+        title: "Phone verified!",
+        description: "Your account has been verified successfully.",
+      });
+      onVerified();
+    } catch (error: any) {
+      toast({
+        title: "Invalid code",
+        description: error.message || "Please check the code and try again.",
         variant: "destructive",
       });
     } finally {
@@ -119,14 +117,50 @@ export default function SMSVerification({ onVerified, phone }: SMSVerificationPr
             className="w-full"
             data-testid="button-resend"
           >
-            Resend Code (0:30)
+            Resend Code
           </Button>
 
-          <div className="mt-6 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700 text-center">
-              Demo code: <strong>123456</strong>
-            </p>
-          </div>
+          {!showSkipConfirmation ? (
+            <Button
+              variant="ghost"
+              className="w-full mt-4"
+              onClick={() => setShowSkipConfirmation(true)}
+              data-testid="button-skip-verification"
+            >
+              Skip Verification
+            </Button>
+          ) : (
+            <Alert className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="text-sm">
+                <p className="mb-3">You can skip phone verification for now. However, some features may be limited until you verify your phone number.</p>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      toast({
+                        title: "Verification Skipped",
+                        description: "You can verify your phone number later in Settings",
+                      });
+                      onVerified();
+                    }}
+                    data-testid="button-confirm-skip"
+                  >
+                    Continue Without Verification
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowSkipConfirmation(false)}
+                    data-testid="button-cancel-skip"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
     </div>

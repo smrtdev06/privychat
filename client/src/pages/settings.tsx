@@ -415,6 +415,35 @@ export default function Settings() {
               <p className="text-sm text-green-700 mb-4">
                 Purchase premium access for another user
               </p>
+              
+              {/* Pricing and Billing Info */}
+              <div className="mb-6 p-4 border rounded-lg">
+                <p className="text-2xl font-bold">$29.99/year</p>
+                <p className="text-sm text-muted-foreground mt-1">Billed annually</p>
+              </div>
+
+              {/* Free vs Premium Comparison */}
+              <div className="space-y-3 mb-6">
+                <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 p-3 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-2">Free Plan</h4>
+                  <ul className="space-y-1 text-xs text-gray-700 dark:text-gray-300">
+                    <li>• Limited daily messages</li>
+                    <li>• Text messages only</li>
+                    <li>• Basic features</li>
+                  </ul>
+                </div>
+
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3 rounded-lg">
+                  <h4 className="font-semibold text-green-900 dark:text-green-100 text-sm mb-2">Premium Features</h4>
+                  <ul className="space-y-1 text-xs text-green-800 dark:text-green-200">
+                    <li>• Unlimited messages</li>
+                    <li>• Send images and videos</li>
+                    <li>• Priority support</li>
+                    <li>• Ad-free experience</li>
+                  </ul>
+                </div>
+              </div>
+
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="gift-email">Recipient Email</Label>
@@ -444,7 +473,7 @@ export default function Settings() {
                   data-testid="button-gift-premium"
                 >
                   <Gift className="h-4 w-4 mr-2" />
-                  {giftMutation.isPending ? "Processing..." : "Gift Premium Access - $29"}
+                  {giftMutation.isPending ? "Processing..." : "Gift Premium Access"}
                 </Button>
               </div>
             </CardContent>
