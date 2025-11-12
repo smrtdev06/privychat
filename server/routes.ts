@@ -241,11 +241,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isHashed = currentUser.numericPassword.includes('.');
       let isValid = false;
 
-      // DEBUG: Log what we're comparing
-      console.log("🔍 DEBUG - Entered PIN:", numericPassword, "Type:", typeof numericPassword);
-      console.log("🔍 DEBUG - Stored PIN:", currentUser.numericPassword, "Type:", typeof currentUser.numericPassword);
-      console.log("🔍 DEBUG - Is hashed?", isHashed);
-
       if (isHashed) {
         // Compare hashed password
         const { comparePasswords } = await import('./auth');
@@ -253,7 +248,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         // Legacy plain-text comparison (will be migrated)
         isValid = numericPassword === currentUser.numericPassword;
-        console.log("🔍 DEBUG - Plain text comparison result:", isValid);
       }
 
       if (isValid) {

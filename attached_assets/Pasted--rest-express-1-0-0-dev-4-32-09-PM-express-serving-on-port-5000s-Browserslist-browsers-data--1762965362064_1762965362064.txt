@@ -1,0 +1,55 @@
+
+> rest-express@1.0.0 dev
+4:32:09 PM [express] serving on port 5000s
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+4:32:24 PM [express] GET /api/user 200 in 70ms :: {"id":"4a02e638-1d9f-4beb-9a31-9e087b8d39c7","user…
+4:35:45 PM [express] GET /api/csrf-token 304 in 669ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d13…
+4:35:46 PM [express] GET /api/csrf-token 304 in 72ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+4:35:46 PM [express] GET /api/csrf-token 304 in 72ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+🔍 DEBUG - Entered PIN: 12 Type: string
+🔍 DEBUG - Stored PIN: 123456 Type: string
+🔍 DEBUG - Is hashed? false
+🔍 DEBUG - Plain text comparison result: false
+❌ Invalid PIN attempt for user: Chang
+4:35:47 PM [express] POST /api/verify-numeric-password 401 in 74ms :: {"error":"Invalid PIN"}
+4:35:47 PM [express] GET /api/csrf-token 304 in 71ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+🔍 DEBUG - Entered PIN: 1 Type: string
+🔍 DEBUG - Stored PIN: 123456 Type: string
+🔍 DEBUG - Is hashed? false
+🔍 DEBUG - Plain text comparison result: false
+❌ Invalid PIN attempt for user: Chang
+4:35:48 PM [express] POST /api/verify-numeric-password 401 in 2145ms :: {"error":"Invalid PIN"}
+4:35:48 PM [express] GET /api/csrf-token 304 in 73ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+🔍 DEBUG - Entered PIN: 123 Type: string
+🔍 DEBUG - Stored PIN: 123456 Type: string
+🔍 DEBUG - Is hashed? false
+🔍 DEBUG - Plain text comparison result: false
+❌ Invalid PIN attempt for user: Chang
+4:35:48 PM [express] POST /api/verify-numeric-password 401 in 80ms :: {"error":"Invalid PIN"}
+Received numeric password request for user: Chang
+4:35:48 PM [express] POST /api/verify-numeric-password 429 in 73ms :: {"error":"Too many failed atte…
+4:35:49 PM [express] GET /api/csrf-token 304 in 74ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+4:35:49 PM [express] POST /api/verify-numeric-password 429 in 70ms :: {"error":"Too many failed atte…
+Received numeric password request for user: Chang
+4:35:49 PM [express] GET /api/csrf-token 304 in 69ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+4:35:49 PM [express] POST /api/verify-numeric-password 429 in 71ms :: {"error":"Too many failed atte…
+Received numeric password request for user: Chang
+4:35:50 PM [express] GET /api/csrf-token 304 in 71ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+4:35:50 PM [express] POST /api/verify-numeric-password 429 in 72ms :: {"error":"Too many failed atte…
+Received numeric password request for user: Chang
+4:35:51 PM [express] GET /api/csrf-token 304 in 66ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+4:35:51 PM [express] POST /api/verify-numeric-password 429 in 69ms :: {"error":"Too many failed atte…
+Received numeric password request for user: Chang
+4:35:51 PM [express] POST /api/verify-numeric-password 429 in 70ms :: {"error":"Too many failed atte…
+4:35:51 PM [express] GET /api/csrf-token 304 in 74ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+4:35:52 PM [express] POST /api/verify-numeric-password 429 in 73ms :: {"error":"Too many failed atte…
+4:35:52 PM [express] GET /api/csrf-token 304 in 79ms :: {"csrfToken":"87892d64294dfdb0eb3793b713d139…
+Received numeric password request for user: Chang
+4:35:52 PM [express] POST /api/verify-numeric-password 429 in 76ms :: {"error":"Too many failed atte…
