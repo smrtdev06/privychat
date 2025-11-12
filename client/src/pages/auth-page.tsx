@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema, loginUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import SMSVerification from "@/components/sms-verification";
 import { PCLegalLinks, MobileLegalModal } from "@/components/legal-content";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
@@ -30,8 +29,6 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [showSMSVerification, setShowSMSVerification] = useState(false);
-  const [registrationData, setRegistrationData] = useState<any>(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
@@ -52,7 +49,6 @@ export default function AuthPage() {
       email: "",
       password: "",
       confirmPassword: "",
-      phone: "",
       fullName: "",
     },
   });
@@ -69,15 +65,8 @@ export default function AuthPage() {
   };
 
   const onRegister = (data: z.infer<typeof registerSchema>) => {
-    setRegistrationData(data);
-    setShowSMSVerification(true);
-  };
-
-  const onSMSVerified = () => {
-    if (registrationData) {
-      const { confirmPassword, ...userData } = registrationData;
-      registerMutation.mutate(userData);
-    }
+    const { confirmPassword, ...userData } = data;
+    registerMutation.mutate(userData);
   };
 
   const handleForgotPassword = async () => {
@@ -121,10 +110,6 @@ export default function AuthPage() {
       setResetLoading(false);
     }
   };
-
-  if (showSMSVerification) {
-    return <SMSVerification onVerified={onSMSVerified} phone={registrationData?.phone} />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col md:flex-row">
@@ -251,19 +236,6 @@ export default function AuthPage() {
                       />
                       <FormField
                         control={registerForm.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl>
-                              <Input type="tel" {...field} data-testid="input-phone" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
                         name="password"
                         render={({ field }) => (
                           <FormItem>
@@ -288,13 +260,6 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
-                      
-                      <Alert>
-                        <Shield className="h-4 w-4" />
-                        <AlertDescription>
-                          Your phone will be verified via SMS for security purposes.
-                        </AlertDescription>
-                      </Alert>
 
                       <Button 
                         type="submit" 
@@ -337,8 +302,8 @@ export default function AuthPage() {
               <span>Calculator disguise</span>
             </div>
             <div className="flex items-center space-x-3">
-              <Shield className="w-5 h-5 text-primary" />
-              <span>Phone verification</span>
+              <Mail className="w-5 h-5 text-primary" />
+              <span>Email verification</span>
             </div>
           </div>
         </div>
