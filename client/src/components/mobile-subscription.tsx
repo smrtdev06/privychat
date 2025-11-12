@@ -149,11 +149,18 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
           title = "Premium Yearly";
         }
         
+        // Format price - ensure it includes "/year" suffix
+        let price = p.price || "$29.99";
+        const priceLower = price.toLowerCase();
+        if (!priceLower.includes("/year") && !priceLower.includes("/yr") && !priceLower.includes("year")) {
+          price = `${price}/year`;
+        }
+        
         return {
           id: p.productId,
           title: title,
           description: p.description || "Unlimited messaging for one year",
-          price: p.price || "$29.99/year",
+          price: price,
           platform: platformType,
         };
       });
@@ -207,6 +214,14 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
         
         if (product.canPurchase) {
           addDebug(`✅ Product ${product.id} can be purchased! Adding to list.`);
+          
+          // Format price - ensure it includes "/year" suffix
+          let formattedPrice = product.price || "$29.99";
+          const priceLower = formattedPrice.toLowerCase();
+          if (!priceLower.includes("/year") && !priceLower.includes("/yr") && !priceLower.includes("year")) {
+            formattedPrice = `${formattedPrice}/year`;
+          }
+          
           setProducts((prev) => {
             const existing = prev.find((p) => p.id === product.id);
             if (existing) {
@@ -214,7 +229,12 @@ export function MobileSubscription({ onSubscriptionUpdate }: MobileSubscriptionP
               return prev;
             }
             
-            const newList = [...prev, product];
+            const formattedProduct = {
+              ...product,
+              price: formattedPrice
+            };
+            
+            const newList = [...prev, formattedProduct];
             addDebug(`   ✅ Added! New product count: ${newList.length}`);
             return newList;
           });
