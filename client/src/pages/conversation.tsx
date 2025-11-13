@@ -31,6 +31,7 @@ export default function Conversation() {
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ["/api/conversations", id, "messages"],
     enabled: !!id,
+    refetchOnMount: 'always', // Always refetch when navigating back to conversation
   });
 
   const { data: conversations = [], isLoading: conversationsLoading } = useQuery({
@@ -147,8 +148,10 @@ export default function Conversation() {
     };
   };
 
-  const canSendMessage = user?.subscriptionType === "premium" || 
-    (user?.dailyMessageCount || 0) < 1;
+  // Check if either user has premium (matches backend logic)
+  const userIsPremium = user?.subscriptionType === "premium";
+  const otherUserIsPremium = conversation?.otherUser?.subscriptionType === "premium";
+  const canSendMessage = userIsPremium || otherUserIsPremium || (user?.dailyMessageCount || 0) < 1;
 
   if (isLoading || conversationsLoading) {
     return (
@@ -294,8 +297,8 @@ export default function Conversation() {
           </Button>
         </div>
 
-        {/* Message Limit Warning */}
-        {user?.subscriptionType === "free" && (
+        {/* Message Limit Warning - only show when BOTH users are free */}
+        {user?.subscriptionType === "free" && !otherUserIsPremium && (
           <div className="mt-2 text-center">
             <p className="text-sm text-yellow-600">
               {canSendMessage 
