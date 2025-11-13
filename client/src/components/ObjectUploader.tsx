@@ -71,6 +71,7 @@ export function ObjectUploader({
       })
       .on("complete", (result) => {
         onComplete?.(result);
+        setShowModal(false); // Close modal after successful upload
       })
   );
 
