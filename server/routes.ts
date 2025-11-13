@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
@@ -435,6 +436,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting upload URL:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Proxy upload endpoint for mobile apps (avoids CORS issues with GCS)
+  app.post("/api/objects/upload-proxy", express.raw({ limit: '50mb', type: '*/*' }), async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const objectStorageService = new ObjectStorageService();
+      
+      // Get signed URL for upload
+      const uploadURL = await objectStorageService.getObjectEntityUploadURL();
+      
+      // Upload file data to GCS via signed URL with proper headers
+      const contentType = req.headers['content-type'] || 'application/octet-stream';
+      const uploadResponse = await fetch(uploadURL, {
+        method: 'PUT',
+        body: req.body,
+        headers: {
+          'Content-Type': contentType,
+          'Content-Length': req.body.length.toString(),
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('GCS upload failed:', uploadResponse.status, errorText);
+        throw new Error(`GCS upload failed: ${uploadResponse.status}`);
+      }
+
+      // Return the uploadURL (which is what the rest of the app expects)
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Error in proxy upload:", error);
+      res.status(500).json({ error: "Upload failed" });
     }
   });
 

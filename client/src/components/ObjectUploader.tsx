@@ -3,8 +3,11 @@ import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
 import { DashboardModal } from "@uppy/react";
 import AwsS3 from "@uppy/aws-s3";
+import XHRUpload from "@uppy/xhr-upload";
 import type { UploadResult } from "@uppy/core";
 import { Button } from "@/components/ui/button";
+import { Capacitor } from "@capacitor/core";
+import { getFullUrl } from "@/lib/queryClient";
 
 interface ObjectUploaderProps {
   maxNumberOfFiles?: number;
@@ -57,18 +60,35 @@ export function ObjectUploader({
   children,
 }: ObjectUploaderProps) {
   const [showModal, setShowModal] = useState(false);
-  const [uppy] = useState(() =>
-    new Uppy({
+  const isNative = Capacitor.isNativePlatform();
+  
+  const [uppy] = useState(() => {
+    const uppyInstance = new Uppy({
       restrictions: {
         maxNumberOfFiles,
         maxFileSize,
       },
       autoProceed: false,
-    })
-      .use(AwsS3, {
+    });
+
+    // Use different upload strategies for web vs mobile
+    if (isNative) {
+      // Mobile: Upload to backend proxy to avoid CORS issues
+      uppyInstance.use(XHRUpload, {
+        endpoint: getFullUrl("/api/objects/upload-proxy"),
+        method: "POST",
+        formData: false, // Send raw file data
+        fieldName: "file",
+      });
+    } else {
+      // Web: Upload directly to GCS with signed URL
+      uppyInstance.use(AwsS3, {
         shouldUseMultipart: false,
         getUploadParameters: onGetUploadParameters,
-      })
+      });
+    }
+
+    return uppyInstance
       .on("file-added", (file) => {
         console.log("📎 File added:", file.name, file.size, "bytes");
       })
@@ -103,8 +123,8 @@ export function ObjectUploader({
       })
       .on("error", (error) => {
         console.error("❌ Uppy error:", error);
-      })
-  );
+      });
+  });
 
   return (
     <div>
