@@ -79,6 +79,18 @@ export function ObjectUploader({
         method: "POST",
         formData: false, // Send raw file data
         fieldName: "file",
+        // Extract uploadURL from server response
+        onAfterResponse(xhr) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            return {
+              uploadURL: response.uploadURL,
+            };
+          } catch (error) {
+            console.error("Failed to parse upload response:", error);
+            throw error;
+          }
+        },
       });
     } else {
       // Web: Upload directly to GCS with signed URL

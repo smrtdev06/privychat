@@ -54,6 +54,10 @@ Preferred communication style: Simple, everyday language.
 - **iOS Cookie Fix**: Configured `WKAppBoundDomains` in `Info.plist` to enable session cookies.
 - **Deep Linking**: Native URL schemes (`privycalc://`) configured for iOS and Android for promo code redemption.
 - **Legal Persistence**: Mobile legal modal persists user acceptance using Capacitor's Preferences API.
+- **File Uploads**: 
+  - **Web**: Direct uploads to Google Cloud Storage via signed URLs (fast, no proxy overhead)
+  - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) to bypass CORS restrictions in WebView
+  - ObjectUploader component auto-detects platform and uses appropriate strategy (XHRUpload for mobile, AwsS3 for web)
 
 ## Development and Deployment
 - **Tooling**: Vite, TypeScript, Drizzle Kit for database migrations.
