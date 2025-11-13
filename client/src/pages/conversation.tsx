@@ -126,8 +126,8 @@ export default function Conversation() {
       const response = await apiRequest("PUT", "/api/media", { mediaUrl });
       const objectPath = response.objectPath;
 
-      // Send message with media URL
-      sendMessageMutation.mutate({
+      // Send message with media URL and wait for completion
+      await sendMessageMutation.mutateAsync({
         messageType,
         mediaUrl: objectPath,
       });
@@ -137,6 +137,7 @@ export default function Conversation() {
         description: error.message || "Failed to upload media",
         variant: "destructive",
       });
+      throw error; // Re-throw so the modal knows the upload failed
     }
   };
 
@@ -245,10 +246,10 @@ export default function Conversation() {
             maxNumberOfFiles={1}
             maxFileSize={10485760} // 10MB
             onGetUploadParameters={getUploadParameters}
-            onComplete={(result) => {
+            onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
               if (uploadedFile?.uploadURL) {
-                handleMediaUpload(uploadedFile.uploadURL, "image");
+                await handleMediaUpload(uploadedFile.uploadURL, "image");
               }
             }}
             buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
@@ -260,13 +261,13 @@ export default function Conversation() {
             maxNumberOfFiles={1}
             maxFileSize={52428800} // 50MB for videos
             onGetUploadParameters={getUploadParameters}
-            onComplete={(result) => {
+            onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
               if (uploadedFile?.uploadURL) {
                 // Determine if it's an image or video based on file type
                 const fileType = uploadedFile.type || "";
                 const messageType = fileType.startsWith("video/") ? "video" : "image";
-                handleMediaUpload(uploadedFile.uploadURL, messageType);
+                await handleMediaUpload(uploadedFile.uploadURL, messageType);
               }
             }}
             buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"

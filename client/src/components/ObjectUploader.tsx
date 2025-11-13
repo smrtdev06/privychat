@@ -15,7 +15,7 @@ interface ObjectUploaderProps {
   }>;
   onComplete?: (
     result: UploadResult<Record<string, unknown>, Record<string, unknown>>
-  ) => void;
+  ) => void | Promise<void>;
   buttonClassName?: string;
   children: ReactNode;
 }
@@ -69,9 +69,16 @@ export function ObjectUploader({
         shouldUseMultipart: false,
         getUploadParameters: onGetUploadParameters,
       })
-      .on("complete", (result) => {
-        onComplete?.(result);
-        setShowModal(false); // Close modal after successful upload
+      .on("complete", async (result) => {
+        try {
+          if (onComplete) {
+            await onComplete(result);
+          }
+        } catch (error) {
+          console.error("Error in upload completion handler:", error);
+        } finally {
+          setShowModal(false); // Close modal after callback completes or fails
+        }
       })
   );
 
