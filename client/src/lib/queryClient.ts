@@ -30,15 +30,17 @@ async function throwIfResNotOk(res: Response) {
     const text = (await res.text()) || res.statusText;
     
     // Try to parse JSON response to extract clean error message
+    let errorMessage = text;
     try {
       const errorData = JSON.parse(text);
       // Extract the error message from common response formats
-      const errorMessage = errorData.error || errorData.message || text;
-      throw new Error(errorMessage);
+      errorMessage = errorData.error || errorData.message || text;
     } catch (parseError) {
       // If not JSON, use the text as-is
-      throw new Error(text || res.statusText);
+      errorMessage = text || res.statusText;
     }
+    
+    throw new Error(errorMessage);
   }
 }
 
