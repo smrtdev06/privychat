@@ -69,16 +69,40 @@ export function ObjectUploader({
         shouldUseMultipart: false,
         getUploadParameters: onGetUploadParameters,
       })
+      .on("file-added", (file) => {
+        console.log("📎 File added:", file.name, file.size, "bytes");
+      })
+      .on("upload", () => {
+        console.log("🚀 Upload started");
+      })
+      .on("upload-progress", (file, progress) => {
+        if (progress.bytesTotal) {
+          console.log("📊 Upload progress:", file?.name, `${progress.bytesUploaded}/${progress.bytesTotal}`, `(${Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)}%)`);
+        }
+      })
+      .on("upload-success", (file, response) => {
+        console.log("✅ Upload success:", file?.name, response);
+      })
+      .on("upload-error", (file, error) => {
+        console.error("❌ Upload error:", file?.name, error);
+      })
       .on("complete", async (result) => {
+        console.log("🎉 Complete event fired:", result.successful?.length, "successful,", result.failed?.length, "failed");
         try {
           if (onComplete) {
+            console.log("⏳ Calling onComplete callback...");
             await onComplete(result);
+            console.log("✅ onComplete callback finished");
           }
         } catch (error) {
-          console.error("Error in upload completion handler:", error);
+          console.error("❌ Error in upload completion handler:", error);
         } finally {
-          setShowModal(false); // Close modal after callback completes or fails
+          console.log("🔒 Closing modal");
+          setShowModal(false);
         }
+      })
+      .on("error", (error) => {
+        console.error("❌ Uppy error:", error);
       })
   );
 
