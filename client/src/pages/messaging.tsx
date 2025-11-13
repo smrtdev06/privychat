@@ -54,11 +54,9 @@ export default function Messaging() {
         setLocation(`/conversation/${newConversation.id}`);
       } catch (error: any) {
         console.error("Error creating conversation:", error);
-        // Parse error message from response if available
-        const errorMessage = error?.error || error?.message || "Error starting conversation. Please check the user code.";
         toast({
           title: "Failed to start conversation",
-          description: errorMessage,
+          description: error.message || "Error starting conversation. Please check the user code.",
           variant: "destructive",
         });
       }

@@ -28,7 +28,17 @@ export function getFullUrl(path: string): string {
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    
+    // Try to parse JSON response to extract clean error message
+    try {
+      const errorData = JSON.parse(text);
+      // Extract the error message from common response formats
+      const errorMessage = errorData.error || errorData.message || text;
+      throw new Error(errorMessage);
+    } catch (parseError) {
+      // If not JSON, use the text as-is
+      throw new Error(text || res.statusText);
+    }
   }
 }
 

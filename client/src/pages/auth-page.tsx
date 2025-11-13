@@ -103,7 +103,7 @@ export default function AuthPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error?.error || "Failed to send reset email",
+        description: error.message || "Failed to send reset email",
         variant: "destructive",
       });
     } finally {
