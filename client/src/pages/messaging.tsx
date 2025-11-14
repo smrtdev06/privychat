@@ -71,6 +71,15 @@ export default function Messaging() {
       {/* Header */}
       <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between safe-area-top">
         <div className="flex items-center space-x-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary-foreground hover:bg-primary-foreground/20"
+            onClick={() => setLocation("/")}
+            data-testid="button-back-calculator"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <h2 className="text-xl font-semibold">Secure Messages</h2>
         </div>
         <div className="flex items-center space-x-2">
