@@ -248,6 +248,7 @@ export default function Conversation() {
           <ObjectUploader
             maxNumberOfFiles={1}
             maxFileSize={10485760} // 10MB
+            allowedFileTypes={['image/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
@@ -268,6 +269,7 @@ export default function Conversation() {
           <ObjectUploader
             maxNumberOfFiles={1}
             maxFileSize={52428800} // 50MB for videos
+            allowedFileTypes={['video/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
@@ -275,10 +277,7 @@ export default function Conversation() {
               const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
               console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
               if (uploadURL && typeof uploadURL === 'string') {
-                // Determine if it's an image or video based on file type
-                const fileType = uploadedFile.type || "";
-                const messageType = fileType.startsWith("video/") ? "video" : "image";
-                await handleMediaUpload(uploadURL, messageType);
+                await handleMediaUpload(uploadURL, "video");
               } else {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
