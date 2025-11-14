@@ -483,7 +483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { mediaUrl, conversationId } = validatedData;
 
       // Verify user is a member of the conversation
-      const conversation = await storage.getConversation(conversationId);
+      const conversation = await storage.getConversationById(conversationId);
       if (!conversation) {
         return res.status(404).json({ error: "Conversation not found" });
       }

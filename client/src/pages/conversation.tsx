@@ -122,8 +122,11 @@ export default function Conversation() {
 
   const handleMediaUpload = async (mediaUrl: string, messageType: "image" | "video") => {
     try {
-      // Set ACL policy for the uploaded media
-      const response = await apiRequest("PUT", "/api/media", { mediaUrl });
+      // Set ACL policy for the uploaded media (grant access to both conversation participants)
+      const response = await apiRequest("PUT", "/api/media", { 
+        mediaUrl,
+        conversationId: id 
+      });
       const objectPath = response.objectPath;
 
       // Send message with media URL and wait for completion

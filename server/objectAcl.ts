@@ -93,7 +93,7 @@ class ConversationMembersAccessGroup extends BaseObjectAccessGroup {
 
   async hasMember(userId: string): Promise<boolean> {
     try {
-      const conversation = await storage.getConversation(this.id);
+      const conversation = await storage.getConversationById(this.id);
       if (!conversation) {
         return false;
       }
