@@ -58,6 +58,12 @@ function csrfProtection(req: any, res: any, next: any) {
     return next();
   }
 
+  // Skip CSRF for mobile upload proxy (still protected by authentication)
+  // Mobile apps can't easily handle CSRF tokens in raw binary uploads
+  if (req.path === "/api/objects/upload-proxy") {
+    return next();
+  }
+
   // Skip CSRF for unauthenticated requests (handled by route-level auth)
   if (!req.isAuthenticated()) {
     return next();
