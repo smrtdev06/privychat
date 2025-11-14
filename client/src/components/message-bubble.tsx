@@ -46,6 +46,8 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
           <video
             src={getMediaStreamUrl(message.mediaUrl)}
             controls
+            preload="metadata"
+            playsInline
             className="w-full h-auto rounded-lg mb-2"
             data-testid={`message-video-${message.id}`}
           />

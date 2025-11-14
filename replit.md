@@ -48,6 +48,15 @@ Preferred communication style: Simple, everyday language.
 - **User Discovery**: User code system.
 - **Message Types**: Support for text, image, video, and voice messages.
 
+## Media Streaming
+- **Video/Audio/Image Delivery**: Backend streaming endpoint (`GET /api/objects/stream`) with ACL validation
+- **Range Request Support**: RFC 7233 compliant for video seeking (Safari/iOS compatible)
+  - Suffix byte-ranges (bytes=-N)
+  - Absolute ranges (bytes=start-end, bytes=start-)
+  - Multi-range handling (falls back to full file)
+- **Caching**: ETag and Last-Modified headers with If-None-Match/If-Range support
+- **Security**: Session authentication + conversation-level ACL validation before streaming
+
 ## Mobile Deployment (Capacitor)
 - **Platform**: Capacitor for iOS and Android (`com.newhomepage.privychat`, name: PrivyCalc).
 - **Deployment Mode**: **LOCAL BUNDLE** - The app runs fully locally with bundled assets for both iOS and Android, connecting to the backend via `VITE_SERVER_URL`.
