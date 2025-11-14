@@ -33,8 +33,8 @@ Preferred communication style: Simple, everyday language.
 - **Authentication**: Session-based with secure password hashing (scrypt).
 - **Registration**: Email-only verification flow (phone verification completely removed as of November 2025).
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
-- **Security**: HTTP-only cookies, CSRF protection, comprehensive input validation (Zod), email-based password reset, email verification.
-- **Access Control**: Rate limiting (freemium model), object-level permissions for files.
+- **Security**: HTTP-only cookies, CSRF protection (exempted for mobile upload proxy), comprehensive input validation (Zod), email-based password reset, email verification.
+- **Access Control**: Rate limiting (freemium model), conversation-level ACLs for shared media files ensuring both participants can access uploaded images/videos.
 - **Account Deletion**: Full account deletion feature (DELETE /api/account) that permanently removes all user data including messages, conversations, subscriptions, and gifts. Accessible via Settings page with confirmation dialog. Required by App Store guidelines.
 
 ## Business Logic
