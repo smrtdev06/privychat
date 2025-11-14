@@ -248,7 +248,7 @@ export default function Conversation() {
           <ObjectUploader
             maxNumberOfFiles={1}
             maxFileSize={10485760} // 10MB
-            allowedFileTypes={['image/*']}
+            allowedFileTypes={['video/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
@@ -256,7 +256,7 @@ export default function Conversation() {
               const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
               console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
               if (uploadURL && typeof uploadURL === 'string') {
-                await handleMediaUpload(uploadURL, "image");
+                await handleMediaUpload(uploadURL, "video");
               } else {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
@@ -269,7 +269,7 @@ export default function Conversation() {
           <ObjectUploader
             maxNumberOfFiles={1}
             maxFileSize={52428800} // 50MB for videos
-            allowedFileTypes={['video/*']}
+            allowedFileTypes={['image/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
@@ -277,7 +277,7 @@ export default function Conversation() {
               const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
               console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
               if (uploadURL && typeof uploadURL === 'string') {
-                await handleMediaUpload(uploadURL, "video");
+                await handleMediaUpload(uploadURL, "image");
               } else {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
