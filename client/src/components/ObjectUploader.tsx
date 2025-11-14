@@ -83,6 +83,7 @@ export function ObjectUploader({
         formData: false, // Send raw file data
         fieldName: "file",
         // Extract uploadURL from server response
+        // @ts-ignore - Uppy type definitions mismatch
         onAfterResponse(xhr) {
           try {
             const response = JSON.parse(xhr.responseText);
@@ -126,6 +127,7 @@ export function ObjectUploader({
         try {
           if (onComplete) {
             console.log("⏳ Calling onComplete callback...");
+            // @ts-ignore - Uppy type definitions mismatch
             await onComplete(result);
             console.log("✅ onComplete callback finished");
           }

@@ -35,6 +35,8 @@ Preferred communication style: Simple, everyday language.
 - **Onboarding Flow**: 
   - First-time users see legal agreement modal (Terms & Privacy Policy)
   - After login, users without PIN are redirected to Settings for PIN setup with app explanation
+  - After PIN setup, success modal guides users to calculator with clear CTAs: "Unlock Messages via Calculator" and "Later – Return to Calculator"
+  - Settings page includes persistent "Open Calculator" button in header for easy navigation
   - Users with PIN configured go directly to calculator interface
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
 - **Security**: HTTP-only cookies, CSRF protection (exempted for mobile upload proxy), comprehensive input validation (Zod), email-based password reset, email verification.

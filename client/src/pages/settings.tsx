@@ -298,19 +298,19 @@ export default function Settings() {
               </div>
               <DialogTitle className="text-center text-2xl">Password Set Successfully!</DialogTitle>
               <DialogDescription className="text-center space-y-4 pt-4">
-                <p>Your numeric password has been configured.</p>
+                <p>Your numeric password has been configured. <strong>The calculator unlocks your messages!</strong></p>
                 
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg text-left">
-                  <p className="text-sm text-blue-900 font-medium mb-2">Quick Reminder:</p>
+                  <p className="text-sm text-blue-900 font-medium mb-2">How to Access Your Messages:</p>
                   <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
                     <li>Open the calculator screen</li>
                     <li>Type your password using the number buttons</li>
-                    <li>Press the <strong>=</strong> button to unlock</li>
+                    <li>Press the <strong>=</strong> button to unlock your inbox</li>
                   </ol>
                 </div>
 
-                <p className="text-sm text-muted-foreground">
-                  Would you like to practice entering your password now?
+                <p className="text-sm font-medium text-foreground">
+                  Tap below to launch the calculator and enter your PIN to open chats.
                 </p>
               </DialogDescription>
             </DialogHeader>
@@ -322,10 +322,10 @@ export default function Settings() {
                   setLocation("/");
                 }}
                 className="w-full"
-                data-testid="button-practice-now"
+                data-testid="button-unlock-messages"
               >
-                <Calculator className="w-4 h-4 mr-2" />
-                Practice Now
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Unlock Messages via Calculator
               </Button>
               <Button
                 variant="outline"
@@ -334,9 +334,10 @@ export default function Settings() {
                   setLocation("/");
                 }}
                 className="w-full"
-                data-testid="button-skip-practice"
+                data-testid="button-later"
               >
-                Skip - I Got It
+                <Calculator className="w-4 h-4 mr-2" />
+                Later – Return to Calculator
               </Button>
             </div>
           </DialogContent>
@@ -349,17 +350,28 @@ export default function Settings() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-8 safe-area-top">
+        <div className="flex items-center justify-between mb-8 safe-area-top">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLocation("/")}
+              className="mr-4"
+              data-testid="button-back-settings"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h2 className="text-2xl font-bold">Settings</h2>
+          </div>
           <Button
-            variant="ghost"
-            size="icon"
             onClick={() => setLocation("/")}
-            className="mr-4"
-            data-testid="button-back-settings"
+            variant="outline"
+            size="sm"
+            data-testid="button-open-calculator"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <Calculator className="h-4 w-4 mr-2" />
+            Open Calculator
           </Button>
-          <h2 className="text-2xl font-bold">Settings</h2>
         </div>
 
         {/* Email Verification Banner */}
