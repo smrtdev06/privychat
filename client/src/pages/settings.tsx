@@ -321,13 +321,13 @@ export default function Settings() {
               <Button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  setLocation("/");
+                  setLocation("/messaging");
                 }}
                 className="w-full"
-                data-testid="button-unlock-messages"
+                data-testid="button-start-messaging"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Unlock Messages via Calculator
+                Start Sending Messages
               </Button>
               <Button
                 variant="outline"
@@ -336,9 +336,20 @@ export default function Settings() {
                   setLocation("/");
                 }}
                 className="w-full"
-                data-testid="button-later"
+                data-testid="button-unlock-calculator"
               >
                 <Calculator className="w-4 h-4 mr-2" />
+                Unlock Messages via Calculator
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setLocation("/");
+                }}
+                className="w-full text-sm"
+                data-testid="button-later"
+              >
                 Later – Return to Calculator
               </Button>
             </div>
