@@ -56,7 +56,12 @@ export default function AuthPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      setLocation("/");
+      // Check if user has completed setup (PIN set)
+      if (!user.isSetupComplete) {
+        setLocation("/settings#setup");
+      } else {
+        setLocation("/calculator");
+      }
     }
   }, [user, setLocation]);
 
@@ -308,6 +313,9 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
+
+      {/* Legal Agreement Modal - shows for first-time users */}
+      <MobileLegalModal />
 
       {/* Forgot Password Dialog */}
       <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>

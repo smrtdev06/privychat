@@ -32,6 +32,10 @@ Preferred communication style: Simple, everyday language.
 ## Authentication and Security
 - **Authentication**: Session-based with secure password hashing (scrypt).
 - **Registration**: Email-only verification flow (phone verification completely removed as of November 2025).
+- **Onboarding Flow**: 
+  - First-time users see legal agreement modal (Terms & Privacy Policy)
+  - After login, users without PIN are redirected to Settings for PIN setup with app explanation
+  - Users with PIN configured go directly to calculator interface
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
 - **Security**: HTTP-only cookies, CSRF protection (exempted for mobile upload proxy), comprehensive input validation (Zod), email-based password reset, email verification.
 - **Access Control**: Rate limiting (freemium model), conversation-level ACLs for shared media files ensuring both participants can access uploaded images/videos.
