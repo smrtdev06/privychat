@@ -134,12 +134,21 @@ export function ObjectUploader({
         } finally {
           console.log("🔒 Closing modal");
           setShowModal(false);
+          // Clear all files from Uppy after successful upload
+          console.log("🧹 Clearing Uppy state");
+          uppyInstance.cancelAll();
         }
       })
       .on("error", (error) => {
         console.error("❌ Uppy error:", error);
       });
   });
+
+  const handleModalClose = () => {
+    console.log("🚪 Modal closed - clearing Uppy state");
+    uppy.cancelAll();
+    setShowModal(false);
+  };
 
   return (
     <div>
@@ -150,7 +159,7 @@ export function ObjectUploader({
       <DashboardModal
         uppy={uppy}
         open={showModal}
-        onRequestClose={() => setShowModal(false)}
+        onRequestClose={handleModalClose}
         proudlyDisplayPoweredByUppy={false}
       />
     </div>
