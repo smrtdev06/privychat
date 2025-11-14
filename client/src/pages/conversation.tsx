@@ -247,7 +247,7 @@ export default function Conversation() {
         <div className="flex items-end space-x-3">
           <ObjectUploader
             maxNumberOfFiles={1}
-            maxFileSize={10485760} // 10MB
+            maxFileSize={52428800} // 50MB for videos
             allowedFileTypes={['video/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
@@ -268,7 +268,7 @@ export default function Conversation() {
           
           <ObjectUploader
             maxNumberOfFiles={1}
-            maxFileSize={52428800} // 50MB for videos
+            maxFileSize={10485760} // 10MB
             allowedFileTypes={['image/*']}
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
