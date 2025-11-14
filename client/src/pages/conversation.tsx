@@ -248,8 +248,13 @@ export default function Conversation() {
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
-              if (uploadedFile?.uploadURL) {
-                await handleMediaUpload(uploadedFile.uploadURL, "image");
+              // Support both AwsS3 (web) and XHRUpload (mobile) response formats
+              const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
+              console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
+              if (uploadURL && typeof uploadURL === 'string') {
+                await handleMediaUpload(uploadURL, "image");
+              } else {
+                console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
             buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
@@ -263,11 +268,16 @@ export default function Conversation() {
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
-              if (uploadedFile?.uploadURL) {
+              // Support both AwsS3 (web) and XHRUpload (mobile) response formats
+              const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
+              console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
+              if (uploadURL && typeof uploadURL === 'string') {
                 // Determine if it's an image or video based on file type
                 const fileType = uploadedFile.type || "";
                 const messageType = fileType.startsWith("video/") ? "video" : "image";
-                await handleMediaUpload(uploadedFile.uploadURL, messageType);
+                await handleMediaUpload(uploadURL, messageType);
+              } else {
+                console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
             buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
