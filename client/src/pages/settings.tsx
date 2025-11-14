@@ -297,25 +297,27 @@ export default function Settings() {
                 </div>
               </div>
               <DialogTitle className="text-center text-2xl">Password Set Successfully!</DialogTitle>
-              <DialogDescription className="text-center space-y-4 pt-4">
-                <p>Your numeric password has been configured. <strong>The calculator unlocks your messages!</strong></p>
-                
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg text-left">
-                  <p className="text-sm text-blue-900 font-medium mb-2">How to Access Your Messages:</p>
-                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                    <li>Open the calculator screen</li>
-                    <li>Type your password using the number buttons</li>
-                    <li>Press the <strong>=</strong> button to unlock your inbox</li>
-                  </ol>
-                </div>
-
-                <p className="text-sm font-medium text-foreground">
-                  Tap below to launch the calculator and enter your PIN to open chats.
-                </p>
+              <DialogDescription className="text-center">
+                Your numeric password has been configured. The calculator unlocks your messages!
               </DialogDescription>
             </DialogHeader>
             
-            <div className="flex flex-col gap-3 mt-4">
+            <div className="space-y-4 mt-4">
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                <p className="text-sm text-blue-900 font-medium mb-2">How to Access Your Messages:</p>
+                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                  <li>Open the calculator screen</li>
+                  <li>Type your password using the number buttons</li>
+                  <li>Press the <strong>=</strong> button to unlock your inbox</li>
+                </ol>
+              </div>
+
+              <p className="text-sm font-medium text-center">
+                Tap below to launch the calculator and enter your PIN to open chats.
+              </p>
+            </div>
+            
+            <div className="flex flex-col gap-3 mt-6">
               <Button
                 onClick={() => {
                   setShowSuccessModal(false);
