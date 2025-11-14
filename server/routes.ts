@@ -7,7 +7,7 @@ import { insertMessageSchema, insertConversationSchema, insertSubscriptionGiftSc
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
-import { ObjectPermission } from "./objectAcl";
+import { ObjectPermission, ObjectAccessGroupType } from "./objectAcl";
 import { randomUUID } from "crypto";
 import { OAuth2Client } from "google-auth-library";
 import rateLimit from "express-rate-limit";
@@ -47,7 +47,8 @@ const userCodeSchema = z.object({
 });
 
 const mediaUrlSchema = z.object({
-  mediaUrl: z.string().url("Valid URL required")
+  mediaUrl: z.string().url("Valid URL required"),
+  conversationId: z.string().min(1, "Conversation ID is required")
 });
 
 const upgradeCodeSchema = z.object({
@@ -479,14 +480,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const validatedData = mediaUrlSchema.parse(req.body);
-      const { mediaUrl } = validatedData;
+      const { mediaUrl, conversationId } = validatedData;
+
+      // Verify user is a member of the conversation
+      const conversation = await storage.getConversation(conversationId);
+      if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+      }
+      
+      const userId = req.user!.id;
+      if (conversation.user1Id !== userId && conversation.user2Id !== userId) {
+        return res.status(403).json({ error: "Not authorized to access this conversation" });
+      }
 
       const objectStorageService = new ObjectStorageService();
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         mediaUrl,
         {
-          owner: req.user!.id,
+          owner: userId,
           visibility: "private",
+          aclRules: [
+            {
+              group: {
+                type: ObjectAccessGroupType.CONVERSATION_MEMBERS,
+                id: conversationId,
+              },
+              permission: ObjectPermission.READ,
+            },
+          ],
         }
       );
 
