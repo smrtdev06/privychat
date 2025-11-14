@@ -16,6 +16,11 @@ interface MessageBubbleProps {
   isOwnMessage: boolean;
 }
 
+function getMediaStreamUrl(mediaUrl: string): string {
+  const baseUrl = getFullUrl("");
+  return `${baseUrl}/api/objects/stream?path=${encodeURIComponent(mediaUrl)}`;
+}
+
 export default function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
   return (
     <div className={cn("flex", isOwnMessage ? "justify-end" : "justify-start")}>
@@ -30,7 +35,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
       >
         {message.messageType === "image" && message.mediaUrl && (
           <img
-            src={getFullUrl(message.mediaUrl)}
+            src={getMediaStreamUrl(message.mediaUrl)}
             alt="Shared image"
             className="w-full h-auto rounded-lg mb-2"
             data-testid={`message-image-${message.id}`}
@@ -39,7 +44,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
 
         {message.messageType === "video" && message.mediaUrl && (
           <video
-            src={getFullUrl(message.mediaUrl)}
+            src={getMediaStreamUrl(message.mediaUrl)}
             controls
             className="w-full h-auto rounded-lg mb-2"
             data-testid={`message-video-${message.id}`}
@@ -48,7 +53,7 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
 
         {message.messageType === "voice" && message.mediaUrl && (
           <audio
-            src={getFullUrl(message.mediaUrl)}
+            src={getMediaStreamUrl(message.mediaUrl)}
             controls
             className="w-full mb-2"
             data-testid={`message-voice-${message.id}`}

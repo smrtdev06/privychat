@@ -475,6 +475,197 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stream media files with ACL validation and Range support for video seeking
+  app.get("/api/objects/stream", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+
+    try {
+      const path = req.query.path as string;
+      if (!path) {
+        return res.status(400).json({ error: "path parameter required" });
+      }
+
+      console.log(`📹 Streaming media request for path: ${path} by user: ${req.user!.username}`);
+
+      const objectStorageService = new ObjectStorageService();
+      const objectFile = await objectStorageService.getObjectEntityFile(path);
+      console.log(`✅ Object file found:`, objectFile.name);
+
+      // Verify user has READ permission via ACL
+      const canAccess = await objectStorageService.canAccessObjectEntity({
+        userId: req.user!.id,
+        objectFile,
+        requestedPermission: ObjectPermission.READ,
+      });
+
+      if (!canAccess) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      // Get file metadata
+      const [metadata] = await objectFile.getMetadata();
+      const fileSize = parseInt(String(metadata.size || "0"), 10);
+      const contentType = metadata.contentType || "application/octet-stream";
+      
+      // Generate ETag for caching (use file size + updated timestamp)
+      const etag = `"${metadata.size}-${metadata.updated || metadata.timeCreated}"`;
+      const lastModified = metadata.updated || metadata.timeCreated;
+
+      // Handle If-None-Match for 304 responses
+      const ifNoneMatch = req.headers["if-none-match"];
+      if (ifNoneMatch === etag) {
+        return res.status(304).end();
+      }
+
+      // Handle Range requests for video seeking (RFC 7233)
+      const range = req.headers.range;
+      if (range) {
+        // Check If-Range - only serve range if resource hasn't changed
+        const ifRange = req.headers["if-range"];
+        if (ifRange) {
+          // Support both ETag and HTTP-date validators
+          const ifRangeIsDate = ifRange.includes(",") || ifRange.includes("GMT");
+          const resourceUnchanged = ifRangeIsDate
+            ? ifRange === lastModified
+            : ifRange === etag;
+
+          if (!resourceUnchanged) {
+            // Resource changed, send full response instead
+            res.status(200).set({
+              "Content-Type": contentType,
+              "Content-Length": fileSize.toString(),
+              "Accept-Ranges": "bytes",
+              "Cache-Control": "private, max-age=3600",
+              "ETag": etag,
+              "Last-Modified": lastModified || new Date().toUTCString(),
+            });
+            objectFile.createReadStream().pipe(res);
+            return;
+          }
+        }
+
+        // Validate Range header format
+        if (!range.startsWith("bytes=")) {
+          res.status(416).set({
+            "Content-Range": `bytes */${fileSize}`,
+          });
+          return res.end();
+        }
+
+        const rangeSpec = range.replace(/bytes=/, "");
+
+        // Reject multi-range requests (send full file instead)
+        if (rangeSpec.includes(",")) {
+          res.status(200).set({
+            "Content-Type": contentType,
+            "Content-Length": fileSize.toString(),
+            "Accept-Ranges": "bytes",
+            "Cache-Control": "private, max-age=3600",
+            "ETag": etag,
+            "Last-Modified": lastModified || new Date().toUTCString(),
+          });
+          objectFile.createReadStream().pipe(res);
+          return;
+        }
+        let start: number;
+        let end: number;
+
+        // Handle suffix byte-range (e.g., bytes=-500 means last 500 bytes)
+        if (rangeSpec.startsWith("-")) {
+          const suffixLength = parseInt(rangeSpec.slice(1), 10);
+          if (isNaN(suffixLength) || suffixLength <= 0) {
+            res.status(416).set({
+              "Content-Range": `bytes */${fileSize}`,
+            });
+            return res.end();
+          }
+          start = Math.max(0, fileSize - suffixLength);
+          end = fileSize - 1;
+        } else {
+          // Handle absolute byte-range (e.g., bytes=0-999 or bytes=500-)
+          const parts = rangeSpec.split("-");
+          start = parseInt(parts[0], 10);
+          end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+          // Validate range values
+          if (isNaN(start) || start < 0) {
+            res.status(416).set({
+              "Content-Range": `bytes */${fileSize}`,
+            });
+            return res.end();
+          }
+
+          // If end is specified, validate it
+          if (parts[1] && (isNaN(end) || end < start)) {
+            res.status(416).set({
+              "Content-Range": `bytes */${fileSize}`,
+            });
+            return res.end();
+          }
+        }
+
+        // Clamp end to file size
+        end = Math.min(end, fileSize - 1);
+        
+        // Check if range is satisfiable
+        if (start >= fileSize) {
+          res.status(416).set({
+            "Content-Range": `bytes */${fileSize}`,
+          });
+          return res.end();
+        }
+
+        const chunkSize = end - start + 1;
+
+        res.status(206).set({
+          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+          "Accept-Ranges": "bytes",
+          "Content-Length": chunkSize.toString(),
+          "Content-Type": contentType,
+          "Cache-Control": "private, max-age=3600",
+          "ETag": etag,
+          "Last-Modified": lastModified || new Date().toUTCString(),
+        });
+
+        const stream = objectFile.createReadStream({ start, end });
+        stream.on("error", (err) => {
+          console.error("Stream error:", err);
+          if (!res.headersSent) {
+            res.status(500).end();
+          }
+        });
+        stream.pipe(res);
+      } else {
+        // Full file download
+        res.status(200).set({
+          "Content-Type": contentType,
+          "Content-Length": fileSize.toString(),
+          "Accept-Ranges": "bytes",
+          "Cache-Control": "private, max-age=3600",
+          "ETag": etag,
+          "Last-Modified": lastModified || new Date().toUTCString(),
+        });
+
+        const stream = objectFile.createReadStream();
+        stream.on("error", (err) => {
+          console.error("Stream error:", err);
+          if (!res.headersSent) {
+            res.status(500).end();
+          }
+        });
+        stream.pipe(res);
+      }
+    } catch (error) {
+      if (error instanceof ObjectNotFoundError) {
+        return res.status(404).json({ error: "Media not found" });
+      }
+      console.error("Error streaming media:", error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Internal server error" });
+      }
+    }
+  });
+
   app.put("/api/media", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
