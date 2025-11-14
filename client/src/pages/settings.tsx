@@ -181,8 +181,8 @@ export default function Settings() {
     user?.subscriptionExpiresAt && 
     new Date(user.subscriptionExpiresAt) > new Date();
 
-  // Show password setup if not completed
-  if (user && !user.isSetupComplete) {
+  // Show password setup if not completed OR if success modal is showing
+  if (user && (!user.isSetupComplete || showSuccessModal)) {
     return (
       <div className="min-h-screen bg-background p-6 flex flex-col justify-center">
         <div className="max-w-md mx-auto w-full">
