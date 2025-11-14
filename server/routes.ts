@@ -507,6 +507,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fileSize = parseInt(String(metadata.size || "0"), 10);
       const contentType = metadata.contentType || "application/octet-stream";
       
+      console.log(`📊 Streaming ${fileSize} bytes, Content-Type: ${contentType}`);
+      
       // Generate ETag for caching (use file size + updated timestamp)
       const etag = `"${metadata.size}-${metadata.updated || metadata.timeCreated}"`;
       const lastModified = metadata.updated || metadata.timeCreated;
