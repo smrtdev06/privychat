@@ -80,11 +80,11 @@ export class DatabaseStorage implements IStorage {
       .insert(users)
       .values({
         ...insertUser,
-        userCode,
+        userCode: userCode,
         isSetupComplete: false,
         subscriptionType: "free",
         dailyMessageCount: 0,
-      })
+      } as typeof users.$inferInsert)
       .returning();
     return user;
   }

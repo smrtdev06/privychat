@@ -31,8 +31,9 @@ Preferred communication style: Simple, everyday language.
 
 ## Authentication and Security
 - **Authentication**: Session-based with secure password hashing (scrypt).
-- **Registration**: Email-only verification flow (phone verification completely removed as of November 2025).
-  - **Username Auto-fill**: Username field automatically populates with email address during registration (users can override if desired)
+- **Registration**: Email-only authentication flow (username and phone verification completely removed as of November 2025).
+  - **Login Credential**: Users login with email address only (backend auto-generates username from email for DB compatibility)
+  - **Display Names**: Full names shown throughout UI (conversation list, headers); usernames hidden from users
   - **Password Visibility**: Eye icon toggles on all password fields (login, register, confirm) for easy verification
 - **Welcome Email**: Sent after email verification, includes introduction to app features and highlights shared premium benefit
 - **Onboarding Flow**: 
