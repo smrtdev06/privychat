@@ -32,10 +32,13 @@ Preferred communication style: Simple, everyday language.
 ## Authentication and Security
 - **Authentication**: Session-based with secure password hashing (scrypt).
 - **Registration**: Email-only verification flow (phone verification completely removed as of November 2025).
+  - **Username Auto-fill**: Username field automatically populates with email address during registration (users can override if desired)
+  - **Password Visibility**: Eye icon toggles on all password fields (login, register, confirm) for easy verification
+- **Welcome Email**: Sent after email verification, includes introduction to app features and highlights shared premium benefit
 - **Onboarding Flow**: 
   - First-time users see legal agreement modal (Terms & Privacy Policy)
   - After login, users without PIN are redirected to Settings for PIN setup with app explanation
-  - After PIN setup, success modal guides users to calculator with clear CTAs: "Unlock Messages via Calculator" and "Later – Return to Calculator"
+  - After PIN setup, success modal offers three options: "Start Sending Messages" (direct to conversations), "Unlock Messages via Calculator" (practice stealth mode), or "Later – Return to Calculator"
   - Settings page includes persistent "Open Calculator" button in header for easy navigation
   - Users with PIN configured go directly to calculator interface
 - **Stealth Mode**: Calculator interface conceals messaging, dual-layer password (standard + numeric PIN), PIN setup with guided instructions and smart hints.
@@ -44,10 +47,12 @@ Preferred communication style: Simple, everyday language.
 - **Account Deletion**: Full account deletion feature (DELETE /api/account) that permanently removes all user data including messages, conversations, subscriptions, and gifts. Accessible via Settings page with confirmation dialog. Required by App Store guidelines.
 
 ## Business Logic
-- **Freemium Model**: Free users have daily message limits; premium users get unlimited messages. If one user in a conversation is premium, both send unlimited messages.
+- **Freemium Model**: Free users have daily message limits; premium users get unlimited messages. **Shared Premium Access**: If one user in a conversation is premium, both users get unlimited messages during that conversation.
 - **Subscription Gifts**: Users can gift premium subscriptions via upgrade codes (web-only purchase and redemption).
 - **Mobile Subscriptions**: Native in-app purchases (Google Play Billing, Apple App Store) with backend receipt validation and webhook support for real-time subscription status updates (DID_RENEW, EXPIRED, REFUND, DID_CHANGE_RENEWAL_STATUS). Promo codes are supported.
-- **User Discovery**: User code system.
+- **User Discovery**: User code system with automatic conversation discovery.
+  - **Auto-add Contacts**: When User A starts a conversation with User B, both users can see the conversation in their list
+  - **Real-time Updates**: Conversation list auto-refreshes on window focus and every 30 seconds to show new conversations
 - **Message Types**: Support for text, image, video, and voice messages.
 
 ## Media Streaming
