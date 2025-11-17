@@ -7,7 +7,7 @@ interface ConversationListProps {
     otherUser: {
       id: string;
       userCode: string;
-      username: string;
+      fullName: string | null;
     };
     lastMessage?: {
       content: string;
@@ -39,8 +39,8 @@ export default function ConversationList({ conversations }: ConversationListProp
           data-testid={`conversation-${conversation.id}`}
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="font-medium" data-testid={`username-${conversation.id}`}>
-              {conversation.otherUser.username}
+            <span className="font-medium" data-testid={`fullname-${conversation.id}`}>
+              {conversation.otherUser.fullName || conversation.otherUser.userCode}
             </span>
             <span className="text-sm text-muted-foreground" data-testid={`time-${conversation.id}`}>
               {formatDistanceToNow(new Date(conversation.lastMessageAt), { addSuffix: true })}

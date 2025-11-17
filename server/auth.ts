@@ -103,12 +103,9 @@ export function setupAuth(app: Express) {
   app.use(csrfProtection);
 
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      // Try to find user by username first, then by email
-      let user = await storage.getUserByUsername(username);
-      if (!user) {
-        user = await storage.getUserByEmail(username); // username field can contain email
-      }
+    new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
 
       if (!user || !(await comparePasswords(password, user.password))) {
         return done(null, false);
@@ -125,13 +122,18 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/register", async (req, res, next) => {
-    const existingUser = await storage.getUserByUsername(req.body.username);
+    // Check if email already exists
+    const existingUser = await storage.getUserByEmail(req.body.email);
     if (existingUser) {
-      return res.status(400).send("Username already exists");
+      return res.status(400).send("Email already registered");
     }
+
+    // Auto-generate username from email (for database compatibility)
+    const username = req.body.email;
 
     const user = await storage.createUser({
       ...req.body,
+      username,
       password: await hashPassword(req.body.password),
     });
 
@@ -160,7 +162,7 @@ export function setupAuth(app: Express) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).json({ error: "Invalid username or password" });
+        return res.status(401).json({ error: "Invalid email or password" });
       }
       req.login(user, (err) => {
         if (err) {

@@ -154,15 +154,14 @@ export const promoCodeRedemptionsRelations = relations(promoCodeRedemptions, ({ 
 }));
 
 export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
   email: true,
   password: true,
   fullName: true,
 });
 
-export const loginUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const loginUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
 });
 
 export const insertMessageSchema = createInsertSchema(messages).pick({

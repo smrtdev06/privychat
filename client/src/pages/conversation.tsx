@@ -194,7 +194,7 @@ export default function Conversation() {
         
         <div className="flex-1">
           <h3 className="font-semibold" data-testid="conversation-title">
-            {conversation?.otherUser?.username || "Unknown User"}
+            {conversation?.otherUser?.fullName || conversation?.otherUser?.userCode || "Unknown User"}
           </h3>
           <p className="text-sm text-primary-foreground/80">
             {conversation?.otherUser?.userCode}

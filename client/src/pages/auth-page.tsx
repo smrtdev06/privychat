@@ -40,7 +40,7 @@ export default function AuthPage() {
   const loginForm = useForm({
     resolver: zodResolver(loginUserSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -48,24 +48,12 @@ export default function AuthPage() {
   const registerForm = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
       confirmPassword: "",
       fullName: "",
     },
   });
-
-  // Auto-fill username with email during registration
-  useEffect(() => {
-    const subscription = registerForm.watch((value, { name }) => {
-      if (name === "email" && value.email) {
-        // Auto-fill username with email
-        registerForm.setValue("username", value.email);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [registerForm]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -159,12 +147,12 @@ export default function AuthPage() {
                     <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                       <FormField
                         control={loginForm.control}
-                        name="username"
+                        name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Email</FormLabel>
                             <FormControl>
-                              <Input {...field} data-testid="input-username" />
+                              <Input type="email" {...field} data-testid="input-email-login" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -236,19 +224,6 @@ export default function AuthPage() {
                             <FormLabel>Full Name</FormLabel>
                             <FormControl>
                               <Input {...field} data-testid="input-fullname" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input {...field} data-testid="input-register-username" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
