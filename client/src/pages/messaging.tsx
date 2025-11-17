@@ -22,6 +22,8 @@ export default function Messaging() {
 
   const { data: conversations = [], isLoading } = useQuery({
     queryKey: ["/api/conversations"],
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000, // Refresh every 30 seconds to catch new conversations
   });
 
   useSwipeHandler((direction) => {

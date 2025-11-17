@@ -239,6 +239,7 @@ export async function sendWelcomeEmail(
               <li>🔢 Set up your numeric password in Settings</li>
               <li>💬 Start secure conversations with other users</li>
               <li>🔐 Access your messages by entering your PIN on the calculator</li>
+              <li>⭐ <strong>Premium Sharing:</strong> When one person in a conversation has premium, both users get unlimited messages!</li>
             </ul>
           </div>
           
@@ -264,6 +265,7 @@ export async function sendWelcomeEmail(
     - Set up your numeric password in Settings
     - Start secure conversations with other users
     - Access your messages by entering your PIN on the calculator
+    - Premium Sharing: When one person in a conversation has premium, both users get unlimited messages!
     
     Stealth Mode: Your messaging app is disguised as a calculator. To access your messages, enter your numeric password and press "=" on the calculator interface.
     
