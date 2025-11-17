@@ -312,6 +312,13 @@ export default function Settings() {
                 </ol>
               </div>
 
+              <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+                <p className="text-sm text-purple-900 font-medium mb-1">⭐ Premium Sharing Benefit:</p>
+                <p className="text-sm text-purple-800">
+                  When one person in a conversation has premium, <strong>both users get unlimited messages</strong> during that conversation!
+                </p>
+              </div>
+
               <p className="text-sm font-medium text-center">
                 Tap below to launch the calculator and enter your PIN to open chats.
               </p>
