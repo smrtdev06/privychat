@@ -1,6 +1,6 @@
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Filesystem } from '@capacitor/filesystem';
 
 export interface CapturedMedia {
   blob: Blob;
@@ -16,10 +16,37 @@ export function useNativeCamera() {
   const isNative = Capacitor.isNativePlatform();
 
   /**
+   * Request camera permissions before use
+   * This is critical for Android to work properly
+   */
+  const requestPermissions = async () => {
+    try {
+      const permissions = await Camera.checkPermissions();
+      console.log('📸 Current camera permissions:', permissions);
+      
+      if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
+        console.log('📸 Requesting camera permissions...');
+        const result = await Camera.requestPermissions();
+        console.log('📸 Permission request result:', result);
+        
+        if (result.camera !== 'granted' || result.photos !== 'granted') {
+          throw new Error('Camera permissions denied');
+        }
+      }
+    } catch (error: any) {
+      console.error('Failed to request camera permissions:', error);
+      throw new Error('Camera permissions are required');
+    }
+  };
+
+  /**
    * Capture a photo using the native camera
    */
   const capturePhoto = async (): Promise<CapturedMedia> => {
     try {
+      // Request permissions first
+      await requestPermissions();
+      
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
@@ -52,6 +79,9 @@ export function useNativeCamera() {
    */
   const selectPhoto = async (): Promise<CapturedMedia> => {
     try {
+      // Request permissions first
+      await requestPermissions();
+      
       const photo = await Camera.getPhoto({
         resultType: CameraResultType.Uri,
         source: CameraSource.Photos,
@@ -83,6 +113,9 @@ export function useNativeCamera() {
    */
   const selectVideo = async (): Promise<CapturedMedia> => {
     try {
+      // Request permissions first
+      await requestPermissions();
+      
       // Use Camera API in VIDEO mode with Photos source
       // @ts-ignore - captureMode is not in types but works on native
       const result = await Camera.getPhoto({
@@ -179,6 +212,9 @@ export function useNativeCamera() {
    */
   const captureVideo = async (): Promise<CapturedMedia> => {
     try {
+      // Request permissions first
+      await requestPermissions();
+      
       // Use Camera API in VIDEO mode
       // @ts-ignore - captureMode is not in types but works on native
       const result = await Camera.getPhoto({
