@@ -261,7 +261,7 @@ export default function Conversation() {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
-            buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
+            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <Camera className="h-5 w-5" data-testid="button-camera" />
           </ObjectUploader>
@@ -282,7 +282,7 @@ export default function Conversation() {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
-            buttonClassName="p-0 h-10 w-10 text-muted-foreground hover:bg-muted"
+            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <Image className="h-5 w-5" data-testid="button-image" />
           </ObjectUploader>

@@ -312,6 +312,40 @@ export default function Settings() {
                 </ol>
               </div>
 
+              {/* User Code Display */}
+              <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
+                <p className="text-sm text-gray-900 font-medium mb-1">Your User Code:</p>
+                <p className="text-lg font-bold text-gray-900 tracking-wider">{user?.userCode}</p>
+                <p className="text-xs text-gray-600 mt-1">Share this code with others to connect</p>
+              </div>
+
+              {/* Free vs Premium Section */}
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <div className="bg-gray-100 p-3">
+                  <h3 className="font-semibold text-gray-900">Account Type</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
+                      <span className="text-blue-600 text-xs">✓</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">Free Account</p>
+                      <p className="text-xs text-gray-600">Daily message limits apply</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-yellow-100 flex items-center justify-center mt-0.5">
+                      <span className="text-yellow-600 text-xs">★</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">Premium - $29.99/year</p>
+                      <p className="text-xs text-gray-600">Unlimited messages, priority support</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
                 <p className="text-sm text-purple-900 font-medium mb-1">⭐ Premium Sharing Benefit:</p>
                 <p className="text-sm text-purple-800">
@@ -337,27 +371,25 @@ export default function Settings() {
                 Start Sending Messages
               </Button>
               <Button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setLocation("/upgrade");
+                }}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+                data-testid="button-upgrade"
+              >
+                ⭐ Upgrade to Premium
+              </Button>
+              <Button
                 variant="outline"
                 onClick={() => {
                   setShowSuccessModal(false);
                   setLocation("/");
                 }}
                 className="w-full"
-                data-testid="button-unlock-calculator"
+                data-testid="button-stay-free"
               >
-                <Calculator className="w-4 h-4 mr-2" />
-                Unlock Messages via Calculator
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  setLocation("/");
-                }}
-                className="w-full text-sm"
-                data-testid="button-later"
-              >
-                Later – Return to Calculator
+                Stay on Free Plan
               </Button>
             </div>
           </DialogContent>

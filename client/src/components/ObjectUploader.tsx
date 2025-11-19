@@ -4,6 +4,7 @@ import Uppy from "@uppy/core";
 import { DashboardModal } from "@uppy/react";
 import AwsS3 from "@uppy/aws-s3";
 import XHRUpload from "@uppy/xhr-upload";
+import Webcam from "@uppy/webcam";
 import type { UploadResult } from "@uppy/core";
 import { Button } from "@/components/ui/button";
 import { Capacitor } from "@capacitor/core";
@@ -72,6 +73,15 @@ export function ObjectUploader({
         allowedFileTypes,
       },
       autoProceed: false,
+    });
+
+    // Add webcam support
+    uppyInstance.use(Webcam, {
+      modes: allowedFileTypes?.includes('video/*') 
+        ? ['video-audio', 'video-only', 'picture'] 
+        : ['picture'],
+      mirror: true,
+      showRecordingLength: true,
     });
 
     // Use different upload strategies for web vs mobile
@@ -163,6 +173,8 @@ export function ObjectUploader({
         open={showModal}
         onRequestClose={handleModalClose}
         proudlyDisplayPoweredByUppy={false}
+        plugins={['Webcam']}
+        note="Use camera or upload from your device"
       />
     </div>
   );
