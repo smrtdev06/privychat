@@ -17,6 +17,7 @@
     "@capacitor/camera": "^7.0.2",
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
+    "@capacitor/filesystem": "^7.1.4",
     "@capacitor/ios": "^7.4.3",
     "@capacitor/preferences": "^7.0.2",
     "@google-cloud/storage": "^7.17.1",

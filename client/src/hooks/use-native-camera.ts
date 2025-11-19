@@ -1,5 +1,6 @@
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 export interface CapturedMedia {
   blob: Blob;
@@ -83,8 +84,9 @@ export function useNativeCamera() {
    */
   const captureVideo = async (): Promise<CapturedMedia> => {
     try {
+      // Use Camera API in VIDEO mode
       // @ts-ignore - captureMode is not in types but works on native
-      const video = await Camera.getPhoto({
+      const result = await Camera.getPhoto({
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
         quality: 90,
@@ -94,18 +96,79 @@ export function useNativeCamera() {
         captureMode: 'VIDEO', // Enable video recording mode
       });
 
-      if (!video.webPath) {
-        throw new Error('No video captured');
+      console.log('📹 Video capture result:', {
+        path: result.path,
+        webPath: result.webPath,
+        format: result.format,
+      });
+
+      let blob: Blob;
+      let extension: string;
+
+      // Try to read from native path first (iOS/Android with path support)
+      if (result.path) {
+        try {
+          // Strip file:// scheme if present
+          const normalizedPath = result.path.replace(/^file:\/\//, '');
+          
+          console.log('📹 Reading video file from:', normalizedPath);
+          
+          // Read the actual video file using Filesystem API
+          const videoData = await Filesystem.readFile({
+            path: normalizedPath,
+          });
+
+          // Convert base64 to blob
+          const base64Data = typeof videoData.data === 'string' 
+            ? videoData.data 
+            : videoData.data.toString();
+          
+          const byteCharacters = atob(base64Data);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          
+          // Determine extension from file path
+          extension = result.path.split('.').pop()?.toLowerCase() || 'mp4';
+          const mimeType = extension === 'mov' ? 'video/quicktime' : `video/${extension}`;
+          
+          blob = new Blob([byteArray], { type: mimeType });
+          
+          console.log('✅ Video read successfully via Filesystem:', blob.size, 'bytes');
+        } catch (fsError: any) {
+          console.warn('⚠️ Filesystem read failed, falling back to webPath:', fsError.message);
+          
+          // Fallback to webPath if Filesystem fails
+          if (!result.webPath) {
+            throw new Error('No video file available (both path and webPath failed)');
+          }
+          
+          const response = await fetch(result.webPath);
+          blob = await response.blob();
+          extension = result.format || 'mp4';
+          
+          console.log('✅ Video read successfully via webPath:', blob.size, 'bytes');
+        }
+      } else if (result.webPath) {
+        // Android fallback: use webPath directly if path is not available
+        console.log('📹 Using webPath (Android fallback)');
+        const response = await fetch(result.webPath);
+        blob = await response.blob();
+        extension = result.format || 'mp4';
+        
+        console.log('✅ Video read successfully via webPath:', blob.size, 'bytes');
+      } else {
+        throw new Error('No video file path returned');
       }
 
-      // Fetch the video as a blob
-      const response = await fetch(video.webPath);
-      const blob = await response.blob();
+      const mimeType = extension === 'mov' ? 'video/quicktime' : `video/${extension}`;
 
       return {
         blob,
-        filename: `video-${Date.now()}.${video.format || 'mp4'}`,
-        mimeType: `video/${video.format || 'mp4'}`,
+        filename: `video-${Date.now()}.${extension}`,
+        mimeType,
       };
     } catch (error: any) {
       console.error('Failed to capture video:', error);
