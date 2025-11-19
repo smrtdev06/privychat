@@ -252,13 +252,23 @@ export default function Conversation() {
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
+              console.log("📤 Video upload complete, full result:", JSON.stringify(uploadedFile, null, 2));
+              
               // Support both AwsS3 (web) and XHRUpload (mobile) response formats
-              const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
-              console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
+              let uploadURL = uploadedFile?.uploadURL as string | undefined;
+              
+              // For XHRUpload (mobile), response might be in different locations
+              if (!uploadURL && uploadedFile?.response) {
+                const response = uploadedFile.response as any;
+                uploadURL = response?.uploadURL || response?.body?.uploadURL;
+              }
+              
+              console.log("📤 Extracted uploadURL:", uploadURL);
+              
               if (uploadURL && typeof uploadURL === 'string') {
                 await handleMediaUpload(uploadURL, "video");
               } else {
-                console.error("❌ No uploadURL found in result:", uploadedFile);
+                console.error("❌ No uploadURL found in result. Full uploadedFile:", uploadedFile);
               }
             }}
             buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
@@ -273,13 +283,23 @@ export default function Conversation() {
             onGetUploadParameters={getUploadParameters}
             onComplete={async (result) => {
               const uploadedFile = result.successful?.[0];
+              console.log("📤 Image upload complete, full result:", JSON.stringify(uploadedFile, null, 2));
+              
               // Support both AwsS3 (web) and XHRUpload (mobile) response formats
-              const uploadURL = (uploadedFile?.uploadURL || uploadedFile?.response?.body?.uploadURL) as string | undefined;
-              console.log("📤 Upload complete, URL:", uploadURL, "Full file:", uploadedFile);
+              let uploadURL = uploadedFile?.uploadURL as string | undefined;
+              
+              // For XHRUpload (mobile), response might be in different locations
+              if (!uploadURL && uploadedFile?.response) {
+                const response = uploadedFile.response as any;
+                uploadURL = response?.uploadURL || response?.body?.uploadURL;
+              }
+              
+              console.log("📤 Extracted uploadURL:", uploadURL);
+              
               if (uploadURL && typeof uploadURL === 'string') {
                 await handleMediaUpload(uploadURL, "image");
               } else {
-                console.error("❌ No uploadURL found in result:", uploadedFile);
+                console.error("❌ No uploadURL found in result. Full uploadedFile:", uploadedFile);
               }
             }}
             buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
