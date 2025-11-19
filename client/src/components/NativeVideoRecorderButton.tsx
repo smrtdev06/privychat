@@ -9,18 +9,20 @@ interface NativeVideoRecorderButtonProps {
   onUploadComplete: (uploadURL: string) => Promise<void>;
   buttonClassName?: string;
   children: React.ReactNode;
+  mode?: "record" | "gallery";
 }
 
 /**
- * Native video recorder button for Capacitor mobile apps
- * Uses Capacitor Camera API in VIDEO mode to record videos
+ * Native video button for Capacitor mobile apps
+ * Supports both recording videos and selecting from gallery
  */
 export function NativeVideoRecorderButton({
   onUploadComplete,
   buttonClassName,
   children,
+  mode = "record",
 }: NativeVideoRecorderButtonProps) {
-  const { captureVideo, isNative } = useNativeCamera();
+  const { captureVideo, selectVideo, isNative } = useNativeCamera();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -28,7 +30,7 @@ export function NativeVideoRecorderButton({
     if (!isNative) {
       toast({
         title: "Not supported",
-        description: "Native video recording is only available on mobile devices",
+        description: `Native video ${mode === "record" ? "recording" : "selection"} is only available on mobile devices`,
         variant: "destructive",
       });
       return;
@@ -36,12 +38,14 @@ export function NativeVideoRecorderButton({
 
     setIsUploading(true);
     try {
-      console.log("🎥 Starting video recording...");
+      console.log(`🎥 Starting video ${mode}...`);
       
-      // Capture video using native camera
-      const media = await captureVideo();
+      // Capture or select video using native camera
+      const media = mode === "record" 
+        ? await captureVideo()
+        : await selectVideo();
       
-      console.log(`🎥 Video captured:`, media.filename, media.blob.size, "bytes");
+      console.log(`🎥 Video ${mode === "record" ? "captured" : "selected"}:`, media.filename, media.blob.size, "bytes");
 
       // Upload to backend proxy
       const formData = new FormData();
@@ -71,10 +75,10 @@ export function NativeVideoRecorderButton({
         description: "Video uploaded successfully",
       });
     } catch (error: any) {
-      console.error("❌ Video recording/upload failed:", error);
+      console.error(`❌ Video ${mode}/upload failed:`, error);
       toast({
         title: "Video upload failed",
-        description: error.message || "Failed to record or upload video",
+        description: error.message || `Failed to ${mode === "record" ? "record" : "select"} or upload video`,
         variant: "destructive",
       });
     } finally {
@@ -92,7 +96,7 @@ export function NativeVideoRecorderButton({
       onClick={handleRecord}
       className={buttonClassName}
       disabled={isUploading}
-      data-testid="button-native-video-recorder"
+      data-testid={`button-native-video-${mode}`}
     >
       {isUploading ? (
         <Loader2 className="h-6 w-6 animate-spin" />

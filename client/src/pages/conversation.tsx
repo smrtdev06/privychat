@@ -12,7 +12,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
 import { NativeCameraButton } from "@/components/NativeCameraButton";
-import { NativeVideoPicker } from "@/components/NativeVideoPicker";
 import { NativeVideoRecorderButton } from "@/components/NativeVideoRecorderButton";
 import { Capacitor } from "@capacitor/core";
 import {
@@ -275,12 +274,23 @@ export default function Conversation() {
               </NativeCameraButton>
               
               <NativeVideoRecorderButton
+                mode="record"
                 onUploadComplete={async (uploadURL) => {
                   await handleMediaUpload(uploadURL, "video");
                 }}
                 buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
                 <Video className="h-5 w-5" data-testid="button-video-record" />
+              </NativeVideoRecorderButton>
+              
+              <NativeVideoRecorderButton
+                mode="gallery"
+                onUploadComplete={async (uploadURL) => {
+                  await handleMediaUpload(uploadURL, "video");
+                }}
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                <Video className="h-5 w-5" data-testid="button-video-gallery" />
               </NativeVideoRecorderButton>
             </>
           ) : (
