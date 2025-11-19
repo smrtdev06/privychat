@@ -3,7 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Camera, Image, Send, MoreVertical, Settings, HelpCircle, Info } from "lucide-react";
+import { ArrowLeft, Camera, Image, Video, Send, MoreVertical, Settings, HelpCircle, Info } from "lucide-react";
 import MessageBubble from "@/components/message-bubble";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest } from "@/lib/queryClient";
@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
 import { NativeCameraButton } from "@/components/NativeCameraButton";
+import { NativeVideoPicker } from "@/components/NativeVideoPicker";
 import { Capacitor } from "@capacitor/core";
 import {
   DropdownMenu,
@@ -270,6 +271,16 @@ export default function Conversation() {
               >
                 <Image className="h-6 w-6" data-testid="button-image" />
               </NativeCameraButton>
+              
+              <NativeVideoPicker
+                onUploadComplete={async (uploadURL) => {
+                  await handleMediaUpload(uploadURL, "video");
+                }}
+                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                maxFileSize={52428800}
+              >
+                <Video className="h-6 w-6" data-testid="button-video" />
+              </NativeVideoPicker>
             </>
           ) : (
             /* Web uploader with Uppy */
