@@ -1,0 +1,739 @@
+Running with gitlab-runner 18.2.0 (c24769e8)
+  on Ionic Package Android Runner 8edcfcad2, system ID: r_grBV51LLoFR2
+  feature flags: FF_USE_POD_ACTIVE_DEADLINE_SECONDS:false
+Preparing the "kubernetes" executor
+Using Kubernetes namespace: ionic-runners
+Using Kubernetes executor with image 319312831725.dkr.ecr.us-west-2.amazonaws.com/appflow-runners/linux:2025.06 ...
+Using attach strategy to execute scripts...
+Using effective pull policy of [Always] for container helper
+Using effective pull policy of [Always] for container init-permissions
+Using effective pull policy of [Always] for container metrics
+Using effective pull policy of [Always] for container build
+Preparing environment
+Waiting for pod ionic-runners/runner-8edcfcad2-project-0-concurrent-0-vpyq43za to be running, status is Pending
+Running on runner-8edcfcad2-project-0-concurrent-0-vpyq43za via gitlab-runner-7dffd7b966-798h4...
+
+Getting source from Git repository
+Gitaly correlation ID: 
+Fetching changes...
+Initialized empty Git repository in /builds/smrtdev06/privychat/.git/
+Created fresh repository.
+Checking out 0fd83155 as detached HEAD (ref is main)...
+
+Updating/initializing submodules...
+Updated submodules
+
+Executing "step_script" stage of the job script
+$ pre-build
+[22:31:50]: Building project....
+$ run "fetch-updates"
+Checking for build process updates...
+$ run "build-android"
+[22:31:52]: ---------------------------------
+[22:31:52]: --- Step: add_extra_platforms ---
+[22:31:52]: ---------------------------------
+[22:31:52]: Setting '[:web]' as extra SupportedPlatforms
+/builds/smrtdev06/privychat/fastlane/outsystems/errors/detectors/pdm_plugins.rb:8: warning: character class has '-' without escape
+/builds/smrtdev06/privychat/fastlane/outsystems/errors/detectors/pdm_plugins.rb:15: warning: character class has '-' without escape
+[22:31:52]: ------------------------------
+[22:31:52]: --- Step: default_platform ---
+[22:31:52]: ------------------------------
+[22:31:52]: Driving the lane 'android build_capacitor' 🚀
+[22:31:52]: ---------------------------------
+[22:31:52]: --- Step: prepare_environment ---
+[22:31:52]: ---------------------------------
+[22:31:52]: Setting default environment variables to tidy up logs. These can be overridden by setting them in Appflow.
+[22:31:52]: 
+[22:31:52]: Set COREPACK_ENABLE_AUTO_PIN=0 (Suppress yarn warnings)
+[22:31:52]: -------------------------
+[22:31:52]: --- Step: sentry_init ---
+[22:31:52]: -------------------------
+[22:31:52]: ----------------------------
+[22:31:52]: --- Step: begin_building ---
+[22:31:52]: ----------------------------
+[22:31:52]: Began building @ 2025-11-19T22:31:52
+[22:31:52]: ---------------------------
+[22:31:52]: --- Step: build_summary ---
+[22:31:52]: ---------------------------
+
++---------------------------------------------------+
+|                   Build Summary                   |
++---------------------+-----------------------------+
+| Runners Revision    | Latest                      |
+| Job ID              | 10579976                    |
+| Node.js version     | v20.19.3                    |
+| Cordova CLI version | 12.0.0 (cordova-lib@12.0.2) |
+| npm version         | 10.8.2                      |
+| yarn version        | 1.22.22                     |
++---------------------+-----------------------------+
+
+[22:31:54]: No build credential specified
+[22:31:54]: ---------------------------
+[22:31:54]: --- Step: set_ionic_cli ---
+[22:31:54]: ---------------------------
+[22:31:55]: Unable to detect ionic project type. Skipping...
+[22:31:55]: ------------------------------------
+[22:31:55]: --- Step: detect_package_manager ---
+[22:31:55]: ------------------------------------
+[22:31:55]: Detecting package manager
+[22:31:55]: Defaulting to npm
+[22:31:55]: ---------------------------------
+[22:31:55]: --- Step: add_git_credentials ---
+[22:31:55]: ---------------------------------
+[22:31:55]: Writing git-credentials files
+[22:31:55]: git-credentials successfully added to project
+[22:31:55]: --------------------------------
+[22:31:55]: --- Step: get_appflow_config ---
+[22:31:55]: --------------------------------
+[22:31:55]: Checking for appflow.config.json
+[22:31:55]: Appflow config not detected
+[22:31:55]: --------------------------------
+[22:31:55]: --- Step: dependency_install ---
+[22:31:55]: --------------------------------
+[22:31:55]: Installing Dependencies (in /builds/smrtdev06/privychat)
+[22:31:55]: $ npm ci --quiet 
+[22:31:59]: ▸ npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[22:31:59]: ▸ npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[22:31:59]: ▸ npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[22:32:00]: ▸ npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+[22:32:00]: ▸ npm warn deprecated
+[22:32:00]: ▸ npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+[22:32:04]: ▸ npm warn deprecated csurf@1.11.0: This package is archived and no longer maintained. For support, visit https://github.com/expressjs/express/discussions
+[22:32:04]: ▸ npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[22:32:08]: ▸ npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[22:32:08]: ▸ npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[22:32:10]: ▸ npm warn deprecated @xmldom/xmldom@0.7.13: this version is no longer supported, please update to at least 0.8.*
+[22:32:10]: ▸ npm warn deprecated @xmldom/xmldom@0.7.13: this version is no longer supported, please update to at least 0.8.*
+[22:32:30]: ▸ added 1064 packages, and audited 1065 packages in 35s
+[22:32:30]: ▸ 130 packages are looking for funding
+[22:32:30]: ▸ run `npm fund` for details
+[22:32:30]: ▸ 13 vulnerabilities (5 low, 7 moderate, 1 high)
+[22:32:30]: ▸ To address issues that do not require attention, run:
+[22:32:30]: ▸ npm audit fix
+[22:32:30]: ▸ To address all issues (including breaking changes), run:
+[22:32:30]: ▸ npm audit fix --force
+[22:32:30]: ▸ Run `npm audit` for details.
+[22:32:30]: -------------------------------------
+[22:32:30]: --- Step: create_capacitor_config ---
+[22:32:30]: -------------------------------------
+[22:32:31]: Created capacitor.config.json from capacitor.config.ts/js
+[22:32:31]: -------------------------
+[22:32:31]: --- Step: get_web_dir ---
+[22:32:31]: -------------------------
+[22:32:31]: webDir is `./dist/public`
+[22:32:31]: -----------------------------------
+[22:32:31]: --- Step: modify_cap_web_config ---
+[22:32:31]: -----------------------------------
+[22:32:31]: No custom native config detected.
+[22:32:31]: ---------------------------
+[22:32:31]: --- Step: set_java_home ---
+[22:32:31]: ---------------------------
+[22:32:31]: Try to detect the android gradle plugin version
+[22:32:31]: Project Android Gradle Plug-in version is 8.7.2: set Java to 21
+[22:32:31]: ---------------------------
+[22:32:31]: --- Step: build_pro_app ---
+[22:32:31]: ---------------------------
+[22:32:31]: Building app from /builds/smrtdev06/privychat
+[22:32:31]: Build script detected...
+[22:32:31]: $ npm run build
+[22:32:32]: ▸ > rest-express@1.0.0 build
+[22:32:32]: ▸ > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[22:32:32]: ▸ vite v5.4.19 building for production...
+[22:32:32]: ▸ transforming...
+[22:32:32]: ▸ Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+[22:32:32]: ▸ npx update-browserslist-db@latest
+[22:32:32]: ▸ Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[22:32:40]: ▸ ✓ 2446 modules transformed.
+[22:32:41]: ▸ rendering chunks...
+[22:32:41]: ▸ computing gzip size...
+[22:32:41]: ▸ ../dist/public/index.html                   5.58 kB │ gzip:   1.73 kB
+[22:32:41]: ▸ ../dist/public/assets/index-CFgQVG74.css   67.92 kB │ gzip:  12.02 kB
+[22:32:41]: ▸ ../dist/public/assets/web-D_54unhs.js       0.76 kB │ gzip:   0.35 kB
+[22:32:41]: ▸ ../dist/public/assets/web-BxX-autP.js       1.25 kB │ gzip:   0.59 kB
+[22:32:41]: ▸ ../dist/public/assets/web-D35JwUUX.js       8.73 kB │ gzip:   2.97 kB
+[22:32:41]: ▸ ../dist/public/assets/index-D9kHGHDe.js   893.85 kB │ gzip: 271.96 kB
+[22:32:41]: ▸ 
+[22:32:41]: ▸ (!) Some chunks are larger than 500 kB after minification. Consider:
+[22:32:41]: ▸ - Using dynamic import() to code-split the application
+[22:32:41]: ▸ - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[22:32:41]: ▸ - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[22:32:41]: ▸ ✓ built in 9.13s
+[22:32:41]: ▸ dist/index.js  119.6kb
+[22:32:41]: ▸ ⚡ Done in 13ms
+[22:32:41]: $ ionic info
+[22:32:42]: ▸ [WARN] You are not in an Ionic project directory. Project context may be missing.
+[22:32:42]: ▸ Ionic:
+[22:32:42]: ▸ Ionic CLI : 7.2.1
+[22:32:42]: ▸ Utility:
+[22:32:42]: ▸ cordova-res : not installed globally
+[22:32:42]: ▸ native-run  : not installed globally
+[22:32:42]: ▸ System:
+[22:32:42]: ▸ NodeJS : v20.19.3
+[22:32:42]: ▸ npm    : 10.8.2
+[22:32:42]: ▸ OS     : Linux 5.10
+[22:32:42]: Generating app manifest...
+[22:32:42]: ----------------------
+[22:32:42]: --- Step: cap_sync ---
+[22:32:42]: ----------------------
+[22:32:43]: $ npx cap sync android
+[22:32:44]: ▸ ✔ Copying web assets from public to android/app/src/main/assets/public in 13.71ms
+[22:32:44]: ▸ ✔ Creating capacitor.config.json in android/app/src/main/assets in 1.41ms
+[22:32:44]: ▸ [info] Found 1 Cordova plugin for android:
+[22:32:44]: ▸ cordova-plugin-inapppurchases@3.1.1
+[22:32:44]: ▸ ✔ copy android in 145.01ms
+[22:32:44]: ▸ ✔ Updating Android plugins in 30.70ms
+[22:32:44]: ▸ [info] Found 4 Capacitor plugins for android:
+[22:32:44]: ▸ @capacitor/app@7.1.0
+[22:32:44]: ▸ @capacitor/camera@7.0.2
+[22:32:44]: ▸ @capacitor/filesystem@7.1.4
+[22:32:44]: ▸ @capacitor/preferences@7.0.2
+[22:32:44]: ▸ [info] Found 1 Cordova plugin for android:
+[22:32:44]: ▸ cordova-plugin-inapppurchases@3.1.1
+[22:32:45]: ▸ ✔ update android in 252.92ms
+[22:32:45]: ▸ [info] Sync finished in 0.626s
+[22:32:45]: -------------------------------
+[22:32:45]: --- Step: cap_custom_deploy ---
+[22:32:45]: -------------------------------
+[22:32:45]: No custom native config detected.
+[22:32:45]: ----------------------------------
+[22:32:45]: --- Step: modify_gradle_config ---
+[22:32:45]: ----------------------------------
+[22:32:45]: No custom native config found... skipping
+[22:32:45]: Building android (in /builds/smrtdev06/privychat/android)...
+[22:32:45]: -------------------------
+[22:32:45]: --- Step: bundledebug ---
+[22:32:45]: -------------------------
+[22:32:45]: ▸ Downloading https://services.gradle.org/distributions/gradle-8.11.1-all.zip
+[22:32:47]: ▸ .....................10%......................20%......................30%......................40%......................50%......................60%......................70%......................80%......................90%......................100%
+[22:32:51]: ▸ Welcome to Gradle 8.11.1!
+[22:32:51]: ▸ Here are the highlights of this release:
+[22:32:51]: ▸ - Parallel load and store for Configuration Cache
+[22:32:51]: ▸ - Java compilation errors at the end of the build output
+[22:32:51]: ▸ - Consolidated report for warnings and deprecations
+[22:32:51]: ▸ For more details see https://docs.gradle.org/8.11.1/release-notes.html
+[22:32:51]: ▸ Starting a Gradle Daemon (subsequent builds will be faster)
+[22:33:22]: ▸ > Configure project :app
+[22:33:22]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[22:33:29]: ▸ > Configure project :capacitor-cordova-android-plugins
+[22:33:29]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[22:33:51]: ▸ > Task :app:preBuild UP-TO-DATE
+[22:33:51]: ▸ > Task :app:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :app:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-android:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-android:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-android:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-android:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-android:packageDebugResources
+[22:33:52]: ▸ > Task :capacitor-app:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-app:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-app:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-app:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-app:packageDebugResources
+[22:33:52]: ▸ > Task :capacitor-camera:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-camera:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-camera:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-camera:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-camera:packageDebugResources
+[22:33:52]: ▸ > Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugResources
+[22:33:52]: ▸ > Task :capacitor-filesystem:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-filesystem:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-filesystem:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-filesystem:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-filesystem:packageDebugResources
+[22:33:52]: ▸ > Task :capacitor-preferences:preBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-preferences:preDebugBuild UP-TO-DATE
+[22:33:52]: ▸ > Task :capacitor-preferences:generateDebugResValues
+[22:33:52]: ▸ > Task :capacitor-preferences:generateDebugResources
+[22:33:52]: ▸ > Task :capacitor-preferences:packageDebugResources
+[22:34:01]: ▸ > Task :app:mapDebugSourceSetPaths
+[22:34:01]: ▸ > Task :app:generateDebugResources
+[22:34:03]: ▸ > Task :app:createDebugCompatibleScreenManifests
+[22:34:03]: ▸ > Task :app:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-android:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-app:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-camera:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-filesystem:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-preferences:extractDeepLinksDebug
+[22:34:03]: ▸ > Task :capacitor-filesystem:processDebugManifest
+[22:34:03]: ▸ > Task :capacitor-cordova-android-plugins:processDebugManifest
+[22:34:03]: ▸ > Task :capacitor-android:writeDebugAarMetadata
+[22:34:03]: ▸ > Task :capacitor-app:processDebugManifest
+[22:34:03]: ▸ > Task :capacitor-camera:processDebugManifest
+[22:34:03]: ▸ > Task :capacitor-preferences:processDebugManifest
+[22:34:03]: ▸ > Task :capacitor-android:processDebugManifest
+[22:34:04]: ▸ > Task :capacitor-app:writeDebugAarMetadata
+[22:34:05]: ▸ > Task :app:mergeDebugResources
+[22:34:05]: ▸ > Task :app:processDebugMainManifest
+[22:34:05]: ▸ > Task :app:processDebugManifest
+[22:34:05]: ▸ > Task :app:processApplicationManifestDebugForBundle
+[22:34:05]: ▸ > Task :capacitor-camera:writeDebugAarMetadata
+[22:34:05]: ▸ > Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+[22:34:05]: ▸ > Task :capacitor-preferences:writeDebugAarMetadata
+[22:34:05]: ▸ > Task :capacitor-filesystem:writeDebugAarMetadata
+[22:34:05]: ▸ > Task :app:packageDebugResources
+[22:34:06]: ▸ > Task :app:checkDebugAarMetadata
+[22:34:06]: ▸ > Task :app:parseDebugLocalResources
+[22:34:07]: ▸ > Task :capacitor-app:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-android:parseDebugLocalResources
+[22:34:07]: ▸ > Task :capacitor-android:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-camera:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-app:parseDebugLocalResources
+[22:34:07]: ▸ > Task :capacitor-android:generateDebugRFile
+[22:34:07]: ▸ > Task :capacitor-camera:parseDebugLocalResources
+[22:34:07]: ▸ > Task :app:processDebugManifestForPackage
+[22:34:07]: ▸ > Task :capacitor-app:generateDebugRFile
+[22:34:07]: ▸ > Task :capacitor-camera:generateDebugRFile
+[22:34:07]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-filesystem:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+[22:34:07]: ▸ > Task :capacitor-filesystem:parseDebugLocalResources
+[22:34:07]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugRFile
+[22:34:07]: ▸ > Task :capacitor-filesystem:generateDebugRFile
+[22:34:07]: ▸ > Task :capacitor-preferences:compileDebugLibraryResources
+[22:34:07]: ▸ > Task :capacitor-preferences:parseDebugLocalResources
+[22:34:07]: ▸ > Task :app:mergeDebugShaders
+[22:34:07]: ▸ > Task :capacitor-preferences:generateDebugRFile
+[22:34:07]: ▸ > Task :app:compileDebugShaders NO-SOURCE
+[22:34:09]: ▸ > Task :app:generateDebugAssets UP-TO-DATE
+[22:34:09]: ▸ > Task :capacitor-android:mergeDebugShaders
+[22:34:09]: ▸ > Task :capacitor-android:compileDebugShaders NO-SOURCE
+[22:34:09]: ▸ > Task :capacitor-android:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-android:packageDebugAssets
+[22:34:10]: ▸ > Task :capacitor-app:mergeDebugShaders
+[22:34:10]: ▸ > Task :capacitor-app:compileDebugShaders NO-SOURCE
+[22:34:10]: ▸ > Task :capacitor-app:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-app:packageDebugAssets
+[22:34:10]: ▸ > Task :capacitor-camera:mergeDebugShaders
+[22:34:10]: ▸ > Task :capacitor-camera:compileDebugShaders NO-SOURCE
+[22:34:10]: ▸ > Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-camera:packageDebugAssets
+[22:34:10]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugShaders
+[22:34:10]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+[22:34:10]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugAssets
+[22:34:10]: ▸ > Task :capacitor-filesystem:mergeDebugShaders
+[22:34:10]: ▸ > Task :capacitor-filesystem:compileDebugShaders NO-SOURCE
+[22:34:10]: ▸ > Task :capacitor-filesystem:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-filesystem:packageDebugAssets
+[22:34:10]: ▸ > Task :capacitor-preferences:mergeDebugShaders
+[22:34:10]: ▸ > Task :capacitor-preferences:compileDebugShaders NO-SOURCE
+[22:34:10]: ▸ > Task :capacitor-preferences:generateDebugAssets UP-TO-DATE
+[22:34:10]: ▸ > Task :capacitor-preferences:packageDebugAssets
+[22:34:10]: ▸ > Task :app:mergeDebugAssets
+[22:34:10]: ▸ > Task :capacitor-android:javaPreCompileDebug
+[22:34:10]: ▸ > Task :capacitor-app:javaPreCompileDebug
+[22:34:10]: ▸ > Task :capacitor-camera:javaPreCompileDebug
+[22:34:10]: ▸ > Task :app:processDebugResources
+[22:34:17]: ▸ > Task :capacitor-android:compileDebugJavaWithJavac
+[22:34:17]: ▸ Note: Some input files use unchecked or unsafe operations.
+[22:34:17]: ▸ Note: Recompile with -Xlint:unchecked for details.
+[22:34:38]: ▸ > Task :capacitor-filesystem:checkKotlinGradlePluginConfigurationErrors
+[22:34:38]: ▸ > Task :capacitor-filesystem:javaPreCompileDebug
+[22:34:38]: ▸ > Task :capacitor-preferences:javaPreCompileDebug
+[22:34:38]: ▸ > Task :capacitor-android:bundleLibRuntimeToJarDebug
+[22:34:38]: ▸ > Task :capacitor-android:bundleLibCompileToJarDebug
+[22:34:38]: ▸ > Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+[22:34:38]: ▸ > Task :capacitor-app:compileDebugJavaWithJavac
+[22:34:38]: ▸ > Task :capacitor-app:bundleLibRuntimeToJarDebug
+[22:34:39]: ▸ > Task :app:bundleDebugResources
+[22:34:40]: ▸ > Task :capacitor-camera:compileDebugJavaWithJavac
+[22:34:40]: ▸ Note: /builds/smrtdev06/privychat/node_modules/@capacitor/camera/android/src/main/java/com/capacitorjs/plugins/camera/CameraBottomSheetDialogFragment.java uses unchecked or unsafe operations.
+[22:34:40]: ▸ Note: Recompile with -Xlint:unchecked for details.
+[22:34:43]: ▸ > Task :capacitor-camera:bundleLibRuntimeToJarDebug
+[22:34:47]: ▸ > Task :capacitor-preferences:compileDebugJavaWithJavac
+[22:34:47]: ▸ > Task :capacitor-preferences:bundleLibRuntimeToJarDebug
+[22:34:49]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac
+[22:34:49]: ▸ Note: /builds/smrtdev06/privychat/android/capacitor-cordova-android-plugins/src/main/java/com/alexdisler_github_cozycode/inapppurchases/IabHelper.java uses or overrides a deprecated API.
+[22:34:49]: ▸ Note: Recompile with -Xlint:deprecation for details.
+[22:34:57]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+[22:34:58]: ▸ > Task :app:desugarDebugFileDependencies
+[22:34:58]: ▸ > Task :capacitor-app:bundleLibCompileToJarDebug
+[22:34:58]: ▸ > Task :capacitor-camera:bundleLibCompileToJarDebug
+[22:34:58]: ▸ > Task :app:javaPreCompileDebug
+[22:34:58]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+[22:34:58]: ▸ > Task :capacitor-preferences:bundleLibCompileToJarDebug
+[22:34:58]: ▸ > Task :app:processDebugJavaRes NO-SOURCE
+[22:34:58]: ▸ > Task :capacitor-android:processDebugJavaRes NO-SOURCE
+[22:34:58]: ▸ > Task :capacitor-app:processDebugJavaRes NO-SOURCE
+[22:34:58]: ▸ > Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+[22:34:58]: ▸ > Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+[22:34:58]: ▸ > Task :capacitor-preferences:processDebugJavaRes NO-SOURCE
+[22:34:59]: ▸ > Task :app:mergeDebugJniLibFolders
+[22:34:59]: ▸ > Task :capacitor-android:mergeDebugJniLibFolders
+[22:34:59]: ▸ > Task :app:checkDebugDuplicateClasses
+[22:34:59]: ▸ > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+[22:35:02]: ▸ > Task :capacitor-filesystem:compileDebugKotlin
+[22:35:02]: ▸ w: file:///builds/smrtdev06/privychat/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemPlugin.kt:335:31 'downloadFile(PluginCall): Unit' is deprecated. Use @capacitor/file-transfer plugin instead
+[22:35:02]: ▸ w: file:///builds/smrtdev06/privychat/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/LegacyFilesystemImplementation.kt:66:29 Type mismatch: inferred type is String? but String was expected
+[22:35:02]: ▸ w: file:///builds/smrtdev06/privychat/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/LegacyFilesystemImplementation.kt:143:25 Unnecessary non-null assertion (!!) on a non-null receiver of type Boolean
+[22:35:02]: ▸ w: file:///builds/smrtdev06/privychat/node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/LegacyFilesystemImplementation.kt:152:21 Unnecessary non-null assertion (!!) on a non-null receiver of type Boolean
+[22:35:27]: ▸ > Task :capacitor-filesystem:compileDebugJavaWithJavac NO-SOURCE
+[22:35:27]: ▸ > Task :capacitor-filesystem:bundleLibRuntimeToJarDebug
+[22:35:27]: ▸ > Task :capacitor-filesystem:bundleLibCompileToJarDebug
+[22:35:28]: ▸ > Task :capacitor-filesystem:processDebugJavaRes
+[22:35:29]: ▸ > Task :app:mergeExtDexDebug
+[22:35:32]: ▸ > Task :app:compileDebugJavaWithJavac
+[22:35:33]: ▸ > Task :app:dexBuilderDebug
+[22:35:33]: ▸ > Task :app:mergeDebugGlobalSynthetics
+[22:35:34]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :capacitor-app:mergeDebugJniLibFolders
+[22:35:34]: ▸ > Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+[22:35:34]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :capacitor-camera:mergeDebugJniLibFolders
+[22:35:34]: ▸ > Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+[22:35:34]: ▸ > Task :capacitor-camera:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+[22:35:34]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+[22:35:34]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :capacitor-filesystem:mergeDebugJniLibFolders
+[22:35:34]: ▸ > Task :capacitor-filesystem:mergeDebugNativeLibs NO-SOURCE
+[22:35:34]: ▸ > Task :app:mergeLibDexDebug
+[22:35:34]: ▸ > Task :capacitor-filesystem:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :capacitor-preferences:mergeDebugJniLibFolders
+[22:35:34]: ▸ > Task :capacitor-preferences:mergeDebugNativeLibs NO-SOURCE
+[22:35:34]: ▸ > Task :capacitor-preferences:copyDebugJniLibsProjectOnly
+[22:35:34]: ▸ > Task :app:writeDebugAppMetadata
+[22:35:34]: ▸ > Task :app:mergeProjectDexDebug
+[22:35:35]: ▸ > Task :app:mergeDebugNativeLibs NO-SOURCE
+[22:35:35]: ▸ > Task :app:stripDebugDebugSymbols NO-SOURCE
+[22:35:35]: ▸ > Task :app:parseDebugIntegrityConfig
+[22:35:35]: ▸ > Task :app:mergeDebugJavaResource
+[22:35:35]: ▸ > Task :app:buildDebugPreBundle
+[22:35:36]: ▸ > Task :app:packageDebugBundle
+[22:35:37]: ▸ > Task :app:signDebugBundle
+[22:35:37]: ▸ > Task :app:produceDebugBundleIdeListingFile
+[22:35:37]: ▸ > Task :app:createDebugBundleListingFileRedirect
+[22:35:37]: ▸ > Task :app:bundleDebug
+[22:35:37]: ▸ [Incubating] Problems report is available at: file:///builds/smrtdev06/privychat/android/build/reports/problems/problems-report.html
+[22:35:37]: ▸ BUILD SUCCESSFUL in 2m 52s
+[22:35:37]: ▸ 139 actionable tasks: 139 executed
+[22:35:38]: ---------------------------
+[22:35:38]: --- Step: assembledebug ---
+[22:35:38]: ---------------------------
+[22:35:40]: ▸ > Configure project :app
+[22:35:40]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[22:35:41]: ▸ > Configure project :capacitor-cordova-android-plugins
+[22:35:41]: ▸ WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+[22:35:43]: ▸ > Task :app:preBuild UP-TO-DATE
+[22:35:43]: ▸ > Task :app:preDebugBuild UP-TO-DATE
+[22:35:43]: ▸ > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+[22:35:43]: ▸ > Task :app:javaPreCompileDebug UP-TO-DATE
+[22:35:43]: ▸ > Task :capacitor-android:preBuild UP-TO-DATE
+[22:35:43]: ▸ > Task :capacitor-android:preDebugBuild UP-TO-DATE
+[22:35:43]: ▸ > Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-app:preBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-app:preDebugBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-camera:preBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-camera:preDebugBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-cordova-android-plugins:writeDebugAarMetadata UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-filesystem:preBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-filesystem:preDebugBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-filesystem:writeDebugAarMetadata UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-preferences:preBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-preferences:preDebugBuild UP-TO-DATE
+[22:35:44]: ▸ > Task :capacitor-preferences:writeDebugAarMetadata UP-TO-DATE
+[22:35:47]: ▸ > Task :app:checkDebugAarMetadata UP-TO-DATE
+[22:35:47]: ▸ > Task :app:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:generateDebugResValues UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :app:mapDebugSourceSetPaths UP-TO-DATE
+[22:35:47]: ▸ > Task :app:generateDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :app:mergeDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :app:packageDebugResources UP-TO-DATE
+[22:35:47]: ▸ > Task :app:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+[22:35:47]: ▸ > Task :app:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:extractDeepLinksDebug UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :app:processDebugMainManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :app:processDebugManifest UP-TO-DATE
+[22:35:47]: ▸ > Task :app:processDebugManifestForPackage UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-android:generateDebugRFile UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-app:generateDebugRFile UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-camera:generateDebugRFile UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugRFile UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-filesystem:generateDebugRFile UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:compileDebugLibraryResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:parseDebugLocalResources UP-TO-DATE
+[22:35:47]: ▸ > Task :capacitor-preferences:generateDebugRFile UP-TO-DATE
+[22:35:49]: ▸ > Task :app:processDebugResources UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:checkKotlinGradlePluginConfigurationErrors
+[22:35:49]: ▸ > Task :capacitor-filesystem:compileDebugKotlin UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:compileDebugJavaWithJavac NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-filesystem:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:javaPreCompileDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:bundleLibCompileToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :app:compileDebugJavaWithJavac UP-TO-DATE
+[22:35:49]: ▸ > Task :app:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :app:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :app:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-android:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-app:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-filesystem:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:mergeDebugShaders UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:compileDebugShaders NO-SOURCE
+[22:35:49]: ▸ > Task :capacitor-preferences:generateDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:packageDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :app:mergeDebugAssets UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-app:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-camera:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-filesystem:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-preferences:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug UP-TO-DATE
+[22:35:49]: ▸ > Task :app:desugarDebugFileDependencies UP-TO-DATE
+[22:35:49]: ▸ > Task :app:compressDebugAssets
+[22:35:49]: ▸ > Task :app:dexBuilderDebug UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+[22:35:50]: ▸ > Task :app:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-android:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-app:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-filesystem:processDebugJavaRes UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-preferences:processDebugJavaRes NO-SOURCE
+[22:35:50]: ▸ > Task :app:mergeDebugJavaResource UP-TO-DATE
+[22:35:50]: ▸ > Task :app:checkDebugDuplicateClasses UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeExtDexDebug UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeLibDexDebug UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeProjectDexDebug UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-filesystem:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-filesystem:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-filesystem:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-preferences:mergeDebugJniLibFolders UP-TO-DATE
+[22:35:50]: ▸ > Task :capacitor-preferences:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :capacitor-preferences:copyDebugJniLibsProjectOnly UP-TO-DATE
+[22:35:50]: ▸ > Task :app:mergeDebugNativeLibs NO-SOURCE
+[22:35:50]: ▸ > Task :app:stripDebugDebugSymbols NO-SOURCE
+[22:35:51]: ▸ > Task :app:validateSigningDebug
+[22:35:51]: ▸ > Task :app:writeDebugAppMetadata UP-TO-DATE
+[22:35:51]: ▸ > Task :app:writeDebugSigningConfigVersions
+[22:35:51]: ▸ > Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+[22:35:51]: ▸ > Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
+[22:35:57]: ▸ > Task :capacitor-android:extractDebugAnnotations
+[22:35:57]: ▸ > Task :capacitor-android:extractDeepLinksForAarDebug
+[22:35:57]: ▸ > Task :capacitor-android:mergeDebugGeneratedProguardFiles
+[22:35:57]: ▸ > Task :capacitor-android:mergeDebugConsumerProguardFiles
+[22:35:57]: ▸ > Task :capacitor-android:prepareDebugArtProfile
+[22:35:57]: ▸ > Task :capacitor-android:prepareLintJarForPublish
+[22:35:57]: ▸ > Task :app:packageDebug
+[22:35:57]: ▸ > Task :app:createDebugApkListingFileRedirect
+[22:35:57]: ▸ > Task :app:assembleDebug
+[22:35:57]: ▸ > Task :capacitor-app:stripDebugDebugSymbols NO-SOURCE
+[22:35:57]: ▸ > Task :capacitor-android:mergeDebugJavaResource
+[22:35:57]: ▸ > Task :capacitor-app:copyDebugJniLibsProjectAndLocalJars
+[22:35:58]: ▸ > Task :capacitor-android:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-android:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-android:assembleDebug
+[22:35:58]: ▸ > Task :capacitor-app:extractDebugAnnotations
+[22:35:58]: ▸ > Task :capacitor-app:extractDeepLinksForAarDebug
+[22:35:58]: ▸ > Task :capacitor-app:mergeDebugGeneratedProguardFiles
+[22:35:58]: ▸ > Task :capacitor-app:mergeDebugConsumerProguardFiles
+[22:35:58]: ▸ > Task :capacitor-app:prepareDebugArtProfile
+[22:35:58]: ▸ > Task :capacitor-app:prepareLintJarForPublish
+[22:35:58]: ▸ > Task :capacitor-camera:stripDebugDebugSymbols NO-SOURCE
+[22:35:58]: ▸ > Task :capacitor-app:mergeDebugJavaResource
+[22:35:58]: ▸ > Task :capacitor-camera:copyDebugJniLibsProjectAndLocalJars
+[22:35:58]: ▸ > Task :capacitor-app:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-app:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-app:assembleDebug
+[22:35:58]: ▸ > Task :capacitor-camera:extractDebugAnnotations
+[22:35:58]: ▸ > Task :capacitor-camera:extractDeepLinksForAarDebug
+[22:35:58]: ▸ > Task :capacitor-camera:mergeDebugGeneratedProguardFiles
+[22:35:58]: ▸ > Task :capacitor-camera:mergeDebugConsumerProguardFiles
+[22:35:58]: ▸ > Task :capacitor-camera:prepareDebugArtProfile
+[22:35:58]: ▸ > Task :capacitor-camera:prepareLintJarForPublish
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+[22:35:58]: ▸ > Task :capacitor-camera:mergeDebugJavaResource
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+[22:35:58]: ▸ > Task :capacitor-camera:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-camera:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-camera:assembleDebug
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:prepareDebugArtProfile
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:prepareLintJarForPublish
+[22:35:58]: ▸ > Task :capacitor-filesystem:stripDebugDebugSymbols NO-SOURCE
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+[22:35:58]: ▸ > Task :capacitor-filesystem:copyDebugJniLibsProjectAndLocalJars
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-cordova-android-plugins:assembleDebug
+[22:35:58]: ▸ > Task :capacitor-filesystem:extractDebugAnnotations
+[22:35:58]: ▸ > Task :capacitor-filesystem:extractDeepLinksForAarDebug
+[22:35:58]: ▸ > Task :capacitor-filesystem:mergeDebugGeneratedProguardFiles
+[22:35:58]: ▸ > Task :capacitor-filesystem:mergeDebugConsumerProguardFiles
+[22:35:58]: ▸ > Task :capacitor-filesystem:prepareDebugArtProfile
+[22:35:58]: ▸ > Task :capacitor-filesystem:prepareLintJarForPublish
+[22:35:58]: ▸ > Task :capacitor-preferences:stripDebugDebugSymbols NO-SOURCE
+[22:35:58]: ▸ > Task :capacitor-preferences:copyDebugJniLibsProjectAndLocalJars
+[22:35:58]: ▸ > Task :capacitor-filesystem:mergeDebugJavaResource
+[22:35:58]: ▸ > Task :capacitor-preferences:extractDebugAnnotations
+[22:35:58]: ▸ > Task :capacitor-filesystem:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-filesystem:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-filesystem:assembleDebug
+[22:35:58]: ▸ > Task :capacitor-preferences:extractDeepLinksForAarDebug
+[22:35:58]: ▸ > Task :capacitor-preferences:mergeDebugGeneratedProguardFiles
+[22:35:58]: ▸ > Task :capacitor-preferences:mergeDebugConsumerProguardFiles
+[22:35:58]: ▸ > Task :capacitor-preferences:prepareDebugArtProfile
+[22:35:58]: ▸ > Task :capacitor-preferences:prepareLintJarForPublish
+[22:35:58]: ▸ > Task :capacitor-preferences:mergeDebugJavaResource
+[22:35:58]: ▸ > Task :capacitor-preferences:syncDebugLibJars
+[22:35:58]: ▸ > Task :capacitor-preferences:bundleDebugAar
+[22:35:58]: ▸ > Task :capacitor-preferences:assembleDebug
+[22:35:58]: ▸ BUILD SUCCESSFUL in 20s
+[22:35:58]: ▸ 196 actionable tasks: 66 executed, 130 up-to-date
+[22:35:58]: -----------------------------------
+[22:35:58]: --- Step: get_filenames_android ---
+[22:35:58]: -----------------------------------
+[22:35:58]: Checking for apk file /builds/smrtdev06/privychat/android/app/build/outputs/apk/debug/app-debug.apk
+[22:35:58]: Detected apk file
+[22:35:58]: Checking for aab file /builds/smrtdev06/privychat/android/app/build/outputs/bundle/debug/app-debug.aab
+[22:35:58]: Detected aab file
+[22:35:58]: -----------------------------------------
+[22:35:58]: --- Step: upload_binary_to_play_store ---
+[22:35:58]: -----------------------------------------
+[22:35:58]: ----------------------------------
+[22:35:58]: --- Step: upload_android_files ---
+[22:35:58]: ----------------------------------
+[22:36:01]: Uploaded APK successfully.
+[22:36:02]: Uploaded AAB successfully.
+[22:36:02]: --------------------------------
+[22:36:02]: --- Step: upload_source_maps ---
+[22:36:02]: --------------------------------
+[22:36:02]: No .sourcemaps directory found. Skipping sourcemaps upload.
+[22:36:02]: -------------------------
+[22:36:02]: --- Step: upload_logs ---
+[22:36:02]: -------------------------
+
++--------------------------------------------------+
+|                 fastlane summary                 |
++------+-----------------------------+-------------+
+| Step | Action                      | Time (in s) |
++------+-----------------------------+-------------+
+| 1    | add_extra_platforms         | 0           |
+| 2    | default_platform            | 0           |
+| 3    | prepare_environment         | 0           |
+| 4    | sentry_init                 | 0           |
+| 5    | begin_building              | 0           |
+| 6    | build_summary               | 1           |
+| 7    | set_ionic_cli               | 1           |
+| 8    | detect_package_manager      | 0           |
+| 9    | add_git_credentials         | 0           |
+| 10   | get_appflow_config          | 0           |
+| 11   | dependency_install          | 35          |
+| 12   | create_capacitor_config     | 0           |
+| 13   | get_web_dir                 | 0           |
+| 14   | modify_cap_web_config       | 0           |
+| 15   | set_java_home               | 0           |
+| 16   | build_pro_app               | 10          |
+| 17   | cap_sync                    | 2           |
+| 18   | cap_custom_deploy           | 0           |
+| 19   | modify_gradle_config        | 0           |
+| 20   | bundledebug                 | 173         |
+| 21   | assembledebug               | 20          |
+| 22   | get_filenames_android       | 0           |
+| 23   | upload_binary_to_play_store | 0           |
+| 24   | upload_android_files        | 3           |
+| 25   | upload_source_maps          | 0           |
+| 26   | upload_logs                 | 6           |
++------+-----------------------------+-------------+
+
+[22:36:09]: fastlane.tools finished successfully 🎉
+
+Running after_script
+Running after script...
+$ run "clean-up"
+
+Cleaning up project directory and file based variables

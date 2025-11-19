@@ -40,84 +40,140 @@ export function useNativeCamera() {
   };
 
   /**
-   * Capture a photo using the native camera
+   * Capture a photo using HTML5 file input with camera access
+   * More reliable than Capacitor Camera API on some Android devices
    */
   const capturePhoto = async (): Promise<CapturedMedia> => {
-    try {
-      // Request permissions first
-      await requestPermissions();
-      
-      const photo = await Camera.getPhoto({
-        resultType: CameraResultType.DataUrl, // Use DataUrl instead of Uri for better Android compatibility
-        source: CameraSource.Camera,
-        quality: 90,
-        allowEditing: false,
-        saveToGallery: false,
-      });
+    return new Promise((resolve, reject) => {
+      try {
+        // Create a hidden file input element
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*'; // Accept images
+        input.capture = 'environment'; // Use camera (not gallery)
+        input.style.display = 'none';
+        document.body.appendChild(input);
 
-      if (!photo.dataUrl) {
-        throw new Error('No photo captured');
+        // Handle file selection
+        input.onchange = async (event: Event) => {
+          try {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            
+            // Cleanup
+            document.body.removeChild(input);
+
+            if (!file) {
+              reject(new Error('No photo captured'));
+              return;
+            }
+
+            console.log('📸 Photo captured:', file.name, file.size, 'bytes');
+
+            // Ensure it's an image file
+            if (!file.type.startsWith('image/')) {
+              reject(new Error('Selected file is not an image'));
+              return;
+            }
+
+            // Determine extension from filename or MIME type
+            let extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+            if (!['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+              extension = file.type.split('/')[1] || 'jpg';
+            }
+
+            resolve({
+              blob: file,
+              filename: `photo-${Date.now()}.${extension}`,
+              mimeType: file.type,
+            });
+          } catch (error: any) {
+            document.body.removeChild(input);
+            reject(error);
+          }
+        };
+
+        // Handle cancellation
+        input.oncancel = () => {
+          document.body.removeChild(input);
+          reject(new Error('Photo capture cancelled'));
+        };
+
+        // Trigger camera
+        input.click();
+      } catch (error: any) {
+        console.error('Failed to capture photo:', error);
+        reject(new Error(error.message || 'Failed to capture photo'));
       }
-
-      // Convert base64 data URL to blob
-      const base64Data = photo.dataUrl.split(',')[1];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: `image/${photo.format || 'jpeg'}` });
-
-      return {
-        blob,
-        filename: `photo-${Date.now()}.${photo.format || 'jpg'}`,
-        mimeType: `image/${photo.format || 'jpeg'}`,
-      };
-    } catch (error: any) {
-      console.error('Failed to capture photo:', error);
-      throw new Error(error.message || 'Failed to capture photo');
-    }
+    });
   };
 
   /**
-   * Select a photo from the gallery
+   * Select a photo from the gallery using HTML5 file input
+   * More reliable than Capacitor Camera API
    */
   const selectPhoto = async (): Promise<CapturedMedia> => {
-    try {
-      // Request permissions first
-      await requestPermissions();
-      
-      const photo = await Camera.getPhoto({
-        resultType: CameraResultType.DataUrl, // Use DataUrl instead of Uri for better Android compatibility
-        source: CameraSource.Photos,
-        quality: 90,
-        allowEditing: false,
-      });
+    return new Promise((resolve, reject) => {
+      try {
+        // Create a hidden file input element
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*'; // Only show images in file picker
+        input.style.display = 'none';
+        document.body.appendChild(input);
 
-      if (!photo.dataUrl) {
-        throw new Error('No photo selected');
+        // Handle file selection
+        input.onchange = async (event: Event) => {
+          try {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            
+            // Cleanup
+            document.body.removeChild(input);
+
+            if (!file) {
+              reject(new Error('No photo selected'));
+              return;
+            }
+
+            console.log('🖼️ Photo selected from gallery:', file.name, file.size, 'bytes');
+
+            // Ensure it's an image file
+            if (!file.type.startsWith('image/')) {
+              reject(new Error('Selected file is not an image'));
+              return;
+            }
+
+            // Determine extension from filename or MIME type
+            let extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+            if (!['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+              extension = file.type.split('/')[1] || 'jpg';
+            }
+
+            resolve({
+              blob: file,
+              filename: `photo-${Date.now()}.${extension}`,
+              mimeType: file.type,
+            });
+          } catch (error: any) {
+            document.body.removeChild(input);
+            reject(error);
+          }
+        };
+
+        // Handle cancellation
+        input.oncancel = () => {
+          document.body.removeChild(input);
+          reject(new Error('Photo selection cancelled'));
+        };
+
+        // Trigger file picker
+        input.click();
+      } catch (error: any) {
+        console.error('Failed to select photo:', error);
+        reject(new Error(error.message || 'Failed to select photo'));
       }
-
-      // Convert base64 data URL to blob
-      const base64Data = photo.dataUrl.split(',')[1];
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: `image/${photo.format || 'jpeg'}` });
-
-      return {
-        blob,
-        filename: `photo-${Date.now()}.${photo.format || 'jpg'}`,
-        mimeType: `image/${photo.format || 'jpeg'}`,
-      };
-    } catch (error: any) {
-      console.error('Failed to select photo:', error);
-      throw new Error(error.message || 'Failed to select photo');
-    }
+    });
   };
 
   /**
