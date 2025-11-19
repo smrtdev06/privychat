@@ -78,13 +78,45 @@ export function useNativeCamera() {
   };
 
   /**
-   * Note: Capacitor Camera plugin doesn't support video recording directly
-   * For video, we'll still need to use file picker or a video-specific plugin
+   * Record a video using the native camera
+   * Note: Requires microphone permissions in addition to camera
    */
+  const captureVideo = async (): Promise<CapturedMedia> => {
+    try {
+      // @ts-ignore - captureMode is not in types but works on native
+      const video = await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        quality: 90,
+        allowEditing: false,
+        saveToGallery: false,
+        presentationStyle: 'fullscreen',
+        captureMode: 'VIDEO', // Enable video recording mode
+      });
+
+      if (!video.webPath) {
+        throw new Error('No video captured');
+      }
+
+      // Fetch the video as a blob
+      const response = await fetch(video.webPath);
+      const blob = await response.blob();
+
+      return {
+        blob,
+        filename: `video-${Date.now()}.${video.format || 'mp4'}`,
+        mimeType: `video/${video.format || 'mp4'}`,
+      };
+    } catch (error: any) {
+      console.error('Failed to capture video:', error);
+      throw new Error(error.message || 'Failed to capture video');
+    }
+  };
 
   return {
     isNative,
     capturePhoto,
     selectPhoto,
+    captureVideo,
   };
 }

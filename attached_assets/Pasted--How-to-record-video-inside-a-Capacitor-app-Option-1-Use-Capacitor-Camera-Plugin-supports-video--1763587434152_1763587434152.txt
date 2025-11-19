@@ -1,0 +1,83 @@
+✅ How to record video inside a Capacitor app
+Option 1: Use Capacitor Camera Plugin (supports video!)
+
+The official Capacitor Camera plugin can record video, but only if you set the correct options.
+
+Install:
+npm install @capacitor/camera
+npx cap sync
+
+Use:
+import { Camera, CameraSource, CameraResultType } from '@capacitor/camera';
+
+const recordVideo = async () => {
+  const video = await Camera.getPhoto({
+    source: CameraSource.Camera,
+    resultType: CameraResultType.Uri,
+    allowEditing: false,
+    saveToGallery: true,
+    quality: 90,
+    presentationStyle: 'fullscreen',
+    // IMPORTANT:
+    captureMode: "VIDEO"  // this enables video recording
+  });
+
+  console.log(video);
+};
+
+
+⚠️ On Android, you must enable video capture in AndroidManifest.xml.
+
+✅ Option 2: Use @capacitor-community/media-capture
+
+This plugin gives full control over recording video + audio.
+
+Install:
+npm install @capacitor-community/media-capture
+npx cap sync
+
+Example:
+import { MediaCapture } from '@capacitor-community/media-capture';
+
+const recordVideo = async () => {
+  const result = await MediaCapture.captureVideo({
+    limit: 1,
+    duration: 15
+  });
+
+  console.log(result);
+};
+
+
+This plugin uses the native camera app for video recording — very reliable.
+
+✅ Option 3: Use Capacitor Filesystem + WebRTC video recorder
+
+If you want custom UI recording, you can use WebRTC on mobile (Capacitor supports it):
+
+Use <video> + MediaRecorder()
+
+Save result using Capacitor Filesystem
+
+Example snippet:
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+
+
+Then record with MediaRecorder.
+
+This works but is more complex.
+
+🧨 Why Replit says “Capacitor cannot record video”
+
+Because:
+
+Capacitor core (without plugins) does NOT include video recording.
+
+Replit’s agent looks only at core APIs, not plugins.
+
+But your app can definitely record video once you add the correct plugin.
+
+✅ Best solution for a real chat app
+
+Use @capacitor-community/media-capture — easiest and works on Android/iOS with permissions.

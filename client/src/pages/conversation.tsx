@@ -13,6 +13,7 @@ import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
 import { NativeCameraButton } from "@/components/NativeCameraButton";
 import { NativeVideoPicker } from "@/components/NativeVideoPicker";
+import { NativeVideoRecorderButton } from "@/components/NativeVideoRecorderButton";
 import { Capacitor } from "@capacitor/core";
 import {
   DropdownMenu,
@@ -272,15 +273,14 @@ export default function Conversation() {
                 <Image className="h-6 w-6" data-testid="button-image" />
               </NativeCameraButton>
               
-              <NativeVideoPicker
+              <NativeVideoRecorderButton
                 onUploadComplete={async (uploadURL) => {
                   await handleMediaUpload(uploadURL, "video");
                 }}
                 buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                maxFileSize={52428800}
               >
-                <Video className="h-6 w-6" data-testid="button-video" />
-              </NativeVideoPicker>
+                <Video className="h-6 w-6" data-testid="button-video-record" />
+              </NativeVideoRecorderButton>
             </>
           ) : (
             /* Web uploader with Uppy */
