@@ -119,6 +119,12 @@ export function ObjectUploader({
     return uppyInstance
       .on("file-added", (file) => {
         console.log("📎 File added:", file.name, file.size, "bytes");
+        // Auto-upload when file is added (especially important for mobile camera captures)
+        // Add a small delay to ensure file is fully processed
+        setTimeout(() => {
+          console.log("🎬 Auto-triggering upload for:", file.name);
+          uppyInstance.upload();
+        }, 100);
       })
       .on("upload", () => {
         console.log("🚀 Upload started");
