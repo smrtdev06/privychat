@@ -4,6 +4,7 @@ import { useNativeCamera } from "@/hooks/use-native-camera";
 import { useToast } from "@/hooks/use-toast";
 import { getFullUrl } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
+import { CameraModal } from "@/components/CameraModal";
 
 interface NativeVideoRecorderButtonProps {
   onUploadComplete: (uploadURL: string) => Promise<void>;
@@ -14,7 +15,7 @@ interface NativeVideoRecorderButtonProps {
 
 /**
  * Native video button for Capacitor mobile apps
- * Supports both recording videos and selecting from gallery
+ * Uses MediaDevices API for recording, file picker for gallery
  */
 export function NativeVideoRecorderButton({
   onUploadComplete,
@@ -22,40 +23,29 @@ export function NativeVideoRecorderButton({
   children,
   mode = "record",
 }: NativeVideoRecorderButtonProps) {
-  const { captureVideo, selectVideo, isNative } = useNativeCamera();
+  const { selectVideo, isNative } = useNativeCamera();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [showCameraModal, setShowCameraModal] = useState(false);
 
-  const handleRecord = async () => {
-    if (!isNative) {
-      toast({
-        title: "Not supported",
-        description: `Native video ${mode === "record" ? "recording" : "selection"} is only available on mobile devices`,
-        variant: "destructive",
-      });
-      return;
-    }
+  const handleCameraCapture = (blob: Blob, filename: string, mimeType: string) => {
+    uploadMedia(blob, filename);
+  };
 
+  const uploadMedia = async (blob: Blob, filename: string) => {
     setIsUploading(true);
     try {
-      console.log(`🎥 Starting video ${mode}...`);
-      
-      // Capture or select video using native camera
-      const media = mode === "record" 
-        ? await captureVideo()
-        : await selectVideo();
-      
-      console.log(`🎥 Video ${mode === "record" ? "captured" : "selected"}:`, media.filename, media.blob.size, "bytes");
+      console.log(`🎥 Uploading ${filename}:`, blob.size, "bytes");
 
       // Upload to backend proxy
       const formData = new FormData();
-      formData.append('file', media.blob, media.filename);
+      formData.append('file', blob, filename);
 
       console.log("📤 Uploading video to proxy...");
       const uploadResponse = await fetch(getFullUrl("/api/objects/upload-proxy"), {
         method: "POST",
         body: formData,
-        credentials: "include", // Include session cookie
+        credentials: "include",
       });
 
       if (!uploadResponse.ok) {
@@ -79,13 +69,49 @@ export function NativeVideoRecorderButton({
         description: "Video uploaded successfully",
       });
     } catch (error: any) {
-      console.error(`❌ Video ${mode}/upload failed:`, error);
+      console.error(`❌ Video upload failed:`, error);
       toast({
         title: "Video upload failed",
-        description: error.message || `Failed to ${mode === "record" ? "record" : "select"} or upload video`,
+        description: error.message || "Failed to upload video",
         variant: "destructive",
       });
     } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRecord = async () => {
+    if (!isNative) {
+      toast({
+        title: "Not supported",
+        description: `Native video ${mode === "record" ? "recording" : "selection"} is only available on mobile devices`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // For record mode: show camera modal for true video recording
+    if (mode === "record") {
+      setShowCameraModal(true);
+      return;
+    }
+
+    // For gallery mode: use file picker
+    setIsUploading(true);
+    try {
+      console.log(`🎥 Starting video gallery selection...`);
+      
+      const media = await selectVideo();
+      console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
+
+      await uploadMedia(media.blob, media.filename);
+    } catch (error: any) {
+      console.error(`❌ Video gallery selection failed:`, error);
+      toast({
+        title: "Video selection failed",
+        description: error.message || "Failed to select video",
+        variant: "destructive",
+      });
       setIsUploading(false);
     }
   };
@@ -96,17 +122,29 @@ export function NativeVideoRecorderButton({
   }
 
   return (
-    <Button
-      onClick={handleRecord}
-      className={buttonClassName}
-      disabled={isUploading}
-      data-testid={`button-native-video-${mode}`}
-    >
-      {isUploading ? (
-        <Loader2 className="h-6 w-6 animate-spin" />
-      ) : (
-        children
+    <>
+      <Button
+        onClick={handleRecord}
+        className={buttonClassName}
+        disabled={isUploading}
+        data-testid={`button-native-video-${mode}`}
+      >
+        {isUploading ? (
+          <Loader2 className="h-6 w-6 animate-spin" />
+        ) : (
+          children
+        )}
+      </Button>
+
+      {/* Camera Modal for video recording */}
+      {mode === "record" && (
+        <CameraModal
+          isOpen={showCameraModal}
+          onClose={() => setShowCameraModal(false)}
+          onCapture={handleCameraCapture}
+          mode="video"
+        />
       )}
-    </Button>
+    </>
   );
 }
