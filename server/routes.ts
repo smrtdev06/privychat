@@ -48,7 +48,10 @@ const userCodeSchema = z.object({
 });
 
 const mediaUrlSchema = z.object({
-  mediaUrl: z.string().url("Valid URL required"),
+  mediaUrl: z.string().min(1, "Media URL is required").refine(
+    (url) => url.startsWith("/objects/") || url.startsWith("https://storage.googleapis.com/"),
+    "Must be a valid object path or GCS URL"
+  ),
   conversationId: z.string().min(1, "Conversation ID is required")
 });
 
