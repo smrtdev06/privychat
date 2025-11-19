@@ -177,11 +177,6 @@ export function ObjectUploader({
         proudlyDisplayPoweredByUppy={false}
         plugins={['Webcam']}
         note="Use camera or upload from your device"
-        locale={{
-          strings: {
-            dropPasteFiles: 'Drop files here or import from:', // Remove %{browseFiles} placeholder to hide browse link
-          }
-        }}
       />
     </div>
   );
