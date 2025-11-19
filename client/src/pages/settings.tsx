@@ -289,7 +289,7 @@ export default function Settings() {
 
         {/* Success Modal with Practice Option */}
         <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
@@ -314,9 +314,12 @@ export default function Settings() {
 
               {/* User Code Display */}
               <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
-                <p className="text-sm text-gray-900 font-medium mb-1">Your User Code:</p>
-                <p className="text-lg font-bold text-gray-900 tracking-wider">{user?.userCode}</p>
-                <p className="text-xs text-gray-600 mt-1">Share this code with others to connect</p>
+                <p className="text-sm text-gray-900 font-medium mb-2">Your User Code:</p>
+                <p className="text-xl font-bold text-gray-900 tracking-wider text-center py-2">{user?.userCode}</p>
+                <div className="space-y-1 mt-2">
+                  <p className="text-xs text-gray-700 font-medium">Share this code with others to connect</p>
+                  <p className="text-xs text-gray-600">Find your code later in Settings → Your Unique Code</p>
+                </div>
               </div>
 
               {/* Free vs Premium Section */}
