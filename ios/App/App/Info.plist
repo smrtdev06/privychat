@@ -60,5 +60,13 @@
                         <string>com.newhomepage.privychat</string>
                 </dict>
         </array>
+        <key>NSCameraUsageDescription</key>
+        <string>This app needs camera access to take photos and videos for messages</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>This app needs access to your photo library to select images and videos</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>This app needs access to save photos to your photo library</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>This app needs microphone access to record videos with audio</string>
 </dict>
 </plist>

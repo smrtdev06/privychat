@@ -75,9 +75,14 @@ Preferred communication style: Simple, everyday language.
 - **iOS Cookie Fix**: Configured `WKAppBoundDomains` in `Info.plist` to enable session cookies.
 - **Deep Linking**: Native URL schemes (`privycalc://`) configured for iOS and Android for promo code redemption.
 - **Legal Persistence**: Mobile legal modal persists user acceptance using Capacitor's Preferences API.
+- **Native Permissions**:
+  - **iOS**: Camera, photo library, microphone access configured in `Info.plist` with usage descriptions
+  - **Android**: Camera, audio recording, media read/write permissions in `AndroidManifest.xml`
+  - **Camera Features**: Marked as optional (app works without camera but benefits from it)
 - **File Uploads**: 
   - **Web**: Direct uploads to Google Cloud Storage via signed URLs (fast, no proxy overhead)
   - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) to bypass CORS restrictions in WebView
+  - **Camera Integration**: Uses `mobileNativeCamera: true` in Uppy webcam plugin to open native camera app on mobile devices
   - ObjectUploader component auto-detects platform and uses appropriate strategy (XHRUpload for mobile, AwsS3 for web)
 
 ## Development and Deployment
