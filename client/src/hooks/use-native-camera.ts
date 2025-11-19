@@ -121,101 +121,72 @@ export function useNativeCamera() {
   };
 
   /**
-   * Select a video from the gallery
+   * Select a video from the gallery using HTML5 file input
+   * This is more reliable than Camera API's non-standard captureMode
    */
   const selectVideo = async (): Promise<CapturedMedia> => {
-    try {
-      // Request permissions first
-      await requestPermissions();
-      
-      // Use Camera API in VIDEO mode with Photos source
-      // @ts-ignore - captureMode is not in types but works on native
-      const result = await Camera.getPhoto({
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Photos,
-        quality: 90,
-        allowEditing: false,
-        captureMode: 'VIDEO', // Enable video selection mode
-      });
+    return new Promise((resolve, reject) => {
+      try {
+        // Create a hidden file input element
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'video/*'; // Only show videos in file picker
+        input.style.display = 'none';
+        document.body.appendChild(input);
 
-      console.log('🎬 Video selection result:', {
-        path: result.path,
-        webPath: result.webPath,
-        format: result.format,
-      });
+        // Handle file selection
+        input.onchange = async (event: Event) => {
+          try {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            
+            // Cleanup
+            document.body.removeChild(input);
 
-      let blob: Blob;
-      let extension: string;
+            if (!file) {
+              reject(new Error('No video selected'));
+              return;
+            }
 
-      // Try to read from native path first (iOS/Android with path support)
-      if (result.path) {
-        try {
-          // Strip file:// scheme if present
-          const normalizedPath = result.path.replace(/^file:\/\//, '');
-          
-          console.log('🎬 Reading video file from:', normalizedPath);
-          
-          // Read the actual video file using Filesystem API
-          const videoData = await Filesystem.readFile({
-            path: normalizedPath,
-          });
+            console.log('🎬 Video selected from gallery:', file.name, file.size, 'bytes');
 
-          // Convert base64 to blob
-          const base64Data = typeof videoData.data === 'string' 
-            ? videoData.data 
-            : videoData.data.toString();
-          
-          const byteCharacters = atob(base64Data);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+            // Ensure it's a video file
+            if (!file.type.startsWith('video/')) {
+              reject(new Error('Selected file is not a video'));
+              return;
+            }
+
+            // Determine extension from filename or MIME type
+            let extension = file.name.split('.').pop()?.toLowerCase() || 'mp4';
+            if (!['mp4', 'mov', 'avi', 'webm', 'mkv'].includes(extension)) {
+              // Fallback to extension from MIME type
+              extension = file.type.split('/')[1] || 'mp4';
+            }
+
+            resolve({
+              blob: file,
+              filename: `video-${Date.now()}.${extension}`,
+              mimeType: file.type,
+            });
+          } catch (error: any) {
+            document.body.removeChild(input);
+            reject(error);
           }
-          const byteArray = new Uint8Array(byteNumbers);
-          
-          // Determine extension from file path
-          extension = result.path.split('.').pop()?.toLowerCase() || 'mp4';
-          const mimeType = extension === 'mov' ? 'video/quicktime' : `video/${extension}`;
-          
-          blob = new Blob([byteArray], { type: mimeType });
-          
-          console.log('✅ Video read successfully via Filesystem:', blob.size, 'bytes');
-        } catch (fsError: any) {
-          console.warn('⚠️ Filesystem read failed, falling back to webPath:', fsError.message);
-          
-          // Fallback to webPath if Filesystem fails
-          if (!result.webPath) {
-            throw new Error('No video file available (both path and webPath failed)');
-          }
-          
-          const response = await fetch(result.webPath);
-          blob = await response.blob();
-          extension = result.format || 'mp4';
-          
-          console.log('✅ Video read successfully via webPath:', blob.size, 'bytes');
-        }
-      } else if (result.webPath) {
-        // Android fallback: use webPath directly if path is not available
-        console.log('🎬 Using webPath (Android fallback)');
-        const response = await fetch(result.webPath);
-        blob = await response.blob();
-        extension = result.format || 'mp4';
-        
-        console.log('✅ Video read successfully via webPath:', blob.size, 'bytes');
-      } else {
-        throw new Error('No video file path returned');
+        };
+
+        // Handle cancellation
+        input.oncancel = () => {
+          document.body.removeChild(input);
+          reject(new Error('Video selection cancelled'));
+        };
+
+        // Trigger file picker
+        input.click();
+      } catch (error: any) {
+        console.error('Failed to select video:', error);
+        reject(new Error(error.message || 'Failed to select video'));
       }
-
-      const mimeType = extension === 'mov' ? 'video/quicktime' : `video/${extension}`;
-
-      return {
-        blob,
-        filename: `video-${Date.now()}.${extension}`,
-        mimeType,
-      };
-    } catch (error: any) {
-      console.error('Failed to select video:', error);
-      throw new Error(error.message || 'Failed to select video');
-    }
+    });
   };
 
   /**
