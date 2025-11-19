@@ -81,9 +81,10 @@ Preferred communication style: Simple, everyday language.
   - **Camera Features**: Marked as optional (app works without camera but benefits from it)
 - **File Uploads**: 
   - **Web**: Direct uploads to Google Cloud Storage via signed URLs (fast, no proxy overhead)
-  - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) to bypass CORS restrictions in WebView
+  - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) using multer for multipart/form-data parsing, then uploads to GCS
   - **Camera Integration**: Uses `mobileNativeCamera: true` in Uppy webcam plugin to open native camera app on mobile devices
-  - ObjectUploader component auto-detects platform and uses appropriate strategy (XHRUpload for mobile, AwsS3 for web)
+  - **Auto-Upload**: Files from camera captures auto-trigger upload via `file-added` event listener (100ms delay for processing)
+  - ObjectUploader component auto-detects platform and uses appropriate strategy (XHRUpload with formData for mobile, AwsS3 for web)
 
 ## Development and Deployment
 - **Tooling**: Vite, TypeScript, Drizzle Kit for database migrations.

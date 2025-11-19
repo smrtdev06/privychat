@@ -17,6 +17,7 @@ import { testSendGridSetup, sendEmail } from "./email";
 import { generateVerificationToken, sendVerificationEmail, sendWelcomeEmail, isTokenExpired } from "./email-verification";
 import { generatePasswordResetToken, sendPasswordResetEmail, isTokenExpired as isResetTokenExpired } from "./password-reset";
 import { hashPassword } from "./auth";
+import multer from "multer";
 import {
   validateGooglePlayPurchase,
   validateAppleAppStorePurchase,
@@ -441,23 +442,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Proxy upload endpoint for mobile apps (avoids CORS issues with GCS)
-  app.post("/api/objects/upload-proxy", express.raw({ limit: '50mb', type: '*/*' }), async (req, res) => {
+  // Use multer to handle multipart/form-data from mobile
+  const multerUpload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
+  });
+  
+  app.post("/api/objects/upload-proxy", multerUpload.single('file'), async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
 
     try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
       const objectStorageService = new ObjectStorageService();
       
       // Get signed URL for upload
       const uploadURL = await objectStorageService.getObjectEntityUploadURL();
       
       // Upload file data to GCS via signed URL with proper headers
-      const contentType = req.headers['content-type'] || 'application/octet-stream';
+      const contentType = req.file.mimetype || 'application/octet-stream';
       const uploadResponse = await fetch(uploadURL, {
         method: 'PUT',
-        body: req.body,
+        body: req.file.buffer,
         headers: {
           'Content-Type': contentType,
-          'Content-Length': req.body.length.toString(),
+          'Content-Length': req.file.size.toString(),
         },
       });
 

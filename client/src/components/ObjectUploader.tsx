@@ -92,21 +92,8 @@ export function ObjectUploader({
       uppyInstance.use(XHRUpload, {
         endpoint: getFullUrl("/api/objects/upload-proxy"),
         method: "POST",
-        formData: false, // Send raw file data
-        fieldName: "file",
-        // Extract uploadURL from server response
-        // @ts-ignore - Uppy type definitions mismatch
-        onAfterResponse(xhr) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            return {
-              uploadURL: response.uploadURL,
-            };
-          } catch (error) {
-            console.error("Failed to parse upload response:", error);
-            throw error;
-          }
-        },
+        formData: true, // Send as multipart/form-data
+        fieldName: "file", // Form field name for the file
       });
     } else {
       // Web: Upload directly to GCS with signed URL
