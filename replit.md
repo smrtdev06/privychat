@@ -84,11 +84,17 @@ Preferred communication style: Simple, everyday language.
   - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) using multer for multipart/form-data parsing, then uploads to GCS
   - **Camera Integration (Native)**: Uses Capacitor Camera API (`@capacitor/camera`) on iOS/Android to bypass WebView restrictions
     - `useNativeCamera` hook provides `capturePhoto()` and `selectPhoto()` methods
-    - `NativeCameraButton` component handles capture, upload, and ACL setup
+    - `NativeCameraButton` component handles photo capture/selection, upload, and ACL setup
     - Works around WebView's `navigator.mediaDevices.getUserMedia()` blocking issue
+  - **Video Integration (Native)**: Uses HTML file input with `accept="video/*"` to trigger native gallery
+    - `NativeVideoPicker` component allows selecting videos from device gallery
+    - Supports file size validation (50MB max) and upload progress indication
+    - Note: Live video recording not supported (would require additional plugin)
   - **Camera Integration (Web)**: Uses Uppy with Webcam plugin for browser-based capture
   - Platform detection: `Capacitor.isNativePlatform()` determines which upload strategy to use
-  - Conditional rendering in conversation page: NativeCameraButton for mobile, ObjectUploader for web
+  - Conditional rendering in conversation page: 
+    - **Mobile**: Three native buttons (📷 camera, 🖼️ image gallery, 🎥 video gallery)
+    - **Web**: Uppy ObjectUploader for images and videos
 
 ## Development and Deployment
 - **Tooling**: Vite, TypeScript, Drizzle Kit for database migrations.
