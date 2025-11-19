@@ -80,11 +80,15 @@ Preferred communication style: Simple, everyday language.
   - **Android**: Camera, audio recording, media read/write permissions in `AndroidManifest.xml`
   - **Camera Features**: Marked as optional (app works without camera but benefits from it)
 - **File Uploads**: 
-  - **Web**: Direct uploads to Google Cloud Storage via signed URLs (fast, no proxy overhead)
+  - **Web**: Direct uploads to Google Cloud Storage via signed URLs (fast, no proxy overhead) using Uppy with AwsS3 plugin
   - **Mobile**: Backend proxy upload (`/api/objects/upload-proxy`) using multer for multipart/form-data parsing, then uploads to GCS
-  - **Camera Integration**: Uses `mobileNativeCamera: true` in Uppy webcam plugin to open native camera app on mobile devices
-  - **Auto-Upload**: Files from camera captures auto-trigger upload via `file-added` event listener (100ms delay for processing)
-  - ObjectUploader component auto-detects platform and uses appropriate strategy (XHRUpload with formData for mobile, AwsS3 for web)
+  - **Camera Integration (Native)**: Uses Capacitor Camera API (`@capacitor/camera`) on iOS/Android to bypass WebView restrictions
+    - `useNativeCamera` hook provides `capturePhoto()` and `selectPhoto()` methods
+    - `NativeCameraButton` component handles capture, upload, and ACL setup
+    - Works around WebView's `navigator.mediaDevices.getUserMedia()` blocking issue
+  - **Camera Integration (Web)**: Uses Uppy with Webcam plugin for browser-based capture
+  - Platform detection: `Capacitor.isNativePlatform()` determines which upload strategy to use
+  - Conditional rendering in conversation page: NativeCameraButton for mobile, ObjectUploader for web
 
 ## Development and Deployment
 - **Tooling**: Vite, TypeScript, Drizzle Kit for database migrations.

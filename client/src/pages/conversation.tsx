@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { ObjectUploader } from "@/components/ObjectUploader";
+import { NativeCameraButton } from "@/components/NativeCameraButton";
+import { Capacitor } from "@capacitor/core";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +29,7 @@ export default function Conversation() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
+  const isNative = Capacitor.isNativePlatform();
 
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ["/api/conversations", id, "messages"],
@@ -245,67 +248,67 @@ export default function Conversation() {
       {/* Message Input */}
       <div className="border-t border-border p-4 safe-area-bottom">
         <div className="flex items-end space-x-3">
-          <ObjectUploader
-            maxNumberOfFiles={1}
-            maxFileSize={52428800} // 50MB for videos
-            allowedFileTypes={['video/*']}
-            onGetUploadParameters={getUploadParameters}
-            onComplete={async (result) => {
-              const uploadedFile = result.successful?.[0];
-              console.log("📤 Video upload complete, full result:", JSON.stringify(uploadedFile, null, 2));
+          {/* Native camera buttons for mobile apps */}
+          {isNative ? (
+            <>
+              <NativeCameraButton
+                mode="photo"
+                onUploadComplete={async (uploadURL) => {
+                  await handleMediaUpload(uploadURL, "image");
+                }}
+                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                <Camera className="h-6 w-6" data-testid="button-camera" />
+              </NativeCameraButton>
               
-              // Support both AwsS3 (web) and XHRUpload (mobile) response formats
-              let uploadURL = uploadedFile?.uploadURL as string | undefined;
+              <NativeCameraButton
+                mode="gallery"
+                onUploadComplete={async (uploadURL) => {
+                  await handleMediaUpload(uploadURL, "image");
+                }}
+                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                <Image className="h-6 w-6" data-testid="button-image" />
+              </NativeCameraButton>
+            </>
+          ) : (
+            /* Web uploader with Uppy */
+            <>
+              <ObjectUploader
+                maxNumberOfFiles={1}
+                maxFileSize={52428800} // 50MB for videos
+                allowedFileTypes={['video/*']}
+                onGetUploadParameters={getUploadParameters}
+                onComplete={async (result) => {
+                  const uploadedFile = result.successful?.[0];
+                  const uploadURL = uploadedFile?.uploadURL as string | undefined;
+                  if (uploadURL) {
+                    await handleMediaUpload(uploadURL, "video");
+                  }
+                }}
+                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                <Camera className="h-6 w-6" data-testid="button-camera" />
+              </ObjectUploader>
               
-              // For XHRUpload (mobile), response might be in different locations
-              if (!uploadURL && uploadedFile?.response) {
-                const response = uploadedFile.response as any;
-                uploadURL = response?.uploadURL || response?.body?.uploadURL;
-              }
-              
-              console.log("📤 Extracted uploadURL:", uploadURL);
-              
-              if (uploadURL && typeof uploadURL === 'string') {
-                await handleMediaUpload(uploadURL, "video");
-              } else {
-                console.error("❌ No uploadURL found in result. Full uploadedFile:", uploadedFile);
-              }
-            }}
-            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-          >
-            <Camera className="h-6 w-6" data-testid="button-camera" />
-          </ObjectUploader>
-          
-          <ObjectUploader
-            maxNumberOfFiles={1}
-            maxFileSize={10485760} // 10MB
-            allowedFileTypes={['image/*']}
-            onGetUploadParameters={getUploadParameters}
-            onComplete={async (result) => {
-              const uploadedFile = result.successful?.[0];
-              console.log("📤 Image upload complete, full result:", JSON.stringify(uploadedFile, null, 2));
-              
-              // Support both AwsS3 (web) and XHRUpload (mobile) response formats
-              let uploadURL = uploadedFile?.uploadURL as string | undefined;
-              
-              // For XHRUpload (mobile), response might be in different locations
-              if (!uploadURL && uploadedFile?.response) {
-                const response = uploadedFile.response as any;
-                uploadURL = response?.uploadURL || response?.body?.uploadURL;
-              }
-              
-              console.log("📤 Extracted uploadURL:", uploadURL);
-              
-              if (uploadURL && typeof uploadURL === 'string') {
-                await handleMediaUpload(uploadURL, "image");
-              } else {
-                console.error("❌ No uploadURL found in result. Full uploadedFile:", uploadedFile);
-              }
-            }}
-            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-          >
-            <Image className="h-6 w-6" data-testid="button-image" />
-          </ObjectUploader>
+              <ObjectUploader
+                maxNumberOfFiles={1}
+                maxFileSize={10485760} // 10MB
+                allowedFileTypes={['image/*']}
+                onGetUploadParameters={getUploadParameters}
+                onComplete={async (result) => {
+                  const uploadedFile = result.successful?.[0];
+                  const uploadURL = uploadedFile?.uploadURL as string | undefined;
+                  if (uploadURL) {
+                    await handleMediaUpload(uploadURL, "image");
+                  }
+                }}
+                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+              >
+                <Image className="h-6 w-6" data-testid="button-image" />
+              </ObjectUploader>
+            </>
+          )}
           
           <div className="flex-1">
             <Textarea
