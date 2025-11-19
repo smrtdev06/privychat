@@ -82,6 +82,8 @@ export function ObjectUploader({
         : ['picture'],
       mirror: true,
       showRecordingLength: true,
+      // Use native camera on mobile devices (iOS/Android)
+      mobileNativeCamera: true,
     });
 
     // Use different upload strategies for web vs mobile
