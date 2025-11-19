@@ -373,7 +373,7 @@ export default function Settings() {
               <Button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  setLocation("/upgrade");
+                  setLocation("/settings");
                 }}
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
                 data-testid="button-upgrade"
