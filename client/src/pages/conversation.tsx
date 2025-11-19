@@ -249,7 +249,8 @@ export default function Conversation() {
 
       {/* Message Input */}
       <div className="border-t border-border p-3 safe-area-bottom">
-        <div className="flex items-end space-x-2">
+        {/* Row 1: Media buttons */}
+        <div className="flex items-center space-x-2 mb-2">
           {/* Native camera buttons for mobile apps */}
           {isNative ? (
             <>
@@ -297,9 +298,9 @@ export default function Conversation() {
                     await handleMediaUpload(uploadURL, "video");
                   }
                 }}
-                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Camera className="h-6 w-6" data-testid="button-camera" />
+                <Camera className="h-5 w-5" data-testid="button-camera" />
               </ObjectUploader>
               
               <ObjectUploader
@@ -314,13 +315,16 @@ export default function Conversation() {
                     await handleMediaUpload(uploadURL, "image");
                   }
                 }}
-                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Image className="h-6 w-6" data-testid="button-image" />
+                <Image className="h-5 w-5" data-testid="button-image" />
               </ObjectUploader>
             </>
           )}
-          
+        </div>
+
+        {/* Row 2: Input field and send button */}
+        <div className="flex items-end space-x-2">
           <div className="flex-1 min-w-0">
             <Textarea
               value={messageText}
