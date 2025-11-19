@@ -48,20 +48,26 @@ export function useNativeCamera() {
       await requestPermissions();
       
       const photo = await Camera.getPhoto({
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.DataUrl, // Use DataUrl instead of Uri for better Android compatibility
         source: CameraSource.Camera,
         quality: 90,
         allowEditing: false,
         saveToGallery: false,
       });
 
-      if (!photo.webPath) {
+      if (!photo.dataUrl) {
         throw new Error('No photo captured');
       }
 
-      // Fetch the photo as a blob
-      const response = await fetch(photo.webPath);
-      const blob = await response.blob();
+      // Convert base64 data URL to blob
+      const base64Data = photo.dataUrl.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: `image/${photo.format || 'jpeg'}` });
 
       return {
         blob,
@@ -83,19 +89,25 @@ export function useNativeCamera() {
       await requestPermissions();
       
       const photo = await Camera.getPhoto({
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.DataUrl, // Use DataUrl instead of Uri for better Android compatibility
         source: CameraSource.Photos,
         quality: 90,
         allowEditing: false,
       });
 
-      if (!photo.webPath) {
+      if (!photo.dataUrl) {
         throw new Error('No photo selected');
       }
 
-      // Fetch the photo as a blob
-      const response = await fetch(photo.webPath);
-      const blob = await response.blob();
+      // Convert base64 data URL to blob
+      const base64Data = photo.dataUrl.split(',')[1];
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: `image/${photo.format || 'jpeg'}` });
 
       return {
         blob,
