@@ -261,9 +261,9 @@ export default function Conversation() {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
-            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
           >
-            <Camera className="h-5 w-5" data-testid="button-camera" />
+            <Camera className="h-6 w-6" data-testid="button-camera" />
           </ObjectUploader>
           
           <ObjectUploader
@@ -282,9 +282,9 @@ export default function Conversation() {
                 console.error("❌ No uploadURL found in result:", uploadedFile);
               }
             }}
-            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
           >
-            <Image className="h-5 w-5" data-testid="button-image" />
+            <Image className="h-6 w-6" data-testid="button-image" />
           </ObjectUploader>
           
           <div className="flex-1">
