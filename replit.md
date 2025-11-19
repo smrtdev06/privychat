@@ -86,15 +86,17 @@ Preferred communication style: Simple, everyday language.
     - `useNativeCamera` hook provides `capturePhoto()` and `selectPhoto()` methods
     - `NativeCameraButton` component handles photo capture/selection, upload, and ACL setup
     - Works around WebView's `navigator.mediaDevices.getUserMedia()` blocking issue
-  - **Video Integration (Native)**: Uses HTML file input with `accept="video/*"` to trigger native gallery
-    - `NativeVideoPicker` component allows selecting videos from device gallery
-    - Supports file size validation (50MB max) and upload progress indication
-    - Note: Live video recording not supported (would require additional plugin)
+  - **Video Integration (Native)**: Uses Capacitor Camera API in VIDEO mode for recording
+    - `useNativeCamera` hook provides `captureVideo()` method using Camera.getPhoto with captureMode: 'VIDEO'
+    - `NativeVideoRecorderButton` component handles video recording, upload, and ACL setup
+    - Robust path handling: strips file:// scheme, reads via Filesystem.readFile(), falls back to webPath if needed
+    - Supports both iOS (.mov) and Android (.mp4) video formats with correct MIME types
+    - Maximum 50MB file size for uploads
   - **Camera Integration (Web)**: Uses Uppy with Webcam plugin for browser-based capture
   - Platform detection: `Capacitor.isNativePlatform()` determines which upload strategy to use
   - Conditional rendering in conversation page: 
-    - **Mobile**: Three native buttons (📷 camera, 🖼️ image gallery, 🎥 video gallery)
-    - **Web**: Uppy ObjectUploader for images and videos
+    - **Mobile**: Three native buttons (📷 photo capture, 🖼️ image gallery, 🎥 video recording)
+    - **Web**: Uppy ObjectUploader for images and videos with webcam support
 
 ## Development and Deployment
 - **Tooling**: Vite, TypeScript, Drizzle Kit for database migrations.
