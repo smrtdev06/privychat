@@ -461,6 +461,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get signed URL for upload
       const uploadURL = await objectStorageService.getObjectEntityUploadURL();
       
+      console.log(`📤 Mobile upload proxy: uploading ${req.file.originalname} (${req.file.size} bytes)`);
+      
       // Upload file data to GCS via signed URL with proper headers
       const contentType = req.file.mimetype || 'application/octet-stream';
       const uploadResponse = await fetch(uploadURL, {
@@ -478,8 +480,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error(`GCS upload failed: ${uploadResponse.status}`);
       }
 
-      // Return the uploadURL (which is what the rest of the app expects)
-      res.json({ uploadURL });
+      // Extract the object path from the signed URL (remove query params)
+      const uploadUrl = new URL(uploadURL);
+      const objectPath = objectStorageService.normalizeObjectEntityPath(uploadUrl.origin + uploadUrl.pathname);
+      
+      console.log(`✅ Mobile upload successful: ${objectPath}`);
+      
+      // Return both uploadURL (for compatibility) and objectPath (for mobile)
+      res.json({ 
+        uploadURL,  // Full signed URL for backwards compatibility
+        objectPath  // Clean path for ACL/message operations
+      });
     } catch (error) {
       console.error("Error in proxy upload:", error);
       res.status(500).json({ error: "Upload failed" });

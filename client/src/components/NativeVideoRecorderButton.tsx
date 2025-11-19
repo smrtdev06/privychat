@@ -65,10 +65,14 @@ export function NativeVideoRecorderButton({
       }
 
       const result = await uploadResponse.json();
-      console.log("✅ Video upload successful:", result.uploadURL);
+      console.log("✅ Video upload successful:", result);
+
+      // Use objectPath if available (mobile), otherwise fall back to uploadURL (web)
+      const mediaUrl = result.objectPath || result.uploadURL;
+      console.log("📎 Using media URL:", mediaUrl);
 
       // Call the completion handler
-      await onUploadComplete(result.uploadURL);
+      await onUploadComplete(mediaUrl);
 
       toast({
         title: "Upload successful",
