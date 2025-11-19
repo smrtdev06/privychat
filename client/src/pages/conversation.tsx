@@ -248,8 +248,8 @@ export default function Conversation() {
       </div>
 
       {/* Message Input */}
-      <div className="border-t border-border p-4 safe-area-bottom">
-        <div className="flex items-end space-x-3">
+      <div className="border-t border-border p-3 safe-area-bottom">
+        <div className="flex items-end space-x-2">
           {/* Native camera buttons for mobile apps */}
           {isNative ? (
             <>
@@ -258,9 +258,9 @@ export default function Conversation() {
                 onUploadComplete={async (uploadURL) => {
                   await handleMediaUpload(uploadURL, "image");
                 }}
-                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Camera className="h-6 w-6" data-testid="button-camera" />
+                <Camera className="h-5 w-5" data-testid="button-camera" />
               </NativeCameraButton>
               
               <NativeCameraButton
@@ -268,18 +268,18 @@ export default function Conversation() {
                 onUploadComplete={async (uploadURL) => {
                   await handleMediaUpload(uploadURL, "image");
                 }}
-                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Image className="h-6 w-6" data-testid="button-image" />
+                <Image className="h-5 w-5" data-testid="button-image" />
               </NativeCameraButton>
               
               <NativeVideoRecorderButton
                 onUploadComplete={async (uploadURL) => {
                   await handleMediaUpload(uploadURL, "video");
                 }}
-                buttonClassName="flex items-center justify-center h-10 w-10 min-w-10 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Video className="h-6 w-6" data-testid="button-video-record" />
+                <Video className="h-5 w-5" data-testid="button-video-record" />
               </NativeVideoRecorderButton>
             </>
           ) : (
@@ -321,13 +321,13 @@ export default function Conversation() {
             </>
           )}
           
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <Textarea
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="min-h-[2.5rem] max-h-24 resize-none"
+              className="min-h-[2.5rem] max-h-24 resize-none w-full"
               rows={1}
               disabled={!canSendMessage}
               data-testid="input-message"
@@ -337,7 +337,7 @@ export default function Conversation() {
           <Button
             onClick={handleSendMessage}
             disabled={!messageText.trim() || sendMessageMutation.isPending || !canSendMessage}
-            className="rounded-full"
+            className="rounded-full h-9 w-9 min-w-9 p-0"
             data-testid="button-send"
           >
             <Send className="h-4 w-4" />
