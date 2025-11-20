@@ -13,8 +13,8 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]); // Use ref instead of state to avoid closure issues
   const [isRecording, setIsRecording] = useState(false);
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // Cleanup function to stop all camera tracks
@@ -123,26 +123,47 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
   const startRecording = () => {
     if (!mediaStreamRef.current) return;
 
-    const options = { mimeType: 'video/webm;codecs=vp8,opus' };
+    // Reset chunks for new recording
+    recordedChunksRef.current = [];
+
+    // Try different codecs based on browser support
+    let options: MediaRecorderOptions = { mimeType: 'video/webm' };
+    
+    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+      options = { mimeType: 'video/webm;codecs=vp8' };
+    } else if (MediaRecorder.isTypeSupported('video/webm')) {
+      options = { mimeType: 'video/webm' };
+    }
+    
     const mediaRecorder = new MediaRecorder(mediaStreamRef.current, options);
     
     mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        setRecordedChunks(prev => [...prev, event.data]);
+      if (event.data && event.data.size > 0) {
+        console.log(`📹 Recorded chunk: ${event.data.size} bytes`);
+        recordedChunksRef.current.push(event.data);
       }
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      console.log(`📹 Recording stopped. Total chunks: ${recordedChunksRef.current.length}`);
+      const totalSize = recordedChunksRef.current.reduce((sum, chunk) => sum + chunk.size, 0);
+      console.log(`📹 Total size: ${totalSize} bytes`);
+      
+      const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
       const filename = `video-${Date.now()}.webm`;
+      
+      console.log(`📹 Final blob size: ${blob.size} bytes`);
       onCapture(blob, filename, 'video/webm');
       handleClose();
     };
 
     mediaRecorderRef.current = mediaRecorder;
-    mediaRecorder.start();
+    
+    // Request data every 100ms to ensure we capture data
+    mediaRecorder.start(100);
     setIsRecording(true);
-    setRecordedChunks([]);
+    
+    console.log('📹 Recording started');
   };
 
   const stopRecording = () => {
@@ -154,9 +175,15 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
 
   const handleClose = () => {
     console.log('📸 Closing camera modal...');
+    
+    // Stop recording if active
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+    }
+    
     stopCamera();
     setIsRecording(false);
-    setRecordedChunks([]);
+    recordedChunksRef.current = [];
     setError(null);
     onClose();
   };
