@@ -3,7 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Camera, Image, Video, Send, MoreVertical, Settings, HelpCircle, Info } from "lucide-react";
+import { ArrowLeft, Camera, Image, Video, Film, Send, MoreVertical, Settings, HelpCircle, Info } from "lucide-react";
 import MessageBubble from "@/components/message-bubble";
 import { useSwipeHandler } from "@/lib/swipe-handler";
 import { apiRequest } from "@/lib/queryClient";
@@ -290,7 +290,7 @@ export default function Conversation() {
                 }}
                 buttonClassName="flex items-center justify-center h-9 w-9 min-w-9 rounded-md bg-transparent border-0 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
-                <Video className="h-5 w-5" data-testid="button-video-gallery" />
+                <Film className="h-5 w-5" data-testid="button-video-gallery" />
               </NativeVideoRecorderButton>
             </>
           ) : (
