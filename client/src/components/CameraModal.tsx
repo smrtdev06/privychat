@@ -17,16 +17,44 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // Cleanup function to stop all camera tracks
+  const stopCamera = () => {
+    if (mediaStreamRef.current) {
+      console.log('📸 Stopping camera tracks...');
+      mediaStreamRef.current.getTracks().forEach(track => {
+        track.stop();
+        console.log(`📸 Stopped track: ${track.kind}`);
+      });
+      mediaStreamRef.current = null;
+    }
+    
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      stopCamera();
+      return;
+    }
+
+    // Add small delay to ensure previous camera is released
+    const timeoutId = setTimeout(() => {
+      startCamera();
+    }, 100);
 
     // Start camera when modal opens
     const startCamera = async () => {
       try {
+        console.log(`📸 Starting camera for ${mode} mode...`);
+        
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' }, // Rear camera
           audio: mode === 'video' ? true : false,
         });
+
+        console.log('📸 Camera started successfully');
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -35,18 +63,15 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
 
         setError(null);
       } catch (err: any) {
-        console.error('Failed to start camera:', err);
-        setError('Failed to access camera. Please check permissions.');
+        console.error('❌ Failed to start camera:', err);
+        setError('Failed to access camera. Please close any other camera apps and try again.');
       }
     };
 
-    startCamera();
-
     // Cleanup when modal closes
     return () => {
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach(track => track.stop());
-      }
+      clearTimeout(timeoutId);
+      stopCamera();
     };
   }, [isOpen, mode]);
 
@@ -106,9 +131,11 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
   };
 
   const handleClose = () => {
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop());
-    }
+    console.log('📸 Closing camera modal...');
+    stopCamera();
+    setIsRecording(false);
+    setRecordedChunks([]);
+    setError(null);
     onClose();
   };
 
