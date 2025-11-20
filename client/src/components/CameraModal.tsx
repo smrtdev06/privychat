@@ -23,10 +23,21 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
     // Start camera when modal opens
     const startCamera = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        console.log('🎥 Requesting camera access for mode:', mode);
+        
+        // Check if getUserMedia is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('Camera API not available in this browser');
+        }
+
+        const constraints = {
           video: { facingMode: 'environment' }, // Rear camera
           audio: mode === 'video' ? true : false,
-        });
+        };
+        
+        console.log('🎥 Requesting with constraints:', constraints);
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('✅ Camera access granted');
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -35,8 +46,20 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
 
         setError(null);
       } catch (err: any) {
-        console.error('Failed to start camera:', err);
-        setError('Failed to access camera. Please check permissions.');
+        console.error('❌ Failed to start camera:', err.name, err.message);
+        let errorMessage = 'Failed to access camera. ';
+        
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          errorMessage += 'Camera permission denied. Please allow camera access in your device settings.';
+        } else if (err.name === 'NotFoundError') {
+          errorMessage += 'No camera found on this device.';
+        } else if (err.name === 'NotReadableError') {
+          errorMessage += 'Camera is already in use by another app.';
+        } else {
+          errorMessage += err.message || 'Please check permissions.';
+        }
+        
+        setError(errorMessage);
       }
     };
 
