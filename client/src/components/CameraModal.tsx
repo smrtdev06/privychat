@@ -49,14 +49,36 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
       try {
         console.log(`📸 Starting camera for ${mode} mode...`);
         
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' }, // Rear camera
-          audio: mode === 'video' ? true : false,
-        });
+        // For video mode, try with audio first, fallback to video-only if audio fails
+        let stream: MediaStream | null = null;
+        
+        if (mode === 'video') {
+          try {
+            // Try to get both video and audio
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: 'environment' },
+              audio: true,
+            });
+            console.log('📸 Camera started with audio');
+          } catch (audioErr) {
+            console.warn('⚠️ Audio not available, using video only:', audioErr);
+            // Fallback to video only
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: 'environment' },
+              audio: false,
+            });
+            console.log('📸 Camera started without audio');
+          }
+        } else {
+          // Photo mode: video only
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' },
+            audio: false,
+          });
+          console.log('📸 Camera started for photo');
+        }
 
-        console.log('📸 Camera started successfully');
-
-        if (videoRef.current) {
+        if (videoRef.current && stream) {
           videoRef.current.srcObject = stream;
           mediaStreamRef.current = stream;
         }
@@ -64,7 +86,7 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
         setError(null);
       } catch (err: any) {
         console.error('❌ Failed to start camera:', err);
-        setError('Failed to access camera. Please close any other camera apps and try again.');
+        setError('Camera access denied. Please allow camera permissions and try again.');
       }
     };
 
