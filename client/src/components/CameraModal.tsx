@@ -126,13 +126,30 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
     // Reset chunks for new recording
     recordedChunksRef.current = [];
 
-    // Try different codecs based on browser support
-    let options: MediaRecorderOptions = { mimeType: 'video/webm' };
+    // Detect best codec for the platform
+    // iOS: Supports MP4/H.264
+    // Android/Desktop: Supports WebM/VP8
+    let options: MediaRecorderOptions | undefined;
+    let mimeType = 'video/webm';
     
-    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+    if (MediaRecorder.isTypeSupported('video/mp4')) {
+      // iOS - use MP4
+      options = { mimeType: 'video/mp4' };
+      mimeType = 'video/mp4';
+      console.log('📹 Using MP4 codec (iOS)');
+    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+      // Android/Desktop - use WebM with VP8
       options = { mimeType: 'video/webm;codecs=vp8' };
+      mimeType = 'video/webm';
+      console.log('📹 Using WebM/VP8 codec (Android)');
     } else if (MediaRecorder.isTypeSupported('video/webm')) {
+      // Fallback to basic WebM
       options = { mimeType: 'video/webm' };
+      mimeType = 'video/webm';
+      console.log('📹 Using WebM codec');
+    } else {
+      // Let browser choose default
+      console.log('📹 Using default codec');
     }
     
     const mediaRecorder = new MediaRecorder(mediaStreamRef.current, options);
@@ -149,11 +166,13 @@ export function CameraModal({ isOpen, onClose, onCapture, mode }: CameraModalPro
       const totalSize = recordedChunksRef.current.reduce((sum, chunk) => sum + chunk.size, 0);
       console.log(`📹 Total size: ${totalSize} bytes`);
       
-      const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
-      const filename = `video-${Date.now()}.webm`;
+      // Determine file extension and MIME type based on what was recorded
+      const fileExtension = mimeType === 'video/mp4' ? 'mp4' : 'webm';
+      const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+      const filename = `video-${Date.now()}.${fileExtension}`;
       
-      console.log(`📹 Final blob size: ${blob.size} bytes`);
-      onCapture(blob, filename, 'video/webm');
+      console.log(`📹 Final blob: ${blob.size} bytes, type: ${mimeType}`);
+      onCapture(blob, filename, mimeType);
       handleClose();
     };
 
