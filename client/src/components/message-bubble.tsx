@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getFullUrl } from "@/lib/queryClient";
 import { useState } from "react";
+import { useMediaUrl } from "@/hooks/use-media-url";
 
 interface MessageBubbleProps {
   message: {
@@ -47,20 +48,22 @@ function detectMimeType(url: string): string {
 }
 
 export default function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
-  const [videoError, setVideoError] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  
   const mediaUrl = message.mediaUrl || '';
-  const streamUrl = getMediaStreamUrl(mediaUrl);
   const mimeType = detectMimeType(mediaUrl);
   
-  // Debug logging for media URLs
-  console.log(`📺 Message ${message.id}:`, {
-    messageType: message.messageType,
-    mediaUrl,
-    streamUrl,
-    mimeType
-  });
+  // Use iOS-compatible media URLs
+  const imageMedia = useMediaUrl(
+    message.messageType === 'image' ? message.mediaUrl : undefined,
+    'image'
+  );
+  const videoMedia = useMediaUrl(
+    message.messageType === 'video' ? message.mediaUrl : undefined,
+    'video'
+  );
+  const voiceMedia = useMediaUrl(
+    message.messageType === 'voice' ? message.mediaUrl : undefined,
+    'voice'
+  );
   
   return (
     <div className={cn("flex", isOwnMessage ? "justify-end" : "justify-start")}>
@@ -75,65 +78,71 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
       >
         {message.messageType === "image" && message.mediaUrl && (
           <>
-            {!imageError ? (
-              <img
-                src={streamUrl}
-                alt="Shared image"
-                className="w-full h-auto rounded-lg mb-2"
-                data-testid={`message-image-${message.id}`}
-                crossOrigin="use-credentials"
-                onError={(e) => {
-                  console.error(`❌ Image load error for ${message.id}:`, e);
-                  setImageError(true);
-                }}
-                onLoad={() => console.log(`✅ Image loaded: ${message.id}`)}
-              />
-            ) : (
+            {imageMedia.loading ? (
+              <div className="bg-black/10 dark:bg-white/10 rounded-lg p-4 mb-2 text-center">
+                <p className="text-sm opacity-75">Loading image...</p>
+              </div>
+            ) : imageMedia.error || !imageMedia.url ? (
               <div className="bg-black/10 dark:bg-white/10 rounded-lg p-4 mb-2 text-center">
                 <p className="text-sm opacity-75">Failed to load image</p>
               </div>
+            ) : (
+              <img
+                src={imageMedia.url}
+                alt="Shared image"
+                className="w-full h-auto rounded-lg mb-2"
+                data-testid={`message-image-${message.id}`}
+              />
             )}
           </>
         )}
 
         {message.messageType === "video" && message.mediaUrl && (
           <>
-            {!videoError ? (
-              <video
-                controls
-                preload="metadata"
-                playsInline
-                webkit-playsinline="true"
-                crossOrigin="use-credentials"
-                className="w-full h-auto rounded-lg mb-2"
-                data-testid={`message-video-${message.id}`}
-                onError={(e) => {
-                  console.error(`❌ Video playback error for ${message.id}:`, e);
-                  setVideoError(true);
-                }}
-                onLoadedMetadata={() => console.log(`✅ Video metadata loaded: ${message.id}`)}
-              >
-                <source src={streamUrl} type={mimeType || 'video/mp4'} />
-                Your browser doesn't support this video format.
-              </video>
-            ) : (
+            {videoMedia.loading ? (
               <div className="bg-black/10 dark:bg-white/10 rounded-lg p-4 mb-2 text-center">
-                <p className="text-sm opacity-75">Video format not supported on this device</p>
+                <p className="text-sm opacity-75">Loading video...</p>
+              </div>
+            ) : videoMedia.error || !videoMedia.url ? (
+              <div className="bg-black/10 dark:bg-white/10 rounded-lg p-4 mb-2 text-center">
+                <p className="text-sm opacity-75">Failed to load video</p>
                 {mimeType.includes('webm') && (
                   <p className="text-xs opacity-60 mt-1">WebM videos are not compatible with iOS</p>
                 )}
               </div>
+            ) : (
+              <video
+                src={videoMedia.url}
+                controls
+                preload="metadata"
+                playsInline
+                webkit-playsinline="true"
+                className="w-full h-auto rounded-lg mb-2"
+                data-testid={`message-video-${message.id}`}
+              />
             )}
           </>
         )}
 
         {message.messageType === "voice" && message.mediaUrl && (
-          <audio
-            src={getMediaStreamUrl(message.mediaUrl)}
-            controls
-            className="w-full mb-2"
-            data-testid={`message-voice-${message.id}`}
-          />
+          <>
+            {voiceMedia.loading ? (
+              <div className="bg-black/10 dark:bg-white/10 rounded-lg p-2 mb-2 text-center">
+                <p className="text-xs opacity-75">Loading audio...</p>
+              </div>
+            ) : voiceMedia.error || !voiceMedia.url ? (
+              <div className="bg-black/10 dark:bg-white/10 rounded-lg p-2 mb-2 text-center">
+                <p className="text-xs opacity-75">Failed to load audio</p>
+              </div>
+            ) : (
+              <audio
+                src={voiceMedia.url}
+                controls
+                className="w-full mb-2"
+                data-testid={`message-voice-${message.id}`}
+              />
+            )}
+          </>
         )}
         
         {message.content && (
