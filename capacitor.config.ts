@@ -13,6 +13,10 @@ const config: CapacitorConfig = {
   appName: 'Calculator+',
   webDir: './dist/public',
   
+  // Transparent background needed for VideoRecorder plugin on iOS
+  // This allows the native camera preview to show through the WebView
+  backgroundColor: '#ff000000',
+  
   // LOCAL BUNDLE MODE - NO REMOTE SERVER URL
   // App loads from local files, API calls go to backend via VITE_SERVER_URL
   // This prevents Android from loading the app remotely from privycalc.com
