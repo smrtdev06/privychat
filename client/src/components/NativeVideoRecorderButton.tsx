@@ -4,7 +4,6 @@ import { useNativeCamera } from "@/hooks/use-native-camera";
 import { useToast } from "@/hooks/use-toast";
 import { getFullUrl } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import { CameraModal } from "@/components/CameraModal";
 
 interface NativeVideoRecorderButtonProps {
   onUploadComplete: (uploadURL: string) => Promise<void>;
@@ -15,7 +14,8 @@ interface NativeVideoRecorderButtonProps {
 
 /**
  * Native video button for Capacitor mobile apps
- * Uses MediaDevices API for recording, file picker for gallery
+ * Uses HTML5 file input with capture attribute to trigger native camera app
+ * This ensures iOS records in proper MP4 format that plays on all devices
  */
 export function NativeVideoRecorderButton({
   onUploadComplete,
@@ -23,14 +23,9 @@ export function NativeVideoRecorderButton({
   children,
   mode = "record",
 }: NativeVideoRecorderButtonProps) {
-  const { selectVideo, isNative } = useNativeCamera();
+  const { selectVideo, captureVideo, isNative } = useNativeCamera();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [showCameraModal, setShowCameraModal] = useState(false);
-
-  const handleCameraCapture = (blob: Blob, filename: string, mimeType: string) => {
-    uploadMedia(blob, filename);
-  };
 
   const uploadMedia = async (blob: Blob, filename: string) => {
     setIsUploading(true);
@@ -90,26 +85,28 @@ export function NativeVideoRecorderButton({
       return;
     }
 
-    // For record mode: show camera modal for true video recording
-    if (mode === "record") {
-      setShowCameraModal(true);
-      return;
-    }
-
-    // For gallery mode: use file picker
     setIsUploading(true);
     try {
-      console.log(`🎥 Starting video gallery selection...`);
+      let media: { blob: Blob; filename: string; mimeType: string };
       
-      const media = await selectVideo();
-      console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
+      if (mode === "record") {
+        // For record mode: use native camera capture (triggers iOS/Android native camera app)
+        console.log(`🎥 Starting native video recording...`);
+        media = await captureVideo();
+        console.log(`🎥 Video recorded:`, media.filename, media.blob.size, "bytes", media.mimeType);
+      } else {
+        // For gallery mode: use file picker
+        console.log(`🎥 Starting video gallery selection...`);
+        media = await selectVideo();
+        console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
+      }
 
       await uploadMedia(media.blob, media.filename);
     } catch (error: any) {
-      console.error(`❌ Video gallery selection failed:`, error);
+      console.error(`❌ Video ${mode === "record" ? "recording" : "selection"} failed:`, error);
       toast({
-        title: "Video selection failed",
-        description: error.message || "Failed to select video",
+        title: `Video ${mode === "record" ? "recording" : "selection"} failed`,
+        description: error.message || `Failed to ${mode === "record" ? "record" : "select"} video`,
         variant: "destructive",
       });
       setIsUploading(false);
@@ -122,29 +119,17 @@ export function NativeVideoRecorderButton({
   }
 
   return (
-    <>
-      <Button
-        onClick={handleRecord}
-        className={buttonClassName}
-        disabled={isUploading}
-        data-testid={`button-native-video-${mode}`}
-      >
-        {isUploading ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : (
-          children
-        )}
-      </Button>
-
-      {/* Camera Modal for video recording */}
-      {mode === "record" && (
-        <CameraModal
-          isOpen={showCameraModal}
-          onClose={() => setShowCameraModal(false)}
-          onCapture={handleCameraCapture}
-          mode="video"
-        />
+    <Button
+      onClick={handleRecord}
+      className={buttonClassName}
+      disabled={isUploading}
+      data-testid={`button-native-video-${mode}`}
+    >
+      {isUploading ? (
+        <Loader2 className="h-6 w-6 animate-spin" />
+      ) : (
+        children
       )}
-    </>
+    </Button>
   );
 }
