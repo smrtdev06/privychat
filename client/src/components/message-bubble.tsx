@@ -105,9 +105,9 @@ export default function MessageBubble({ message, isOwnMessage }: MessageBubblePr
               </div>
             ) : videoMedia.error || !videoMedia.url ? (
               <div className="bg-black/10 dark:bg-white/10 rounded-lg p-4 mb-2 text-center">
-                <p className="text-sm opacity-75">Failed to load video</p>
-                {mimeType.includes('webm') && (
-                  <p className="text-xs opacity-60 mt-1">WebM videos are not compatible with iOS</p>
+                <p className="text-sm opacity-75">Video format not supported on this device</p>
+                {(videoMedia.mimeType?.includes('webm') || mimeType.includes('webm')) && (
+                  <p className="text-xs opacity-60 mt-1">WebM videos can only be played on Android</p>
                 )}
               </div>
             ) : (

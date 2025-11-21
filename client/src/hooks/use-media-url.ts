@@ -13,6 +13,7 @@ export function useMediaUrl(mediaPath: string | undefined, messageType: 'image' 
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [mimeType, setMimeType] = useState<string>('');
 
   const isIOS = Capacitor.getPlatform() === 'ios';
 
@@ -55,9 +56,27 @@ export function useMediaUrl(mediaPath: string | undefined, messageType: 'image' 
 
         // Create blob from response
         const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
         
-        console.log(`✅ [iOS] Created blob URL for ${messageType}, size: ${blob.size} bytes`);
+        // Get content type from response headers
+        const contentType = response.headers.get('content-type') || blob.type;
+        setMimeType(contentType);
+        
+        // Check for incompatible formats on iOS
+        if (messageType === 'video' && contentType.includes('webm')) {
+          console.warn(`⚠️ [iOS] WebM video detected - not compatible with iOS`);
+          setError(true);
+          setLoading(false);
+          return;
+        }
+        
+        // Re-create blob with correct MIME type if needed
+        const typedBlob = contentType && contentType !== blob.type
+          ? new Blob([blob], { type: contentType })
+          : blob;
+        
+        const url = URL.createObjectURL(typedBlob);
+        
+        console.log(`✅ [iOS] Created blob URL for ${messageType}, size: ${typedBlob.size} bytes, type: ${typedBlob.type}`);
         setBlobUrl(url);
         setLoading(false);
       } catch (err) {
@@ -77,5 +96,5 @@ export function useMediaUrl(mediaPath: string | undefined, messageType: 'image' 
     };
   }, [mediaPath, isIOS]);
 
-  return { url: blobUrl, loading, error };
+  return { url: blobUrl, loading, error, mimeType };
 }
