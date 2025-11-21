@@ -1,0 +1,225 @@
+[Log] native CapacitorHttp.request (#69565281) (user-script:2, line 344)
+[Log] {callbackId: "69565281", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565281"methodName: "request"options: {url: "https://privycalc.com/api/verify-numeric-password", method: "POST", data: "{\"numericPassword\":\"123456\"}", dataType: "json", headers: {content-type: "application/json", x-csrf-token: "cc3cc7ca244667e83aa7fbbf6d20078a84beb59d4b01766ba322f14f8fab69b7"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result CapacitorHttp.request (#69565281) (user-script:2, line 324)
+[Log] {headers: Object, status: 200, url: "https://privycalc.com/api/verify-numeric-password", data: {success: true}}Objectdata: {success: true}Objectheaders: {date: "Fri, 21 Nov 2025 16:34:15 GMT", server: "Google Frontend", strict-transport-security: "max-age=63072000; includeSubDomains", x-powered-by: "Express", content-type: "application/json; charset=utf-8", …}Objectstatus: 200url: "https://privycalc.com/api/verify-numeric-password"Object Prototype (user-script:2, line 329)
+[Debug] CapacitorHttp fetch 1763742855389 https://privycalc.com/api/verify-numeric-password: 258.174ms (user-script:2, line 550)
+[Log] [Capacitor] WebSocket URL: – "wss://privycalc.com/ws?userId=4a02e638-1d9f-4beb-9a31-9e087b8d39c7&conversationId=a2fd5612-6f59-4469-8a13-28ddfdde9048" (index-dVw2jEQ8.js, line 588)
+[Log] WebSocket connecting to: – "wss://privycalc.com/ws?userId=4a02e638-1d9f-4beb-9a31-9e087b8d39c7&conversationId=a2fd5612-6f59-4469-8a13-28ddfdde9048" (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F753c1012-e5ab-476c-a095-438849fcf109 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F313f6561-0bb0-4948-878f-4d6b50dcee26 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F4eb19764-6e87-4ade-9b12-2de9c09f6a40 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fbc44341b-1088-4953-b79b-443e28e89ed2 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fce656b3d-9e7f-47d1-aae9-acbfbe91bc15 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F02edc7cd-fccb-4ba9-9668-aaa1b938f2bc (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fd9d33978-0631-49be-9ff0-2551718456a9 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F6eea9822-cfee-4712-a347-4fb84befb9dc (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F8629088f-0f71-4bd1-851f-b535de594b7d (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F69bd4219-7dda-43e4-b14a-1578bfd0afe8 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F8900d6b0-524a-4f20-94d0-fba26d72aeff (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F7bbb0861-5a5f-4a06-a6b5-78264d889258 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F181f0edd-d15d-4319-af01-fe1575d78ea9 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F585e326e-8551-466a-8c5f-096b005f34f0 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F181f5fe5-76e0-4c82-9005-cabf8ec1b171 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fe8c46509-768e-4c30-8415-9cd1c312a172 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fba5881cc-07c8-4bf7-bb96-5ab37461cbae (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F23d7ec03-1f24-4445-b4c7-ea2cbf9a67c3 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F7aa95b5d-f0f7-44fc-9f6c-8e27dd559c26 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fbd763199-c214-4a3c-a026-41c9c0b291ae (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Fc6c38955-ba85-421f-8599-f7b40bd29dbb (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F40cc600b-51fe-46a8-abcd-51f95e54dd85 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F0a01c0bd-0829-4ad7-b227-6951d268499e (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F8a70d3f2-d582-41d1-ad51-da0b5c89c850 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F6fc60fe0-942a-4352-9f47-5079187e02df (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F2095a057-a6f7-4626-a246-f889de8c979e (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2Ff9d4d4d7-306d-4ebf-be3a-52fc4d9262e2 (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F2ef42dfc-5874-4678-8d68-ef65ce30a5ca (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F7f19ef94-3a0b-481b-8caa-66e0f031534e (index-dVw2jEQ8.js, line 588)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F26c0bef0-d051-4d3c-b38c-6004d592655d (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 17112 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 279589 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 71260 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 279589 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 100546 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 279589 bytes, type: image/png (index-dVw2jEQ8.js, line 588, x2)
+[Log] ✅ [iOS] Created blob URL for image, size: 35151 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 279589 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 60176 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 15140 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 55044 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 50071 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 279589 bytes, type: image/png (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 51045 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for video, size: 318860 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for video, size: 358721 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for video, size: 252368 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 50855 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Log] WebSocket connected (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for image, size: 962714 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for video, size: 962714 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588, x2)
+[Log] ✅ [iOS] Created blob URL for image, size: 962714 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Warning] ⚠️ [iOS] WebM video detected - not compatible with iOS (index-dVw2jEQ8.js, line 588)
+[Log] ✅ [iOS] Created blob URL for video, size: 962714 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588)
+[Warning] ⚠️ [iOS] WebM video detected - not compatible with iOS (index-dVw2jEQ8.js, line 588, x2)
+[Log] ✅ [iOS] Created blob URL for video, size: 12248126 bytes, type: video/mp4 (index-dVw2jEQ8.js, line 588, x3)
+[Error] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+	(anonymous function) (index-dVw2jEQ8.js:317:160)
+	dp (index-dVw2jEQ8.js:40:24274)
+	fa (index-dVw2jEQ8.js:40:42385)
+	d4 (index-dVw2jEQ8.js:40:41208)
+	Fi (index-dVw2jEQ8.js:40:40257)
+	rx (index-dVw2jEQ8.js:40:36867)
+	ki (index-dVw2jEQ8.js:38:3276)
+	(anonymous function) (index-dVw2jEQ8.js:40:34249)
+[Warning] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. (index-dVw2jEQ8.js, line 317)
+[Log] native VideoRecorder.initialize (#69565282) (user-script:2, line 344)
+[Log] {callbackId: "69565282", pluginId: "VideoRecorder", methodName: "initialize", options: Object}ObjectcallbackId: "69565282"methodName: "initialize"options: {camera: 0, previewFrames: Array}ObjectpluginId: "VideoRecorder"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result VideoRecorder.initialize (#69565282) (user-script:2, line 324)
+[Error] {message: "Back camera unavailable", errorMessage: "Back camera unavailable"}Object
+	(anonymous function) (user-script:2:326)
+	returnResult (user-script:2:934)
+	(anonymous function) (user-script:2:929)
+	Global Code (a2fd5612-6f59-4469-8a13-28ddfdde9048:1)
+[Error] Failed to initialize camera: – Error: Back camera unavailable
+Error: Back camera unavailable
+	(anonymous function) (index-dVw2jEQ8.js:613:64037)
+[Log] result VideoRecorder.initialize (#69565282) (user-script:2, line 324)
+[Log] undefinedNo Properties (user-script:2, line 329)
+[Log] native VideoRecorder.destroy (#69565283) (user-script:2, line 344)
+[Log] Object (user-script:2, line 345)
+
+callbackId: "69565283"
+
+methodName: "destroy"
+
+options: {}
+
+pluginId: "VideoRecorder"
+
+type: "message"
+
+Object Prototype
+
+[Log] result VideoRecorder.destroy (#69565283) (user-script:2, line 324)
+[Log] undefinedNo Properties (user-script:2, line 329)
+[Log] ✅ VideoRecorder destroyed (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Starting camera for photo mode... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Camera started for photo (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Uploading photo-1763742940352.jpg: – 51489 – "bytes" (index-dVw2jEQ8.js, line 613)
+[Log] 📤 Uploading to proxy... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Closing camera modal... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Stopping camera tracks... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Stopped track: video (index-dVw2jEQ8.js, line 613)
+[Log] native CapacitorHttp.request (#69565284) (user-script:2, line 344)
+[Log] {callbackId: "69565284", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565284"methodName: "request"options: {url: "https://privycalc.com/api/objects/upload-proxy", method: "POST", data: Array, dataType: "formData", headers: {content-type: "multipart/form-data; boundary=----WebKitFormBoundaryDIXqsjYBvebKky2A"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result CapacitorHttp.request (#69565284) (user-script:2, line 324)
+[Log] Object (user-script:2, line 329)
+
+data: {objectPath: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a", uploadURL: "https://storage.googleapis.com/replit-objstore-72a…6908f5fadf9beb7e2715713&X-Goog-SignedHeaders=host"}
+
+headers: {vary: "Origin", content-length: "992", date: "Fri, 21 Nov 2025 16:35:41 GMT", server: "Google Frontend", etag: "W/\"3e0-sI+U9N30f3Pn3TeBdv07x1spHS8\"", …}
+
+status: 200
+
+url: "https://privycalc.com/api/objects/upload-proxy"
+
+Object Prototype
+
+[Debug] CapacitorHttp fetch 1763742940354 https://privycalc.com/api/objects/upload-proxy: 723.573ms (user-script:2, line 550)
+[Log] ✅ Upload successful: – {objectPath: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a", uploadURL: "https://storage.googleapis.com/replit-objstore-72a…6908f5fadf9beb7e2715713&X-Goog-SignedHeaders=host"} (index-dVw2jEQ8.js, line 613)
+{objectPath: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a", uploadURL: "https://storage.googleapis.com/replit-objstore-72a…6908f5fadf9beb7e2715713&X-Goog-SignedHeaders=host"}Object
+[Log] 📎 Using media URL: – "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a" (index-dVw2jEQ8.js, line 613)
+[Log] native CapacitorHttp.request (#69565285) (user-script:2, line 344)
+[Log] {callbackId: "69565285", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565285"methodName: "request"options: {url: "https://privycalc.com/api/media", method: "PUT", data: "{\"mediaUrl\":\"/objects/uploads/127649e7-0b8b-4d66-9…sationId\":\"a2fd5612-6f59-4469-8a13-28ddfdde9048\"}", dataType: "json", headers: {content-type: "application/json", x-csrf-token: "cc3cc7ca244667e83aa7fbbf6d20078a84beb59d4b01766ba322f14f8fab69b7"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result CapacitorHttp.request (#69565285) (user-script:2, line 324)
+[Log] {url: "https://privycalc.com/api/media", status: 200, data: {objectPath: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a"}, headers: Object}Objectdata: {objectPath: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a"}Objectheaders: {via: "1.1 google", server: "Google Frontend", content-type: "application/json; charset=utf-8", x-cloud-trace-context: "19a3209d85033bb305fc26fcc41707f6", vary: "Origin", …}Objectstatus: 200url: "https://privycalc.com/api/media"Object Prototype (user-script:2, line 329)
+[Debug] CapacitorHttp fetch 1763742941241 https://privycalc.com/api/media: 259.666ms (user-script:2, line 550)
+[Log] native CapacitorHttp.request (#69565286) (user-script:2, line 344)
+[Log] {callbackId: "69565286", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565286"methodName: "request"options: {url: "https://privycalc.com/api/messages", method: "POST", data: "{\"conversationId\":\"a2fd5612-6f59-4469-8a13-28ddfdd…ts/uploads/127649e7-0b8b-4d66-989b-e2422416507a\"}", dataType: "json", headers: {content-type: "application/json", x-csrf-token: "cc3cc7ca244667e83aa7fbbf6d20078a84beb59d4b01766ba322f14f8fab69b7"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F127649e7-0b8b-4d66-989b-e2422416507a (index-dVw2jEQ8.js, line 588)
+[Log] result CapacitorHttp.request (#69565286) (user-script:2, line 324)
+[Log] {headers: Object, data: Object, status: 200, url: "https://privycalc.com/api/messages"}Objectdata: {mediaUrl: "/objects/uploads/127649e7-0b8b-4d66-989b-e2422416507a", createdAt: "2025-11-21T16:35:42.000Z", messageType: "image", conversationId: "a2fd5612-6f59-4469-8a13-28ddfdde9048", content: null, …}Objectheaders: {x-cloud-trace-context: "496e38fbeb2f66b905fc26fcc4170564", content-length: "309", server: "Google Frontend", etag: "W/\"135-Oq0YsZTi66AdEOR9Cqjd60f2CyY\"", strict-transport-security: "max-age=63072000; includeSubDomains", …}Objectstatus: 200url: "https://privycalc.com/api/messages"Object Prototype (user-script:2, line 329)
+[Debug] CapacitorHttp fetch 1763742941660 https://privycalc.com/api/messages: 435.148ms (user-script:2, line 550)
+[Log] ✅ [iOS] Created blob URL for image, size: 51489 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)
+[Error] `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+	(anonymous function) (index-dVw2jEQ8.js:317:160)
+	dp (index-dVw2jEQ8.js:40:24274)
+	fa (index-dVw2jEQ8.js:40:42385)
+	d4 (index-dVw2jEQ8.js:40:41208)
+	Fi (index-dVw2jEQ8.js:40:40257)
+	rx (index-dVw2jEQ8.js:40:36867)
+	ki (index-dVw2jEQ8.js:38:3276)
+	(anonymous function) (index-dVw2jEQ8.js:40:34249)
+[Warning] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. (index-dVw2jEQ8.js, line 317)
+[Log] native VideoRecorder.initialize (#69565287) (user-script:2, line 344)
+[Log] {callbackId: "69565287", pluginId: "VideoRecorder", methodName: "initialize", options: Object}ObjectcallbackId: "69565287"methodName: "initialize"options: {camera: 0, previewFrames: Array}ObjectpluginId: "VideoRecorder"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result VideoRecorder.initialize (#69565287) (user-script:2, line 324)
+[Error] {errorMessage: "Back camera unavailable", message: "Back camera unavailable"}
+	(anonymous function) (user-script:2:326)
+	returnResult (user-script:2:934)
+	(anonymous function) (user-script:2:929)
+	Global Code (a2fd5612-6f59-4469-8a13-28ddfdde9048:1)
+[Error] Failed to initialize camera: – Error: Back camera unavailable
+Error: Back camera unavailable
+	(anonymous function) (index-dVw2jEQ8.js:613:64037)
+[Log] result VideoRecorder.initialize (#69565287) (user-script:2, line 324)
+[Log] undefinedNo Properties (user-script:2, line 329)
+[Error] WebSocket connection to 'wss://privycalc.com/ws?userId=4a02e638-1d9f-4beb-9a31-9e087b8d39c7&conversationId=a2fd5612-6f59-4469-8a13-28ddfdde9048' failed: The operation couldn’t be completed. Socket is not connected
+[Error] WebSocket error: – Event {isTrusted: true, type: "error", target: WebSocket, …}
+Event {isTrusted: true, type: "error", target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}Event
+	(anonymous function) (index-dVw2jEQ8.js:588:46641)
+[Log] WebSocket disconnected (index-dVw2jEQ8.js, line 588)
+[Log] Reconnecting... (index-dVw2jEQ8.js, line 588)
+[Log] [Capacitor] WebSocket URL: – "wss://privycalc.com/ws?userId=4a02e638-1d9f-4beb-9a31-9e087b8d39c7&conversationId=a2fd5612-6f59-4469-8a13-28ddfdde9048" (index-dVw2jEQ8.js, line 588)
+[Log] WebSocket connecting to: – "wss://privycalc.com/ws?userId=4a02e638-1d9f-4beb-9a31-9e087b8d39c7&conversationId=a2fd5612-6f59-4469-8a13-28ddfdde9048" (index-dVw2jEQ8.js, line 588)
+[Log] WebSocket connected (index-dVw2jEQ8.js, line 588)
+[Log] native VideoRecorder.destroy (#69565288) (user-script:2, line 344)
+[Log] {callbackId: "69565288", pluginId: "VideoRecorder", methodName: "destroy", options: {}}ObjectcallbackId: "69565288"methodName: "destroy"options: {}ObjectpluginId: "VideoRecorder"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result VideoRecorder.destroy (#69565288) (user-script:2, line 324)
+[Log] undefinedNo Properties (user-script:2, line 329)
+[Log] ✅ VideoRecorder destroyed (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Starting camera for photo mode... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Camera started for photo (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Uploading photo-1763743316814.jpg: – 51258 – "bytes" (index-dVw2jEQ8.js, line 613)
+[Log] 📤 Uploading to proxy... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Closing camera modal... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Stopping camera tracks... (index-dVw2jEQ8.js, line 613)
+[Log] 📸 Stopped track: video (index-dVw2jEQ8.js, line 613)
+[Log] native CapacitorHttp.request (#69565289) (user-script:2, line 344)
+[Log] {callbackId: "69565289", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565289"methodName: "request"options: {url: "https://privycalc.com/api/objects/upload-proxy", method: "POST", data: Array, dataType: "formData", headers: {content-type: "multipart/form-data; boundary=----WebKitFormBoundaryPQTEOSoM9swVktVK"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result CapacitorHttp.request (#69565289) (user-script:2, line 324)
+[Log] Object (user-script:2, line 329)
+
+data: {uploadURL: "https://storage.googleapis.com/replit-objstore-72a…d8467a310ebde17d982a09e&X-Goog-SignedHeaders=host", objectPath: "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6"}
+
+headers: {content-length: "992", server: "Google Frontend", x-cloud-trace-context: "9f6850d5f9a5f21c6876fa3cfa81a9d0;o=1", access-control-allow-credentials: "true", strict-transport-security: "max-age=63072000; includeSubDomains", …}
+
+status: 200
+
+url: "https://privycalc.com/api/objects/upload-proxy"
+
+Object Prototype
+
+[Debug] CapacitorHttp fetch 1763743316815 https://privycalc.com/api/objects/upload-proxy: 1250.660ms (user-script:2, line 550)
+[Log] ✅ Upload successful: – {uploadURL: "https://storage.googleapis.com/replit-objstore-72a…d8467a310ebde17d982a09e&X-Goog-SignedHeaders=host", objectPath: "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6"} (index-dVw2jEQ8.js, line 613)
+{uploadURL: "https://storage.googleapis.com/replit-objstore-72a…d8467a310ebde17d982a09e&X-Goog-SignedHeaders=host", objectPath: "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6"}Object
+[Log] 📎 Using media URL: – "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6" (index-dVw2jEQ8.js, line 613)
+[Log] native CapacitorHttp.request (#69565290) (user-script:2, line 344)
+[Log] {callbackId: "69565290", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565290"methodName: "request"options: {url: "https://privycalc.com/api/media", method: "PUT", data: "{\"mediaUrl\":\"/objects/uploads/7f948431-3675-42df-9…sationId\":\"a2fd5612-6f59-4469-8a13-28ddfdde9048\"}", dataType: "json", headers: {content-type: "application/json", x-csrf-token: "cc3cc7ca244667e83aa7fbbf6d20078a84beb59d4b01766ba322f14f8fab69b7"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] result CapacitorHttp.request (#69565290) (user-script:2, line 324)
+[Log] {url: "https://privycalc.com/api/media", status: 200, data: {objectPath: "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6"}, headers: Object}Objectdata: {objectPath: "/objects/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6"}Objectheaders: {date: "Fri, 21 Nov 2025 16:41:58 GMT", etag: "W/\"46-OeQr3/Y4bY7UkfDNzt8CgxC+lnY\"", content-type: "application/json; charset=utf-8", content-length: "70", via: "1.1 google", …}Objectstatus: 200url: "https://privycalc.com/api/media"Object Prototype (user-script:2, line 329)
+[Debug] CapacitorHttp fetch 1763743318245 https://privycalc.com/api/media: 448.261ms (user-script:2, line 550)
+[Log] native CapacitorHttp.request (#69565291) (user-script:2, line 344)
+[Log] {callbackId: "69565291", pluginId: "CapacitorHttp", methodName: "request", options: Object}ObjectcallbackId: "69565291"methodName: "request"options: {url: "https://privycalc.com/api/messages", method: "POST", data: "{\"conversationId\":\"a2fd5612-6f59-4469-8a13-28ddfdd…ts/uploads/7f948431-3675-42df-918c-d46d1c7dc1b6\"}", dataType: "json", headers: {content-type: "application/json", x-csrf-token: "cc3cc7ca244667e83aa7fbbf6d20078a84beb59d4b01766ba322f14f8fab69b7"}}ObjectpluginId: "CapacitorHttp"type: "message"Object Prototype (user-script:2, line 345)
+[Log] 📱 [iOS] Fetching media with credentials: https://privycalc.com//api/objects/stream?path=%2Fobjects%2Fuploads%2F7f948431-3675-42df-918c-d46d1c7dc1b6 (index-dVw2jEQ8.js, line 588)
+[Log] result CapacitorHttp.request (#69565291) (user-script:2, line 324)
+[Log] {status: 200, url: "https://privycalc.com/api/messages", headers: Object, data: Object}Objectdata: {senderId: "4a02e638-1d9f-4beb-9a31-9e087b8d39c7", messageType: "image", conversationId: "a2fd5612-6f59-4469-8a13-28ddfdde9048", id: "3bb4be66-1536-4b6a-9403-b54660adf873", isRead: false, …}Objectheaders: {alt-svc: "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000", etag: "W/\"135-5qMvsEhkHYj//JmDgQuDCiFO4RA\"", access-control-allow-credentials: "true", x-powered-by: "Express", strict-transport-security: "max-age=63072000; includeSubDomains", …}Objectstatus: 200url: "https://privycalc.com/api/messages"Object Prototype (user-script:2, line 329)
+[Debug] CapacitorHttp fetch 1763743318849 https://privycalc.com/api/messages: 416.397ms (user-script:2, line 550)
+[Log] ✅ [iOS] Created blob URL for image, size: 51258 bytes, type: image/jpeg (index-dVw2jEQ8.js, line 588)

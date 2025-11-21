@@ -86,12 +86,12 @@ Preferred communication style: Simple, everyday language.
     - `useNativeCamera` hook provides `capturePhoto()` and `selectPhoto()` methods
     - `NativeCameraButton` component handles photo capture/selection, upload, and ACL setup
     - Works around WebView's `navigator.mediaDevices.getUserMedia()` blocking issue
-  - **Video Integration (Native)**: Uses `@capacitor-community/video-recorder` plugin for iOS/Android
-    - `VideoRecordModal` component provides full-screen camera preview with Start/Stop controls
-    - `NativeVideoRecorderButton` component triggers modal and handles upload after recording
-    - Proper native camera initialization with preview frames (solves iOS MediaRecorder incompatibility)
-    - Displays recording timer and real-time feedback
-    - Supports both iOS (.mp4) and Android (.mp4) video formats with iOS-compatible codecs
+  - **Video Integration (Native)**: Uses Capacitor Camera API with VIDEO mode for iOS/Android
+    - `useNativeCamera` hook provides `captureVideo()` method using `Camera.getPhoto({ captureMode: 'VIDEO' })`
+    - `NativeVideoRecorderButton` component handles video recording trigger and upload
+    - Launches native iOS/Android camera app for video recording (solves iOS MediaRecorder incompatibility)
+    - Supports both iOS (.mov/.mp4) and Android (.mp4) video formats with proper MIME types
+    - Filesystem API reads recorded video and converts to Blob for upload
     - Maximum 50MB file size for uploads
   - **Camera Integration (Web)**: Uses Uppy with Webcam plugin for browser-based capture
   - Platform detection: `Capacitor.isNativePlatform()` determines which upload strategy to use

@@ -4,7 +4,6 @@ import { useNativeCamera } from "@/hooks/use-native-camera";
 import { useToast } from "@/hooks/use-toast";
 import { getFullUrl } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
-import { VideoRecordModal } from "@/components/VideoRecordModal";
 
 interface NativeVideoRecorderButtonProps {
   onUploadComplete: (uploadURL: string) => Promise<void>;
@@ -15,8 +14,8 @@ interface NativeVideoRecorderButtonProps {
 
 /**
  * Native video button for Capacitor mobile apps
- * Uses HTML5 file input with capture attribute to trigger native camera app
- * This ensures iOS records in proper MP4 format that plays on all devices
+ * Uses Capacitor Camera API with VIDEO mode to trigger native camera app
+ * This ensures iOS records in proper MP4/MOV format that plays on all devices
  */
 export function NativeVideoRecorderButton({
   onUploadComplete,
@@ -24,10 +23,9 @@ export function NativeVideoRecorderButton({
   children,
   mode = "record",
 }: NativeVideoRecorderButtonProps) {
-  const { selectVideo, isNative } = useNativeCamera();
+  const { selectVideo, captureVideo, isNative } = useNativeCamera();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [showRecordModal, setShowRecordModal] = useState(false);
 
   const uploadMedia = async (blob: Blob, filename: string) => {
     setIsUploading(true);
@@ -77,10 +75,6 @@ export function NativeVideoRecorderButton({
     }
   };
 
-  const handleVideoRecorded = async (blob: Blob, filename: string) => {
-    await uploadMedia(blob, filename);
-  };
-
   const handleRecord = async () => {
     if (!isNative) {
       toast({
@@ -91,24 +85,28 @@ export function NativeVideoRecorderButton({
       return;
     }
 
-    if (mode === "record") {
-      // For record mode: show video recording modal
-      setShowRecordModal(true);
-      return;
-    }
-
-    // For gallery mode: use file picker
     setIsUploading(true);
     try {
-      console.log(`🎥 Starting video gallery selection...`);
-      const media = await selectVideo();
-      console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
+      let media: { blob: Blob; filename: string; mimeType: string };
+      
+      if (mode === "record") {
+        // For record mode: use native camera API to record video
+        console.log(`🎥 Starting native video recording...`);
+        media = await captureVideo();
+        console.log(`🎥 Video recorded:`, media.filename, media.blob.size, "bytes", media.mimeType);
+      } else {
+        // For gallery mode: use file picker
+        console.log(`🎥 Starting video gallery selection...`);
+        media = await selectVideo();
+        console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
+      }
+
       await uploadMedia(media.blob, media.filename);
     } catch (error: any) {
-      console.error(`❌ Video selection failed:`, error);
+      console.error(`❌ Video ${mode === "record" ? "recording" : "selection"} failed:`, error);
       toast({
-        title: "Video selection failed",
-        description: error.message || "Failed to select video",
+        title: `Video ${mode === "record" ? "recording" : "selection"} failed`,
+        description: error.message || `Failed to ${mode === "record" ? "record" : "select"} video`,
         variant: "destructive",
       });
       setIsUploading(false);
@@ -121,28 +119,17 @@ export function NativeVideoRecorderButton({
   }
 
   return (
-    <>
-      <Button
-        onClick={handleRecord}
-        className={buttonClassName}
-        disabled={isUploading}
-        data-testid={`button-native-video-${mode}`}
-      >
-        {isUploading ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : (
-          children
-        )}
-      </Button>
-
-      {/* Video recording modal for record mode */}
-      {mode === "record" && (
-        <VideoRecordModal
-          isOpen={showRecordModal}
-          onClose={() => setShowRecordModal(false)}
-          onRecordComplete={handleVideoRecorded}
-        />
+    <Button
+      onClick={handleRecord}
+      className={buttonClassName}
+      disabled={isUploading}
+      data-testid={`button-native-video-${mode}`}
+    >
+      {isUploading ? (
+        <Loader2 className="h-6 w-6 animate-spin" />
+      ) : (
+        children
       )}
-    </>
+    </Button>
   );
 }

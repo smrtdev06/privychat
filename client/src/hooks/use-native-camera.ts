@@ -246,8 +246,9 @@ export function useNativeCamera() {
   };
 
   /**
-   * Record a video using Capacitor Community Video Recorder plugin
-   * This properly launches native iOS/Android camera app for video recording
+   * Record a video using Capacitor Camera API with VIDEO mode
+   * This launches native iOS/Android camera app for video recording
+   * Much more reliable than VideoRecorder plugin
    */
   const captureVideo = async (): Promise<CapturedMedia> => {
     if (!isNative) {
@@ -255,55 +256,46 @@ export function useNativeCamera() {
     }
 
     try {
-      console.log('🎥 Starting native video recording with VideoRecorder plugin...');
+      console.log('🎥 Starting native video recording with Camera API...');
 
-      // Import the plugin dynamically to avoid errors on web
-      const { VideoRecorder } = await import('@capacitor-community/video-recorder');
-
-      // Initialize the camera with a full-screen preview
-      await VideoRecorder.initialize({
-        camera: 0, // 0 = back camera, 1 = front camera
-        previewFrames: [{
-          id: 'video-record',
-          stackPosition: 'back',
-          width: 'fill',
-          height: 'fill',
-          x: 0,
-          y: 0,
-          borderRadius: 0
-        }]
-      });
-
-      console.log('✅ VideoRecorder initialized, starting recording...');
-
-      // Start recording
-      await VideoRecorder.startRecording();
-
-      // For now, let's record for 10 seconds max or until user manually stops
-      // In a real app, you'd add UI controls for stop/cancel
-      // For this implementation, we'll auto-stop after 30 seconds
-      await new Promise(resolve => setTimeout(resolve, 30000));
-
-      console.log('🛑 Stopping recording...');
-
-      // Stop recording and get result
-      const result = await VideoRecorder.stopRecording();
+      // Request permissions first
+      const permissions = await Camera.checkPermissions();
+      console.log('📸 Current permissions:', permissions);
       
-      console.log('✅ Recording stopped, result:', result);
-
-      // Clean up
-      await VideoRecorder.destroy();
-
-      // Get the video file from the file path
-      if (!result.videoUrl) {
-        throw new Error('No video file returned from recorder');
+      if (permissions.camera !== 'granted' || permissions.photos !== 'granted') {
+        console.log('📸 Requesting camera permissions...');
+        const result = await Camera.requestPermissions();
+        console.log('📸 Permission result:', result);
+        
+        if (result.camera !== 'granted' || result.photos !== 'granted') {
+          throw new Error('Camera permissions denied. Please enable camera access in Settings.');
+        }
       }
 
-      // Read the video file
-      const videoPath = result.videoUrl.replace('file://', '');
+      // Use Camera API with VIDEO mode to launch native camera app for recording
+      const video = await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        // @ts-ignore - VIDEO mode exists but might not be in types
+        captureMode: 'VIDEO',
+        quality: 90,
+      });
+
+      console.log('✅ Video captured:', video);
+
+      if (!video.path) {
+        throw new Error('No video path returned from camera');
+      }
+
+      // Read the video file using Filesystem API
+      const videoPath = video.path.replace('file://', '');
+      console.log('📂 Reading video from path:', videoPath);
+
       const videoFile = await Filesystem.readFile({
         path: videoPath
       });
+
+      console.log('📂 Video file read, data type:', typeof videoFile.data);
 
       // Convert base64 to Blob
       const base64Data = typeof videoFile.data === 'string' ? videoFile.data : '';
@@ -313,28 +305,23 @@ export function useNativeCamera() {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
-      const blob = new Blob([bytes], { type: 'video/mp4' });
-      const filename = `video-${Date.now()}.mp4`;
+      // iOS typically produces .mov or .mp4, Android produces .mp4
+      const mimeType = video.format === 'mov' ? 'video/quicktime' : 'video/mp4';
+      const extension = video.format || 'mp4';
+      
+      const blob = new Blob([bytes], { type: mimeType });
+      const filename = `video-${Date.now()}.${extension}`;
 
-      console.log('✅ Video converted to blob:', filename, blob.size, 'bytes');
+      console.log('✅ Video converted to blob:', filename, blob.size, 'bytes', mimeType);
 
       return {
         blob,
         filename,
-        mimeType: 'video/mp4',
+        mimeType,
       };
     } catch (error: any) {
       console.error('❌ Failed to capture video:', error);
-      
-      // Try to clean up on error
-      try {
-        const { VideoRecorder } = await import('@capacitor-community/video-recorder');
-        await VideoRecorder.destroy();
-      } catch (cleanupError) {
-        // Ignore cleanup errors
-      }
-
-      throw new Error(error.message || 'Failed to record video');
+      throw new Error(error.message || 'Failed to record video. Make sure you are testing on a real device.');
     }
   };
 
