@@ -4,6 +4,7 @@ import { useNativeCamera } from "@/hooks/use-native-camera";
 import { useToast } from "@/hooks/use-toast";
 import { getFullUrl } from "@/lib/queryClient";
 import { Loader2 } from "lucide-react";
+import { VideoRecordModal } from "@/components/VideoRecordModal";
 
 interface NativeVideoRecorderButtonProps {
   onUploadComplete: (uploadURL: string) => Promise<void>;
@@ -23,9 +24,10 @@ export function NativeVideoRecorderButton({
   children,
   mode = "record",
 }: NativeVideoRecorderButtonProps) {
-  const { selectVideo, captureVideo, isNative } = useNativeCamera();
+  const { selectVideo, isNative } = useNativeCamera();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [showRecordModal, setShowRecordModal] = useState(false);
 
   const uploadMedia = async (blob: Blob, filename: string) => {
     setIsUploading(true);
@@ -75,6 +77,10 @@ export function NativeVideoRecorderButton({
     }
   };
 
+  const handleVideoRecorded = async (blob: Blob, filename: string) => {
+    await uploadMedia(blob, filename);
+  };
+
   const handleRecord = async () => {
     if (!isNative) {
       toast({
@@ -85,28 +91,24 @@ export function NativeVideoRecorderButton({
       return;
     }
 
+    if (mode === "record") {
+      // For record mode: show video recording modal
+      setShowRecordModal(true);
+      return;
+    }
+
+    // For gallery mode: use file picker
     setIsUploading(true);
     try {
-      let media: { blob: Blob; filename: string; mimeType: string };
-      
-      if (mode === "record") {
-        // For record mode: use native camera capture (triggers iOS/Android native camera app)
-        console.log(`🎥 Starting native video recording...`);
-        media = await captureVideo();
-        console.log(`🎥 Video recorded:`, media.filename, media.blob.size, "bytes", media.mimeType);
-      } else {
-        // For gallery mode: use file picker
-        console.log(`🎥 Starting video gallery selection...`);
-        media = await selectVideo();
-        console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
-      }
-
+      console.log(`🎥 Starting video gallery selection...`);
+      const media = await selectVideo();
+      console.log(`🎥 Video selected:`, media.filename, media.blob.size, "bytes");
       await uploadMedia(media.blob, media.filename);
     } catch (error: any) {
-      console.error(`❌ Video ${mode === "record" ? "recording" : "selection"} failed:`, error);
+      console.error(`❌ Video selection failed:`, error);
       toast({
-        title: `Video ${mode === "record" ? "recording" : "selection"} failed`,
-        description: error.message || `Failed to ${mode === "record" ? "record" : "select"} video`,
+        title: "Video selection failed",
+        description: error.message || "Failed to select video",
         variant: "destructive",
       });
       setIsUploading(false);
@@ -119,17 +121,28 @@ export function NativeVideoRecorderButton({
   }
 
   return (
-    <Button
-      onClick={handleRecord}
-      className={buttonClassName}
-      disabled={isUploading}
-      data-testid={`button-native-video-${mode}`}
-    >
-      {isUploading ? (
-        <Loader2 className="h-6 w-6 animate-spin" />
-      ) : (
-        children
+    <>
+      <Button
+        onClick={handleRecord}
+        className={buttonClassName}
+        disabled={isUploading}
+        data-testid={`button-native-video-${mode}`}
+      >
+        {isUploading ? (
+          <Loader2 className="h-6 w-6 animate-spin" />
+        ) : (
+          children
+        )}
+      </Button>
+
+      {/* Video recording modal for record mode */}
+      {mode === "record" && (
+        <VideoRecordModal
+          isOpen={showRecordModal}
+          onClose={() => setShowRecordModal(false)}
+          onRecordComplete={handleVideoRecorded}
+        />
       )}
-    </Button>
+    </>
   );
 }
