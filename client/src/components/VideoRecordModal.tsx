@@ -42,8 +42,26 @@ export function VideoRecordModal({ isOpen, onClose, onRecordComplete }: VideoRec
 
     const initCamera = async () => {
       try {
+        // First, request camera permissions using Capacitor Camera API
+        const { Camera } = await import('@capacitor/camera');
+        
+        console.log('📸 Checking camera permissions...');
+        const permissions = await Camera.checkPermissions();
+        console.log('📸 Current permissions:', permissions);
+        
+        if (permissions.camera !== 'granted') {
+          console.log('📸 Requesting camera permissions...');
+          const result = await Camera.requestPermissions();
+          console.log('📸 Permission result:', result);
+          
+          if (result.camera !== 'granted') {
+            throw new Error('Camera permission denied. Please enable camera access in Settings.');
+          }
+        }
+
         const { VideoRecorder } = await import('@capacitor-community/video-recorder');
         
+        console.log('🎥 Initializing VideoRecorder...');
         await VideoRecorder.initialize({
           camera: 0, // Back camera
           previewFrames: [{
@@ -60,8 +78,8 @@ export function VideoRecordModal({ isOpen, onClose, onRecordComplete }: VideoRec
         console.log('✅ VideoRecorder initialized');
       } catch (err: any) {
         if (isActive) {
-          console.error('Failed to initialize camera:', err);
-          setError(err.message || 'Failed to initialize camera');
+          console.error('❌ Failed to initialize camera:', err);
+          setError(err.message || 'Failed to initialize camera. Make sure you are testing on a real device (not simulator).');
         }
       }
     };
